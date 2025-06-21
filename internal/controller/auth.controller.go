@@ -19,11 +19,12 @@ func NewAuthController(authService services.IAuthService) *AuthController {
 
 func (ac *AuthController) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginResponse, error) {
 	// Call the authService to handle login logic
-
-	response := &v1.LoginResponse{
-		AccessToken:  "",
-		RefreshToken: "",
+	response := &v1.LoginResponse{}
+	if req.Username == "sinhnguyen" && req.Password == "123456" {
+		response.AccessToken = "access_token_example"
+		response.RefreshToken = "refresh_token_example"
 	}
+
 	return response, nil
 }
 

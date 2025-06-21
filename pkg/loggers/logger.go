@@ -51,7 +51,7 @@ func NewLogger(cfg settings.Log) *LoggerZap {
 
 	encoder := getEncoder()
 	hook := lumberjack.Logger{
-		Filename:   cfg.FileLogPath + time.Now().Format("2006010215") + "_author.log",
+		Filename:   cfg.FileLogPath + time.Now().Format("2006010215") + "_auth.log",
 		MaxSize:    cfg.MaxSize, // megabytes
 		MaxBackups: cfg.MaxBackups,
 		MaxAge:     cfg.MaxAge,   //days
