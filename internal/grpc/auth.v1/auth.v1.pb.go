@@ -336,7 +336,8 @@ func (x *ConfirmEmailResponse) GetRefreshToken() string {
 
 type LogoutRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	AccessToken   string                 `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
+	RefreshToken  string                 `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -371,9 +372,16 @@ func (*LogoutRequest) Descriptor() ([]byte, []int) {
 	return file_auth_service_auth_v1_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *LogoutRequest) GetToken() string {
+func (x *LogoutRequest) GetAccessToken() string {
 	if x != nil {
-		return x.Token
+		return x.AccessToken
+	}
+	return ""
+}
+
+func (x *LogoutRequest) GetRefreshToken() string {
+	if x != nil {
+		return x.RefreshToken
 	}
 	return ""
 }
@@ -572,7 +580,7 @@ func (x *ForgotPasswordRequest) GetEmail() string {
 
 type ForgotPasswordResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -607,17 +615,17 @@ func (*ForgotPasswordResponse) Descriptor() ([]byte, []int) {
 	return file_auth_service_auth_v1_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *ForgotPasswordResponse) GetSuccess() bool {
+func (x *ForgotPasswordResponse) GetUserId() string {
 	if x != nil {
-		return x.Success
+		return x.UserId
 	}
-	return false
+	return ""
 }
 
 type ConfirmForgotPasswordRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
-	Email         string                 `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
+	UserId        string                 `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -659,9 +667,9 @@ func (x *ConfirmForgotPasswordRequest) GetToken() string {
 	return ""
 }
 
-func (x *ConfirmForgotPasswordRequest) GetEmail() string {
+func (x *ConfirmForgotPasswordRequest) GetUserId() string {
 	if x != nil {
-		return x.Email
+		return x.UserId
 	}
 	return ""
 }
@@ -734,6 +742,258 @@ func (x *ConfirmForgotPasswordResponse) GetPasswordTmp() string {
 	return ""
 }
 
+type Resource struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ResourceId    string                 `protobuf:"bytes,1,opt,name=resource_id,json=resourceId,proto3" json:"resource_id,omitempty"`
+	Resource      string                 `protobuf:"bytes,2,opt,name=resource,proto3" json:"resource,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Resource) Reset() {
+	*x = Resource{}
+	mi := &file_auth_service_auth_v1_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Resource) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Resource) ProtoMessage() {}
+
+func (x *Resource) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_service_auth_v1_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Resource.ProtoReflect.Descriptor instead.
+func (*Resource) Descriptor() ([]byte, []int) {
+	return file_auth_service_auth_v1_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *Resource) GetResourceId() string {
+	if x != nil {
+		return x.ResourceId
+	}
+	return ""
+}
+
+func (x *Resource) GetResource() string {
+	if x != nil {
+		return x.Resource
+	}
+	return ""
+}
+
+type Action struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ActionId      string                 `protobuf:"bytes,1,opt,name=action_id,json=actionId,proto3" json:"action_id,omitempty"`
+	Action        string                 `protobuf:"bytes,2,opt,name=action,proto3" json:"action,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Action) Reset() {
+	*x = Action{}
+	mi := &file_auth_service_auth_v1_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Action) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Action) ProtoMessage() {}
+
+func (x *Action) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_service_auth_v1_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Action.ProtoReflect.Descriptor instead.
+func (*Action) Descriptor() ([]byte, []int) {
+	return file_auth_service_auth_v1_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *Action) GetActionId() string {
+	if x != nil {
+		return x.ActionId
+	}
+	return ""
+}
+
+func (x *Action) GetAction() string {
+	if x != nil {
+		return x.Action
+	}
+	return ""
+}
+
+type ResourceItem struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Resource      *Resource              `protobuf:"bytes,1,opt,name=resource,proto3" json:"resource,omitempty"`
+	Actions       []*Action              `protobuf:"bytes,2,rep,name=actions,proto3" json:"actions,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ResourceItem) Reset() {
+	*x = ResourceItem{}
+	mi := &file_auth_service_auth_v1_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ResourceItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ResourceItem) ProtoMessage() {}
+
+func (x *ResourceItem) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_service_auth_v1_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ResourceItem.ProtoReflect.Descriptor instead.
+func (*ResourceItem) Descriptor() ([]byte, []int) {
+	return file_auth_service_auth_v1_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *ResourceItem) GetResource() *Resource {
+	if x != nil {
+		return x.Resource
+	}
+	return nil
+}
+
+func (x *ResourceItem) GetActions() []*Action {
+	if x != nil {
+		return x.Actions
+	}
+	return nil
+}
+
+type SaveRouteResourceRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Items         []*ResourceItem        `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SaveRouteResourceRequest) Reset() {
+	*x = SaveRouteResourceRequest{}
+	mi := &file_auth_service_auth_v1_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SaveRouteResourceRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SaveRouteResourceRequest) ProtoMessage() {}
+
+func (x *SaveRouteResourceRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_service_auth_v1_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SaveRouteResourceRequest.ProtoReflect.Descriptor instead.
+func (*SaveRouteResourceRequest) Descriptor() ([]byte, []int) {
+	return file_auth_service_auth_v1_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *SaveRouteResourceRequest) GetItems() []*ResourceItem {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+type SaveRouteResourceResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"` // Optional message for additional context
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SaveRouteResourceResponse) Reset() {
+	*x = SaveRouteResourceResponse{}
+	mi := &file_auth_service_auth_v1_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SaveRouteResourceResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SaveRouteResourceResponse) ProtoMessage() {}
+
+func (x *SaveRouteResourceResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_service_auth_v1_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SaveRouteResourceResponse.ProtoReflect.Descriptor instead.
+func (*SaveRouteResourceResponse) Descriptor() ([]byte, []int) {
+	return file_auth_service_auth_v1_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *SaveRouteResourceResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *SaveRouteResourceResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
 var File_auth_service_auth_v1_proto protoreflect.FileDescriptor
 
 const file_auth_service_auth_v1_proto_rawDesc = "" +
@@ -757,9 +1017,10 @@ const file_auth_service_auth_v1_proto_rawDesc = "" +
 	"\bpassword\x18\x03 \x01(\tR\bpassword\"^\n" +
 	"\x14ConfirmEmailResponse\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
-	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\"%\n" +
-	"\rLogoutRequest\x12\x14\n" +
-	"\x05token\x18\x01 \x01(\tR\x05token\"*\n" +
+	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\"W\n" +
+	"\rLogoutRequest\x12!\n" +
+	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
+	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\"*\n" +
 	"\x0eLogoutResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"u\n" +
 	"\x14ResetPasswordRequest\x12\x17\n" +
@@ -769,17 +1030,32 @@ const file_auth_service_auth_v1_proto_rawDesc = "" +
 	"\x15ResetPasswordResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"-\n" +
 	"\x15ForgotPasswordRequest\x12\x14\n" +
-	"\x05email\x18\x01 \x01(\tR\x05email\"2\n" +
-	"\x16ForgotPasswordResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"J\n" +
+	"\x05email\x18\x01 \x01(\tR\x05email\"1\n" +
+	"\x16ForgotPasswordResponse\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\"M\n" +
 	"\x1cConfirmForgotPasswordRequest\x12\x14\n" +
-	"\x05token\x18\x01 \x01(\tR\x05token\x12\x14\n" +
-	"\x05email\x18\x02 \x01(\tR\x05email\"\xa4\x01\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\tR\x06userId\"\xa4\x01\n" +
 	"\x1dConfirmForgotPasswordResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12!\n" +
 	"\faccess_token\x18\x02 \x01(\tR\vaccessToken\x12#\n" +
 	"\rrefresh_token\x18\x03 \x01(\tR\frefreshToken\x12!\n" +
-	"\fpassword_tmp\x18\x04 \x01(\tR\vpasswordTmp2\xef\x03\n" +
+	"\fpassword_tmp\x18\x04 \x01(\tR\vpasswordTmp\"G\n" +
+	"\bResource\x12\x1f\n" +
+	"\vresource_id\x18\x01 \x01(\tR\n" +
+	"resourceId\x12\x1a\n" +
+	"\bresource\x18\x02 \x01(\tR\bresource\"=\n" +
+	"\x06Action\x12\x1b\n" +
+	"\taction_id\x18\x01 \x01(\tR\bactionId\x12\x16\n" +
+	"\x06action\x18\x02 \x01(\tR\x06action\"b\n" +
+	"\fResourceItem\x12*\n" +
+	"\bresource\x18\x01 \x01(\v2\x0e.grpc.ResourceR\bresource\x12&\n" +
+	"\aactions\x18\x02 \x03(\v2\f.grpc.ActionR\aactions\"D\n" +
+	"\x18SaveRouteResourceRequest\x12(\n" +
+	"\x05items\x18\x01 \x03(\v2\x12.grpc.ResourceItemR\x05items\"O\n" +
+	"\x19SaveRouteResourceResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage2\xc5\x04\n" +
 	"\vAuthService\x120\n" +
 	"\x05Login\x12\x12.grpc.LoginRequest\x1a\x13.grpc.LoginResponse\x129\n" +
 	"\bRegister\x12\x15.grpc.RegisterRequest\x1a\x16.grpc.RegisterResponse\x12E\n" +
@@ -787,7 +1063,8 @@ const file_auth_service_auth_v1_proto_rawDesc = "" +
 	"\x06Logout\x12\x13.grpc.LogoutRequest\x1a\x14.grpc.LogoutResponse\x12H\n" +
 	"\rResetPassword\x12\x1a.grpc.ResetPasswordRequest\x1a\x1b.grpc.ResetPasswordResponse\x12K\n" +
 	"\x0eForgotPassword\x12\x1b.grpc.ForgotPasswordRequest\x1a\x1c.grpc.ForgotPasswordResponse\x12`\n" +
-	"\x15ConfirmForgotPassword\x12\".grpc.ConfirmForgotPasswordRequest\x1a#.grpc.ConfirmForgotPasswordResponseB\x1aZ\x18internal/grpc/auth.v1;v1b\x06proto3"
+	"\x15ConfirmForgotPassword\x12\".grpc.ConfirmForgotPasswordRequest\x1a#.grpc.ConfirmForgotPasswordResponse\x12T\n" +
+	"\x11SaveRouteResource\x12\x1e.grpc.SaveRouteResourceRequest\x1a\x1f.grpc.SaveRouteResourceResponseB\x1aZ\x18internal/grpc/auth.v1;v1b\x06proto3"
 
 var (
 	file_auth_service_auth_v1_proto_rawDescOnce sync.Once
@@ -801,7 +1078,7 @@ func file_auth_service_auth_v1_proto_rawDescGZIP() []byte {
 	return file_auth_service_auth_v1_proto_rawDescData
 }
 
-var file_auth_service_auth_v1_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_auth_service_auth_v1_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
 var file_auth_service_auth_v1_proto_goTypes = []any{
 	(*LoginRequest)(nil),                  // 0: grpc.LoginRequest
 	(*LoginResponse)(nil),                 // 1: grpc.LoginResponse
@@ -817,27 +1094,37 @@ var file_auth_service_auth_v1_proto_goTypes = []any{
 	(*ForgotPasswordResponse)(nil),        // 11: grpc.ForgotPasswordResponse
 	(*ConfirmForgotPasswordRequest)(nil),  // 12: grpc.ConfirmForgotPasswordRequest
 	(*ConfirmForgotPasswordResponse)(nil), // 13: grpc.ConfirmForgotPasswordResponse
+	(*Resource)(nil),                      // 14: grpc.Resource
+	(*Action)(nil),                        // 15: grpc.Action
+	(*ResourceItem)(nil),                  // 16: grpc.ResourceItem
+	(*SaveRouteResourceRequest)(nil),      // 17: grpc.SaveRouteResourceRequest
+	(*SaveRouteResourceResponse)(nil),     // 18: grpc.SaveRouteResourceResponse
 }
 var file_auth_service_auth_v1_proto_depIdxs = []int32{
-	0,  // 0: grpc.AuthService.Login:input_type -> grpc.LoginRequest
-	2,  // 1: grpc.AuthService.Register:input_type -> grpc.RegisterRequest
-	4,  // 2: grpc.AuthService.ConfirmEmail:input_type -> grpc.ConfirmEmailRequest
-	6,  // 3: grpc.AuthService.Logout:input_type -> grpc.LogoutRequest
-	8,  // 4: grpc.AuthService.ResetPassword:input_type -> grpc.ResetPasswordRequest
-	10, // 5: grpc.AuthService.ForgotPassword:input_type -> grpc.ForgotPasswordRequest
-	12, // 6: grpc.AuthService.ConfirmForgotPassword:input_type -> grpc.ConfirmForgotPasswordRequest
-	1,  // 7: grpc.AuthService.Login:output_type -> grpc.LoginResponse
-	3,  // 8: grpc.AuthService.Register:output_type -> grpc.RegisterResponse
-	5,  // 9: grpc.AuthService.ConfirmEmail:output_type -> grpc.ConfirmEmailResponse
-	7,  // 10: grpc.AuthService.Logout:output_type -> grpc.LogoutResponse
-	9,  // 11: grpc.AuthService.ResetPassword:output_type -> grpc.ResetPasswordResponse
-	11, // 12: grpc.AuthService.ForgotPassword:output_type -> grpc.ForgotPasswordResponse
-	13, // 13: grpc.AuthService.ConfirmForgotPassword:output_type -> grpc.ConfirmForgotPasswordResponse
-	7,  // [7:14] is the sub-list for method output_type
-	0,  // [0:7] is the sub-list for method input_type
-	0,  // [0:0] is the sub-list for extension type_name
-	0,  // [0:0] is the sub-list for extension extendee
-	0,  // [0:0] is the sub-list for field type_name
+	14, // 0: grpc.ResourceItem.resource:type_name -> grpc.Resource
+	15, // 1: grpc.ResourceItem.actions:type_name -> grpc.Action
+	16, // 2: grpc.SaveRouteResourceRequest.items:type_name -> grpc.ResourceItem
+	0,  // 3: grpc.AuthService.Login:input_type -> grpc.LoginRequest
+	2,  // 4: grpc.AuthService.Register:input_type -> grpc.RegisterRequest
+	4,  // 5: grpc.AuthService.ConfirmEmail:input_type -> grpc.ConfirmEmailRequest
+	6,  // 6: grpc.AuthService.Logout:input_type -> grpc.LogoutRequest
+	8,  // 7: grpc.AuthService.ResetPassword:input_type -> grpc.ResetPasswordRequest
+	10, // 8: grpc.AuthService.ForgotPassword:input_type -> grpc.ForgotPasswordRequest
+	12, // 9: grpc.AuthService.ConfirmForgotPassword:input_type -> grpc.ConfirmForgotPasswordRequest
+	17, // 10: grpc.AuthService.SaveRouteResource:input_type -> grpc.SaveRouteResourceRequest
+	1,  // 11: grpc.AuthService.Login:output_type -> grpc.LoginResponse
+	3,  // 12: grpc.AuthService.Register:output_type -> grpc.RegisterResponse
+	5,  // 13: grpc.AuthService.ConfirmEmail:output_type -> grpc.ConfirmEmailResponse
+	7,  // 14: grpc.AuthService.Logout:output_type -> grpc.LogoutResponse
+	9,  // 15: grpc.AuthService.ResetPassword:output_type -> grpc.ResetPasswordResponse
+	11, // 16: grpc.AuthService.ForgotPassword:output_type -> grpc.ForgotPasswordResponse
+	13, // 17: grpc.AuthService.ConfirmForgotPassword:output_type -> grpc.ConfirmForgotPasswordResponse
+	18, // 18: grpc.AuthService.SaveRouteResource:output_type -> grpc.SaveRouteResourceResponse
+	11, // [11:19] is the sub-list for method output_type
+	3,  // [3:11] is the sub-list for method input_type
+	3,  // [3:3] is the sub-list for extension type_name
+	3,  // [3:3] is the sub-list for extension extendee
+	0,  // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_auth_service_auth_v1_proto_init() }
@@ -851,7 +1138,7 @@ func file_auth_service_auth_v1_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_auth_service_auth_v1_proto_rawDesc), len(file_auth_service_auth_v1_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   14,
+			NumMessages:   19,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

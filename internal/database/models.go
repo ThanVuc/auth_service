@@ -8,22 +8,43 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type Action struct {
+	ActionID   string
+	ResourceID string
+	Name       string
+	CreatedAt  pgtype.Timestamp
+	UpdatedAt  pgtype.Timestamp
+}
+
 type Permission struct {
 	PermID      pgtype.UUID
+	ResourceID  string
 	Name        string
-	Action      string
-	Resource    string
 	Description pgtype.Text
-	CreateAt    pgtype.Timestamp
-	UpdateAt    pgtype.Timestamp
+	CreatedAt   pgtype.Timestamp
+	UpdatedAt   pgtype.Timestamp
+}
+
+type PermissionAction struct {
+	PaID     pgtype.UUID
+	PermID   pgtype.UUID
+	ActionID string
+	AssignAt pgtype.Timestamp
+}
+
+type Resource struct {
+	ResourceID string
+	Name       string
+	CreatedAt  pgtype.Timestamp
+	UpdatedAt  pgtype.Timestamp
 }
 
 type Role struct {
 	RoleID      pgtype.UUID
 	Name        string
 	Description pgtype.Text
-	CreateAt    pgtype.Timestamp
-	UpdateAt    pgtype.Timestamp
+	CreatedAt   pgtype.Timestamp
+	UpdatedAt   pgtype.Timestamp
 }
 
 type RolePermission struct {
@@ -34,9 +55,15 @@ type RolePermission struct {
 }
 
 type User struct {
-	UserID   pgtype.UUID
-	CreateAt pgtype.Timestamp
-	UpdateAt pgtype.Timestamp
+	UserID         pgtype.UUID
+	Email          string
+	PasswordHash   string
+	LockEnd        pgtype.Timestamp
+	LockReason     pgtype.Text
+	LastLoginAt    pgtype.Timestamp
+	FailedAttempts pgtype.Int4
+	CreatedAt      pgtype.Timestamp
+	UpdatedAt      pgtype.Timestamp
 }
 
 type UserRole struct {

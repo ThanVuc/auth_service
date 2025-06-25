@@ -1,7 +1,9 @@
 version: "2"
 sql:
   - engine: "postgresql"
-    queries: "sql/query"
+    queries:
+      - "sql/query"
+      - "sql/query/auth"
     schema: "sql/schema"
     gen:
       go:

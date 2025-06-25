@@ -1,7 +1,7 @@
 package consumers
 
 import (
-	"auth_service/internal/helper"
+	v1 "auth_service/internal/grpc/auth.v1"
 	"auth_service/pkg/loggers"
 	"context"
 	"encoding/json"
@@ -50,8 +50,26 @@ func (cf *ConsumerFactory) InitCreateResourceApiConsumer(ctx context.Context) er
 	}
 }
 
-func createResourceJsonFile(service string, jsonData []byte, logger *loggers.LoggerZap) error {
-	var resources []helper.ResourceItem
+func (cf *ConsumerFactory) handleCreateResourceMessage(msg amqp.Delivery) error {
+	cf.logger.InfoString("Received message", zap.String("consumer", string(ConsumerNameCreateResource)), zap.String("message", string(msg.Body)))
+
+	if len(msg.Body) == 0 {
+		cf.logger.Warn("Received empty message body", zap.String("consumer", string(ConsumerNameCreateResource)))
+		return nil
+	}
+
+	// err := CreateResourceJsonFile("resources", msg.Body, cf.logger)
+	// if err != nil {
+	// 	cf.logger.ErrorString("Failed to create resource JSON file", zap.Error(err), zap.String("consumer", string(ConsumerNameCreateResource)))
+	// 	return err
+	// }
+
+	cf.logger.InfoString("Successfully created resource JSON file", zap.String("consumer", string(ConsumerNameCreateResource)))
+	return nil
+}
+
+func CreateResourceJsonFile(service string, jsonData []byte, logger *loggers.LoggerZap) error {
+	var resources []v1.ResourceItem
 	err := json.Unmarshal(jsonData, &resources)
 	if err != nil {
 		logger.ErrorString("Failed to unmarshal JSON data", zap.Error(err))
@@ -78,23 +96,5 @@ func createResourceJsonFile(service string, jsonData []byte, logger *loggers.Log
 		return err
 	}
 
-	return nil
-}
-
-func (cf *ConsumerFactory) handleCreateResourceMessage(msg amqp.Delivery) error {
-	cf.logger.InfoString("Received message", zap.String("consumer", string(ConsumerNameCreateResource)), zap.String("message", string(msg.Body)))
-
-	if len(msg.Body) == 0 {
-		cf.logger.Warn("Received empty message body", zap.String("consumer", string(ConsumerNameCreateResource)))
-		return nil
-	}
-
-	err := createResourceJsonFile(string(ConsumerNameCreateResource), msg.Body, cf.logger)
-	if err != nil {
-		cf.logger.ErrorString("Failed to create resource JSON file", zap.Error(err), zap.String("consumer", string(ConsumerNameCreateResource)))
-		return err
-	}
-
-	cf.logger.InfoString("Successfully created resource JSON file", zap.String("consumer", string(ConsumerNameCreateResource)))
 	return nil
 }

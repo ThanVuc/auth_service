@@ -26,6 +26,7 @@ const (
 	AuthService_ResetPassword_FullMethodName         = "/grpc.AuthService/ResetPassword"
 	AuthService_ForgotPassword_FullMethodName        = "/grpc.AuthService/ForgotPassword"
 	AuthService_ConfirmForgotPassword_FullMethodName = "/grpc.AuthService/ConfirmForgotPassword"
+	AuthService_SaveRouteResource_FullMethodName     = "/grpc.AuthService/SaveRouteResource"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -42,6 +43,7 @@ type AuthServiceClient interface {
 	ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*ResetPasswordResponse, error)
 	ForgotPassword(ctx context.Context, in *ForgotPasswordRequest, opts ...grpc.CallOption) (*ForgotPasswordResponse, error)
 	ConfirmForgotPassword(ctx context.Context, in *ConfirmForgotPasswordRequest, opts ...grpc.CallOption) (*ConfirmForgotPasswordResponse, error)
+	SaveRouteResource(ctx context.Context, in *SaveRouteResourceRequest, opts ...grpc.CallOption) (*SaveRouteResourceResponse, error)
 }
 
 type authServiceClient struct {
@@ -122,6 +124,16 @@ func (c *authServiceClient) ConfirmForgotPassword(ctx context.Context, in *Confi
 	return out, nil
 }
 
+func (c *authServiceClient) SaveRouteResource(ctx context.Context, in *SaveRouteResourceRequest, opts ...grpc.CallOption) (*SaveRouteResourceResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SaveRouteResourceResponse)
+	err := c.cc.Invoke(ctx, AuthService_SaveRouteResource_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility.
@@ -136,6 +148,7 @@ type AuthServiceServer interface {
 	ResetPassword(context.Context, *ResetPasswordRequest) (*ResetPasswordResponse, error)
 	ForgotPassword(context.Context, *ForgotPasswordRequest) (*ForgotPasswordResponse, error)
 	ConfirmForgotPassword(context.Context, *ConfirmForgotPasswordRequest) (*ConfirmForgotPasswordResponse, error)
+	SaveRouteResource(context.Context, *SaveRouteResourceRequest) (*SaveRouteResourceResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -166,6 +179,9 @@ func (UnimplementedAuthServiceServer) ForgotPassword(context.Context, *ForgotPas
 }
 func (UnimplementedAuthServiceServer) ConfirmForgotPassword(context.Context, *ConfirmForgotPasswordRequest) (*ConfirmForgotPasswordResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ConfirmForgotPassword not implemented")
+}
+func (UnimplementedAuthServiceServer) SaveRouteResource(context.Context, *SaveRouteResourceRequest) (*SaveRouteResourceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SaveRouteResource not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 func (UnimplementedAuthServiceServer) testEmbeddedByValue()                     {}
@@ -314,6 +330,24 @@ func _AuthService_ConfirmForgotPassword_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_SaveRouteResource_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SaveRouteResourceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).SaveRouteResource(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_SaveRouteResource_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).SaveRouteResource(ctx, req.(*SaveRouteResourceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -348,6 +382,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ConfirmForgotPassword",
 			Handler:    _AuthService_ConfirmForgotPassword_Handler,
+		},
+		{
+			MethodName: "SaveRouteResource",
+			Handler:    _AuthService_SaveRouteResource_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
