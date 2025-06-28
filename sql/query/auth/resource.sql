@@ -1,27 +1,31 @@
--- name: UpsertResourceByID :exec
+-- name: UpsertResources :exec
 INSERT INTO resources (resource_id, name)
-VALUES ($1, $2)
+SELECT t1.resource_id, t2.name
+FROM unnest($1::TEXT[]) WITH ORDINALITY AS t1(resource_id, ord)
+JOIN unnest($2::TEXT[]) WITH ORDINALITY AS t2(name, ord) USING (ord)
 ON CONFLICT (resource_id) DO UPDATE
-SET name = EXCLUDED.name
-WHERE resources.name IS DISTINCT FROM EXCLUDED.name;
+SET name = EXCLUDED.name;
 
--- name: UpsertActionByID :exec
-INSERT INTO actions (action_id, name, resource_id)
-VALUES ($1, $2, $3)
+-- name: UpsertActions :exec
+INSERT INTO actions (action_id, resource_id, name)
+SELECT t1.action_id, t2.resource_id, t3.name
+FROM unnest($1::TEXT[]) WITH ORDINALITY AS t1(action_id, ord)
+JOIN unnest($2::TEXT[]) WITH ORDINALITY AS t2(resource_id, ord) USING (ord)
+JOIN unnest($3::TEXT[]) WITH ORDINALITY AS t3(name, ord) USING (ord)
 ON CONFLICT (action_id) DO UPDATE
-SET name = EXCLUDED.name,
-    resource_id = EXCLUDED.resource_id
-WHERE actions.name IS DISTINCT FROM EXCLUDED.name
-  OR actions.resource_id IS DISTINCT FROM EXCLUDED.resource_id;
+SET resource_id = EXCLUDED.resource_id,
+    name = EXCLUDED.name;
 
--- name: DeleteResourceNotInUse :exec
+-- name: RemoveOldResources :exec
 DELETE FROM resources
 WHERE resource_id NOT IN (
-  SELECT UNNEST($1::text[])
+  SELECT resource_id FROM unnest($1::TEXT[]) AS resource_id
 );
 
--- name: DeleteActionNotInUse :exec
+-- name: RemoveOldActions :exec
 DELETE FROM actions
 WHERE action_id NOT IN (
-  SELECT UNNEST($1::text[])
+  SELECT action_id FROM unnest($1::TEXT[]) AS action_id
 );
+
+

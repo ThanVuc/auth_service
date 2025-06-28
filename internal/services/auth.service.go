@@ -6,19 +6,17 @@ import (
 	"auth_service/internal/repos"
 	"auth_service/pkg/loggers"
 	"context"
+	"fmt"
 
 	"go.uber.org/zap"
-
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type IAuthService interface {
-	SaveRouteResource(items []*v1.ResourceItem) bool
+	SaveRouteResource(ctx context.Context, items []*v1.ResourceItem) bool
 }
 
 type AuthService struct {
 	authRepo repos.IAuthRepo
-	pgx      *pgxpool.Pool
 	logger   *loggers.LoggerZap
 }
 
@@ -27,55 +25,51 @@ func NewAuthService(
 ) IAuthService {
 	return &AuthService{
 		authRepo: authRepo,
-		pgx:      global.PostgresPool,
 		logger:   global.Logger,
 	}
 }
 
-func (as *AuthService) SaveRouteResource(items []*v1.ResourceItem) bool {
-	ctx := context.Background()
-	tx, err := as.pgx.Begin(ctx)
+func (as *AuthService) SaveRouteResource(ctx context.Context, items []*v1.ResourceItem) bool {
 	resourceIds := make([]string, 0)
-	actionIds := make([]string, 0)
+	reourceName := make([]string, 0)
 
-	if err != nil {
-		as.logger.ErrorString("Failed to begin transaction", zap.Error(err))
+	actionIds := make([]string, 0)
+	actionName := make([]string, 0)
+	actionResourceIds := make([]string, 0)
+
+	if len(items) == 0 {
+		as.logger.ErrorString("no items to save", zap.Error(fmt.Errorf("error arise at SaveRouteResource/auth.service.go")))
 		return false
 	}
 
+	// get slice
 	for _, item := range items {
-		resource := item.Resource
-		resourceIds = append(resourceIds, resource.ResourceId)
-		err := as.authRepo.UpsertResource(ctx, resource)
-		if err != nil {
-			as.logger.ErrorString("Failed to upsert resource", zap.Error(err))
-			tx.Rollback(ctx)
-			return false
-		}
+		if item.Resource.ResourceId != "" {
+			resourceIds = append(resourceIds, item.Resource.ResourceId)
+			reourceName = append(reourceName, item.Resource.Resource)
 
-		for _, action := range item.Actions {
-			actionIds = append(actionIds, action.ActionId)
-			err := as.authRepo.UpsertAction(ctx, resource.ResourceId, action)
-			if err != nil {
-				as.logger.ErrorString("Failed to upsert action", zap.Error(err))
-				tx.Rollback(ctx)
-				return false
+			for _, action := range item.Actions {
+				if action.ActionId != "" {
+					actionIds = append(actionIds, action.ActionId)
+					actionName = append(actionName, action.Action)
+					actionResourceIds = append(actionResourceIds, item.Resource.ResourceId)
+				}
 			}
 		}
 	}
 
-	if err := as.authRepo.DeleteResourceNotInUse(ctx, resourceIds); err != nil {
-		as.logger.ErrorString("Failed to delete resource not in use", zap.Error(err))
-		tx.Rollback(ctx)
-		return false
-	}
-	if err := as.authRepo.DeleteActionNotInUse(ctx, actionIds); err != nil {
-		as.logger.ErrorString("Failed to delete action not in use", zap.Error(err))
-		tx.Rollback(ctx)
+	// Save resources
+	err := as.authRepo.SyncResources(ctx, resourceIds, reourceName)
+	if err != nil {
+		as.logger.ErrorString("Failed to sync resources", zap.Error(err))
 		return false
 	}
 
-	tx.Commit(ctx)
+	err = as.authRepo.SyncActions(ctx, actionIds, actionResourceIds, actionName)
+	if err != nil {
+		as.logger.ErrorString("Failed to sync actions", zap.Error(err))
+		return false
+	}
 
 	return true
 }

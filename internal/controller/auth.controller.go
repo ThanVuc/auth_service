@@ -89,7 +89,7 @@ func (ac *AuthController) SaveRouteResource(ctx context.Context, req *v1.SaveRou
 		return nil, fmt.Errorf("no items provided")
 	}
 
-	result := ac.authService.SaveRouteResource(items)
+	result := ac.authService.SaveRouteResource(ctx, items)
 
 	if !result {
 		ac.logger.ErrorString("SaveRouteResource: failed to save route resources", zap.String("request", fmt.Sprintf("%+v", req)))

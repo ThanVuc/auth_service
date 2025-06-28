@@ -1,12 +1,12 @@
 package main
 
 import (
-	"auth_service/internal/initialize"
+	"auth_service/cmd"
 	"log"
 )
 
 func main() {
 	log.Println("gRPC servers are running...\n")
-	initialize.Run()
+	cmd.RunGRPCServer()
 	// run the grpc server
 }

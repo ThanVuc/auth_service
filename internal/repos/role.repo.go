@@ -1,19 +1,11 @@
 package repos
 
 import (
-	"auth_service/global"
 	"auth_service/internal/database"
+	"auth_service/pkg/loggers"
 )
 
-type IRoleRepo interface {
-}
-
 type RoleRepo struct {
-	sqlc *database.Queries
-}
-
-func NewRoleRepo() IRoleRepo {
-	return &RoleRepo{
-		sqlc: database.New(global.PostgresPool),
-	}
+	logger *loggers.LoggerZap
+	sqlc   *database.Queries
 }

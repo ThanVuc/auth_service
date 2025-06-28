@@ -1,20 +1,12 @@
 package repos
 
 import (
-	"auth_service/global"
+	"auth_service/pkg/loggers"
 
 	"github.com/redis/go-redis/v9"
 )
 
-type ITokenRepo interface {
-}
-
 type TokenRepo struct {
+	logger  *loggers.LoggerZap
 	redisDb *redis.Client
-}
-
-func NewTokenRepo() ITokenRepo {
-	return &TokenRepo{
-		redisDb: global.RedisDb,
-	}
 }

@@ -9,65 +9,67 @@ import (
 	"context"
 )
 
-const deleteActionNotInUse = `-- name: DeleteActionNotInUse :exec
+const removeOldActions = `-- name: RemoveOldActions :exec
 DELETE FROM actions
 WHERE action_id NOT IN (
-  SELECT UNNEST($1::text[])
+  SELECT action_id FROM unnest($1::TEXT[]) AS action_id
 )
 `
 
-func (q *Queries) DeleteActionNotInUse(ctx context.Context, dollar_1 []string) error {
-	_, err := q.db.Exec(ctx, deleteActionNotInUse, dollar_1)
+func (q *Queries) RemoveOldActions(ctx context.Context, dollar_1 []string) error {
+	_, err := q.db.Exec(ctx, removeOldActions, dollar_1)
 	return err
 }
 
-const deleteResourceNotInUse = `-- name: DeleteResourceNotInUse :exec
+const removeOldResources = `-- name: RemoveOldResources :exec
 DELETE FROM resources
 WHERE resource_id NOT IN (
-  SELECT UNNEST($1::text[])
+  SELECT resource_id FROM unnest($1::TEXT[]) AS resource_id
 )
 `
 
-func (q *Queries) DeleteResourceNotInUse(ctx context.Context, dollar_1 []string) error {
-	_, err := q.db.Exec(ctx, deleteResourceNotInUse, dollar_1)
+func (q *Queries) RemoveOldResources(ctx context.Context, dollar_1 []string) error {
+	_, err := q.db.Exec(ctx, removeOldResources, dollar_1)
 	return err
 }
 
-const upsertActionByID = `-- name: UpsertActionByID :exec
-INSERT INTO actions (action_id, name, resource_id)
-VALUES ($1, $2, $3)
+const upsertActions = `-- name: UpsertActions :exec
+INSERT INTO actions (action_id, resource_id, name)
+SELECT t1.action_id, t2.resource_id, t3.name
+FROM unnest($1::TEXT[]) WITH ORDINALITY AS t1(action_id, ord)
+JOIN unnest($2::TEXT[]) WITH ORDINALITY AS t2(resource_id, ord) USING (ord)
+JOIN unnest($3::TEXT[]) WITH ORDINALITY AS t3(name, ord) USING (ord)
 ON CONFLICT (action_id) DO UPDATE
-SET name = EXCLUDED.name,
-    resource_id = EXCLUDED.resource_id
-WHERE actions.name IS DISTINCT FROM EXCLUDED.name
-  OR actions.resource_id IS DISTINCT FROM EXCLUDED.resource_id
+SET resource_id = EXCLUDED.resource_id,
+    name = EXCLUDED.name
 `
 
-type UpsertActionByIDParams struct {
-	ActionID   string
-	Name       string
-	ResourceID string
+type UpsertActionsParams struct {
+	Column1 []string
+	Column2 []string
+	Column3 []string
 }
 
-func (q *Queries) UpsertActionByID(ctx context.Context, arg UpsertActionByIDParams) error {
-	_, err := q.db.Exec(ctx, upsertActionByID, arg.ActionID, arg.Name, arg.ResourceID)
+func (q *Queries) UpsertActions(ctx context.Context, arg UpsertActionsParams) error {
+	_, err := q.db.Exec(ctx, upsertActions, arg.Column1, arg.Column2, arg.Column3)
 	return err
 }
 
-const upsertResourceByID = `-- name: UpsertResourceByID :exec
+const upsertResources = `-- name: UpsertResources :exec
 INSERT INTO resources (resource_id, name)
-VALUES ($1, $2)
+SELECT t1.resource_id, t2.name
+FROM unnest($1::TEXT[]) WITH ORDINALITY AS t1(resource_id, ord)
+JOIN unnest($2::TEXT[]) WITH ORDINALITY AS t2(name, ord) USING (ord)
 ON CONFLICT (resource_id) DO UPDATE
 SET name = EXCLUDED.name
-WHERE resources.name IS DISTINCT FROM EXCLUDED.name
 `
 
-type UpsertResourceByIDParams struct {
-	ResourceID string
-	Name       string
+type UpsertResourcesParams struct {
+	Column1 []string
+	Column2 []string
 }
 
-func (q *Queries) UpsertResourceByID(ctx context.Context, arg UpsertResourceByIDParams) error {
-	_, err := q.db.Exec(ctx, upsertResourceByID, arg.ResourceID, arg.Name)
+func (q *Queries) UpsertResources(ctx context.Context, arg UpsertResourcesParams) error {
+	_, err := q.db.Exec(ctx, upsertResources, arg.Column1, arg.Column2)
 	return err
 }
