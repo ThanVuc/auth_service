@@ -6,13 +6,13 @@ import (
 	"context"
 )
 
-type AuthRepo struct {
+type authRepo struct {
 	sqlc   *database.Queries
 	logger *loggers.LoggerZap
 }
 
 // All the below methods are for testing purposes only
-func (ar *AuthRepo) SyncResources(ctx context.Context, ids []string, names []string) error {
+func (ar *authRepo) SyncResources(ctx context.Context, ids []string, names []string) error {
 	err := ar.sqlc.UpsertResources(ctx, database.UpsertResourcesParams{
 		Column1: ids,
 		Column2: names,
@@ -32,7 +32,7 @@ func (ar *AuthRepo) SyncResources(ctx context.Context, ids []string, names []str
 	return nil
 }
 
-func (ar *AuthRepo) SyncActions(ctx context.Context, ids, resourceIds, names []string) error {
+func (ar *authRepo) SyncActions(ctx context.Context, ids, resourceIds, names []string) error {
 	err := ar.sqlc.UpsertActions(ctx, database.UpsertActionsParams{
 		Column1: ids,
 		Column2: resourceIds,

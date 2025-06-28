@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v6.31.1
-// source: auth_service/auth.v1.proto
+// source: auth_service/auth.proto
 
-package v1
+package auth
 
 import (
 	context "context"
@@ -19,14 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AuthService_Login_FullMethodName                 = "/grpc.AuthService/Login"
-	AuthService_Register_FullMethodName              = "/grpc.AuthService/Register"
-	AuthService_ConfirmEmail_FullMethodName          = "/grpc.AuthService/ConfirmEmail"
-	AuthService_Logout_FullMethodName                = "/grpc.AuthService/Logout"
-	AuthService_ResetPassword_FullMethodName         = "/grpc.AuthService/ResetPassword"
-	AuthService_ForgotPassword_FullMethodName        = "/grpc.AuthService/ForgotPassword"
-	AuthService_ConfirmForgotPassword_FullMethodName = "/grpc.AuthService/ConfirmForgotPassword"
-	AuthService_SaveRouteResource_FullMethodName     = "/grpc.AuthService/SaveRouteResource"
+	AuthService_Login_FullMethodName                 = "/auth.AuthService/Login"
+	AuthService_Register_FullMethodName              = "/auth.AuthService/Register"
+	AuthService_ConfirmEmail_FullMethodName          = "/auth.AuthService/ConfirmEmail"
+	AuthService_Logout_FullMethodName                = "/auth.AuthService/Logout"
+	AuthService_ResetPassword_FullMethodName         = "/auth.AuthService/ResetPassword"
+	AuthService_ForgotPassword_FullMethodName        = "/auth.AuthService/ForgotPassword"
+	AuthService_ConfirmForgotPassword_FullMethodName = "/auth.AuthService/ConfirmForgotPassword"
+	AuthService_SaveRouteResource_FullMethodName     = "/auth.AuthService/SaveRouteResource"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -352,7 +352,7 @@ func _AuthService_SaveRouteResource_Handler(srv interface{}, ctx context.Context
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var AuthService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "grpc.AuthService",
+	ServiceName: "auth.AuthService",
 	HandlerType: (*AuthServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -389,5 +389,5 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "auth_service/auth.v1.proto",
+	Metadata: "auth_service/auth.proto",
 }

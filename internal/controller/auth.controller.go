@@ -2,31 +2,29 @@ package controller
 
 import (
 	"auth_service/global"
-	v1 "auth_service/internal/grpc/auth.v1"
+	"auth_service/internal/grpc/auth"
 	"auth_service/internal/services"
+	"auth_service/internal/utils"
 	"auth_service/pkg/loggers"
 	"context"
-	"fmt"
-
-	"go.uber.org/zap"
 )
 
 type AuthController struct {
-	v1.UnimplementedAuthServiceServer
-	authService services.IAuthService
+	auth.UnimplementedAuthServiceServer
+	authService services.AuthService
 	logger      *loggers.LoggerZap
 }
 
-func NewAuthController(authService services.IAuthService) *AuthController {
+func NewAuthController(authService services.AuthService) *AuthController {
 	return &AuthController{
 		authService: authService,
 		logger:      global.Logger,
 	}
 }
 
-func (ac *AuthController) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginResponse, error) {
+func (ac *AuthController) Login(ctx context.Context, req *auth.LoginRequest) (*auth.LoginResponse, error) {
 	// Call the authService to handle login logic
-	response := &v1.LoginResponse{}
+	response := &auth.LoginResponse{}
 	if req.Username == "sinhnguyen" && req.Password == "123456" {
 		response.AccessToken = "access_token_example"
 		response.RefreshToken = "refresh_token_example"
@@ -35,38 +33,38 @@ func (ac *AuthController) Login(ctx context.Context, req *v1.LoginRequest) (*v1.
 	return response, nil
 }
 
-func (ac *AuthController) Register(ctx context.Context, req *v1.RegisterRequest) (*v1.RegisterResponse, error) {
-	response := &v1.RegisterResponse{
+func (ac *AuthController) Register(ctx context.Context, req *auth.RegisterRequest) (*auth.RegisterResponse, error) {
+	response := &auth.RegisterResponse{
 		IsSentMail: true,
 	}
 	return response, nil
 }
 
-func (ac *AuthController) ConfirmEmail(ctx context.Context, req *v1.ConfirmEmailRequest) (*v1.ConfirmEmailResponse, error) {
-	response := &v1.ConfirmEmailResponse{
+func (ac *AuthController) ConfirmEmail(ctx context.Context, req *auth.ConfirmEmailRequest) (*auth.ConfirmEmailResponse, error) {
+	response := &auth.ConfirmEmailResponse{
 		AccessToken:  "",
 		RefreshToken: "",
 	}
 	return response, nil
 }
 
-func (ac *AuthController) Logout(ctx context.Context, req *v1.LogoutRequest) (*v1.LogoutResponse, error) {
-	response := &v1.LogoutResponse{
+func (ac *AuthController) Logout(ctx context.Context, req *auth.LogoutRequest) (*auth.LogoutResponse, error) {
+	response := &auth.LogoutResponse{
 		Success: true,
 	}
 	return response, nil
 }
 
 // forgot password
-func (ac *AuthController) ForgotPassword(ctx context.Context, req *v1.ForgotPasswordRequest) (*v1.ForgotPasswordResponse, error) {
-	response := &v1.ForgotPasswordResponse{
+func (ac *AuthController) ForgotPassword(ctx context.Context, req *auth.ForgotPasswordRequest) (*auth.ForgotPasswordResponse, error) {
+	response := &auth.ForgotPasswordResponse{
 		UserId: "12345",
 	}
 	return response, nil
 }
 
-func (ac *AuthController) ConfirmForgotPassword(ctx context.Context, req *v1.ConfirmForgotPasswordRequest) (*v1.ConfirmForgotPasswordResponse, error) {
-	response := &v1.ConfirmForgotPasswordResponse{
+func (ac *AuthController) ConfirmForgotPassword(ctx context.Context, req *auth.ConfirmForgotPasswordRequest) (*auth.ConfirmForgotPasswordResponse, error) {
+	response := &auth.ConfirmForgotPasswordResponse{
 		Success:      true,
 		AccessToken:  "",
 		RefreshToken: "",
@@ -75,32 +73,13 @@ func (ac *AuthController) ConfirmForgotPassword(ctx context.Context, req *v1.Con
 	return response, nil
 }
 
-func (ac *AuthController) ResetPassword(ctx context.Context, req *v1.ResetPasswordRequest) (*v1.ResetPasswordResponse, error) {
-	response := &v1.ResetPasswordResponse{
+func (ac *AuthController) ResetPassword(ctx context.Context, req *auth.ResetPasswordRequest) (*auth.ResetPasswordResponse, error) {
+	response := &auth.ResetPasswordResponse{
 		Success: true,
 	}
 	return response, nil
 }
 
-func (ac *AuthController) SaveRouteResource(ctx context.Context, req *v1.SaveRouteResourceRequest) (*v1.SaveRouteResourceResponse, error) {
-	items := req.Items
-	if len(items) == 0 {
-		ac.logger.ErrorString("SaveRouteResource: no items provided", zap.String("request", fmt.Sprintf("%+v", req)))
-		return nil, fmt.Errorf("no items provided")
-	}
-
-	result := ac.authService.SaveRouteResource(ctx, items)
-
-	if !result {
-		ac.logger.ErrorString("SaveRouteResource: failed to save route resources", zap.String("request", fmt.Sprintf("%+v", req)))
-		return nil, fmt.Errorf("failed to save route resources")
-	}
-
-	ac.logger.InfoString("SaveRouteResource: route resources saved successfully")
-
-	response := &v1.SaveRouteResourceResponse{
-		Success: true,
-		Message: "Route resource saved successfully",
-	}
-	return response, nil
+func (ac *AuthController) SaveRouteResource(ctx context.Context, req *auth.SaveRouteResourceRequest) (*auth.SaveRouteResourceResponse, error) {
+	return utils.WithSafePanic(ctx, req, ac.authService.SaveRouteResource)
 }

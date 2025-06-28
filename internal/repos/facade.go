@@ -7,41 +7,44 @@ import (
 )
 
 type (
-	IAuthRepo interface {
+	AuthRepo interface {
 		SyncResources(ctx context.Context, ids []string, names []string) error
 		SyncActions(ctx context.Context, ids, resourceIds, names []string) error
 	}
 
-	IPermissionRepo interface{}
+	PermissionRepo interface {
+		GetResources(ctx context.Context) ([]database.GetResourcesRow, error)
+		GetActions(ctx context.Context, resourceId string) ([]database.GetActionsRow, error)
+	}
 
-	IRoleRepo interface{}
+	RoleRepo interface{}
 
-	ITokenRepo interface{}
+	TokenRepo interface{}
 )
 
-func NewAuthRepo() IAuthRepo {
-	return &AuthRepo{
+func NewAuthRepo() AuthRepo {
+	return &authRepo{
 		sqlc:   database.New(global.PostgresPool),
 		logger: global.Logger,
 	}
 }
 
-func NewPermissionRepo() IPermissionRepo {
-	return &PermissionRepo{
+func NewPermissionRepo() PermissionRepo {
+	return &permissionRepo{
 		sqlc:   database.New(global.PostgresPool),
 		logger: global.Logger,
 	}
 }
 
-func NewRoleRepo() IRoleRepo {
-	return &RoleRepo{
+func NewRoleRepo() RoleRepo {
+	return &roleRepo{
 		sqlc:   database.New(global.PostgresPool),
 		logger: global.Logger,
 	}
 }
 
-func NewTokenRepo() ITokenRepo {
-	return &TokenRepo{
+func NewTokenRepo() TokenRepo {
+	return &tokenRepo{
 		redisDb: global.RedisDb,
 		logger:  global.Logger,
 	}

@@ -1,59 +1,59 @@
 package controller
 
 import (
-	v1 "auth_service/internal/grpc/role.v1"
+	"auth_service/internal/grpc/auth"
 	"auth_service/internal/services"
 	"context"
 )
 
 type RoleController struct {
-	v1.UnimplementedRoleServiceServer
-	roleService services.IRoleService
+	auth.UnimplementedRoleServiceServer
+	roleService services.RoleService
 }
 
-func NewRoleController(roleService services.IRoleService) *RoleController {
+func NewRoleController(roleService services.RoleService) *RoleController {
 	return &RoleController{
 		roleService: roleService,
 	}
 }
 
-func (pc *RoleController) GetRoles(ctx context.Context, req *v1.GetRolesRequest) (*v1.GetRolesResponse, error) {
-	response := &v1.GetRolesResponse{
+func (pc *RoleController) GetRoles(ctx context.Context, req *auth.GetRolesRequest) (*auth.GetRolesResponse, error) {
+	response := &auth.GetRolesResponse{
 		Roles: []string{},
 	}
 	return response, nil
 }
 
-func (pc *RoleController) CreateRole(ctx context.Context, req *v1.CreateRoleRequest) (*v1.CreateRoleResponse, error) {
-	response := &v1.CreateRoleResponse{
+func (pc *RoleController) CreateRole(ctx context.Context, req *auth.CreateRoleRequest) (*auth.CreateRoleResponse, error) {
+	response := &auth.CreateRoleResponse{
 		RoleId: "",
 	}
 	return response, nil
 }
 
-func (pc *RoleController) UpdateRole(ctx context.Context, req *v1.UpdateRoleRequest) (*v1.UpdateRoleResponse, error) {
-	response := &v1.UpdateRoleResponse{
+func (pc *RoleController) UpdateRole(ctx context.Context, req *auth.UpdateRoleRequest) (*auth.UpdateRoleResponse, error) {
+	response := &auth.UpdateRoleResponse{
 		Success: true,
 	}
 	return response, nil
 }
 
-func (pc *RoleController) DeleteRole(ctx context.Context, req *v1.DeleteRoleRequest) (*v1.DeleteRoleResponse, error) {
-	response := &v1.DeleteRoleResponse{
+func (pc *RoleController) DeleteRole(ctx context.Context, req *auth.DeleteRoleRequest) (*auth.DeleteRoleResponse, error) {
+	response := &auth.DeleteRoleResponse{
 		Success: true,
 	}
 	return response, nil
 }
 
-func (pc *RoleController) DisableOrEnableRole(ctx context.Context, req *v1.DisableOrEnableRoleRequest) (*v1.DisableOrEnableRoleResponse, error) {
-	response := &v1.DisableOrEnableRoleResponse{
+func (pc *RoleController) DisableOrEnableRole(ctx context.Context, req *auth.DisableOrEnableRoleRequest) (*auth.DisableOrEnableRoleResponse, error) {
+	response := &auth.DisableOrEnableRoleResponse{
 		Success: true,
 	}
 	return response, nil
 }
 
-func (pc *RoleController) AssignRoleToUser(ctx context.Context, req *v1.AssignRoleRequest) (*v1.AssignRoleResponse, error) {
-	response := &v1.AssignRoleResponse{
+func (pc *RoleController) AssignRoleToUser(ctx context.Context, req *auth.AssignRoleRequest) (*auth.AssignRoleResponse, error) {
+	response := &auth.AssignRoleResponse{
 		Success: true,
 	}
 	return response, nil

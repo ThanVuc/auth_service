@@ -1,15 +1,27 @@
 package services
 
-import "auth_service/internal/repos"
+import (
+	"auth_service/internal/grpc/auth"
+	"auth_service/internal/mapper"
+	"auth_service/internal/repos"
+	"context"
+)
 
-type IPermissionService interface{}
-
-type PermissionService struct {
-	permissionRepo repos.IPermissionRepo
+type permissionService struct {
+	permissionRepo   repos.PermissionRepo
+	permissionMapper mapper.PermissionMapper
 }
 
-func NewPermissionService(permissionRepo repos.IPermissionRepo) IPermissionService {
-	return &PermissionService{
-		permissionRepo: permissionRepo,
+func (ps *permissionService) GetResources(ctx context.Context, req *auth.GetResourcesRequest) (*auth.GetResourcesResponse, error) {
+	dbResource, err := ps.permissionRepo.GetResources(ctx)
+	if err != nil {
+		return nil, err
 	}
+
+	resourceItem := ps.permissionMapper.ConvertDbResourcesRowToGrpcResources(dbResource)
+	resp := &auth.GetResourcesResponse{
+		Resources: resourceItem,
+	}
+
+	return resp, nil
 }
