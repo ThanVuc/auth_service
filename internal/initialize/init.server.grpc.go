@@ -3,10 +3,7 @@ package initialize
 import (
 	"auth_service/global"
 	"auth_service/internal/controller"
-	v1Auth "auth_service/internal/grpc/auth.v1"
-	v1Permission "auth_service/internal/grpc/permission.v1"
-	v1Role "auth_service/internal/grpc/role.v1"
-	v1Token "auth_service/internal/grpc/token.v1"
+	"auth_service/internal/grpc/auth"
 	"auth_service/internal/wire"
 	"auth_service/pkg/loggers"
 	"auth_service/pkg/settings"
@@ -92,10 +89,10 @@ func (as *AuthServer) createServer() *grpc.Server {
 	roleServer := wire.InjectRoleWire()
 	tokenServer := wire.InjectTokenWire()
 
-	v1Auth.RegisterAuthServiceServer(server, authServer)
-	v1Permission.RegisterPermissionServiceServer(server, permissionServer)
-	v1Role.RegisterRoleServiceServer(server, roleServer)
-	v1Token.RegisterTokenServiceServer(server, tokenServer)
+	auth.RegisterAuthServiceServer(server, authServer)
+	auth.RegisterPermissionServiceServer(server, permissionServer)
+	auth.RegisterRoleServiceServer(server, roleServer)
+	auth.RegisterTokenServiceServer(server, tokenServer)
 
 	return server
 }

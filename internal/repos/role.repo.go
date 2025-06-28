@@ -5,7 +5,7 @@ import (
 	"auth_service/pkg/loggers"
 )
 
-type RoleRepo struct {
+type roleRepo struct {
 	logger *loggers.LoggerZap
 	sqlc   *database.Queries
 }

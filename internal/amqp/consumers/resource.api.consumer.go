@@ -1,7 +1,7 @@
 package consumers
 
 import (
-	v1 "auth_service/internal/grpc/auth.v1"
+	"auth_service/internal/grpc/auth"
 	"auth_service/pkg/loggers"
 	"context"
 	"encoding/json"
@@ -69,7 +69,7 @@ func (cf *ConsumerFactory) handleCreateResourceMessage(msg amqp.Delivery) error 
 }
 
 func CreateResourceJsonFile(service string, jsonData []byte, logger *loggers.LoggerZap) error {
-	var resources []v1.ResourceItem
+	var resources []auth.ResourceItem
 	err := json.Unmarshal(jsonData, &resources)
 	if err != nil {
 		logger.ErrorString("Failed to unmarshal JSON data", zap.Error(err))

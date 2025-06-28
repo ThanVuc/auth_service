@@ -1,53 +1,58 @@
 package controller
 
 import (
-	v1 "auth_service/internal/grpc/permission.v1"
+	"auth_service/internal/grpc/auth"
 	"auth_service/internal/services"
+	"auth_service/internal/utils"
 	"context"
 )
 
 type PermissionController struct {
-	v1.UnimplementedPermissionServiceServer
-	permissionService services.IPermissionService
+	auth.UnimplementedPermissionServiceServer
+	permissionService services.PermissionService
 }
 
-func NewPermissionController(permissionService services.IPermissionService) *PermissionController {
+func NewPermissionController(permissionService services.PermissionService) *PermissionController {
 	return &PermissionController{
 		permissionService: permissionService,
 	}
 }
 
-func (pc *PermissionController) GetPermissions(ctx context.Context, req *v1.GetPermissionsRequest) (*v1.GetPermissionsResponse, error) {
-	response := &v1.GetPermissionsResponse{
+func (pc *PermissionController) GetPermissions(ctx context.Context, req *auth.GetPermissionsRequest) (*auth.GetPermissionsResponse, error) {
+	response := &auth.GetPermissionsResponse{
 		Permissions: []string{},
 	}
 	return response, nil
 }
 
-func (pc *PermissionController) CreatePermission(ctx context.Context, req *v1.CreatePermissionRequest) (*v1.CreatePermissionResponse, error) {
-	response := &v1.CreatePermissionResponse{
+func (pc *PermissionController) CreatePermission(ctx context.Context, req *auth.CreatePermissionRequest) (*auth.CreatePermissionResponse, error) {
+	response := &auth.CreatePermissionResponse{
 		PermissionId: "",
 	}
 	return response, nil
 }
 
-func (pc *PermissionController) UpdatePermission(ctx context.Context, req *v1.UpdatePermissionRequest) (*v1.UpdatePermissionResponse, error) {
-	response := &v1.UpdatePermissionResponse{
+func (pc *PermissionController) UpdatePermission(ctx context.Context, req *auth.UpdatePermissionRequest) (*auth.UpdatePermissionResponse, error) {
+	response := &auth.UpdatePermissionResponse{
 		Success: true,
 	}
 	return response, nil
 }
 
-func (pc *PermissionController) DeletePermission(ctx context.Context, req *v1.DeletePermissionRequest) (*v1.DeletePermissionResponse, error) {
-	response := &v1.DeletePermissionResponse{
+func (pc *PermissionController) DeletePermission(ctx context.Context, req *auth.DeletePermissionRequest) (*auth.DeletePermissionResponse, error) {
+	response := &auth.DeletePermissionResponse{
 		Success: true,
 	}
 	return response, nil
 }
 
-func (pc *PermissionController) AssignPermissionToRole(ctx context.Context, req *v1.AssignPermissionRequest) (*v1.AssignPermissionResponse, error) {
-	response := &v1.AssignPermissionResponse{
+func (pc *PermissionController) AssignPermissionToRole(ctx context.Context, req *auth.AssignPermissionRequest) (*auth.AssignPermissionResponse, error) {
+	response := &auth.AssignPermissionResponse{
 		Success: true,
 	}
 	return response, nil
+}
+
+func (pc *PermissionController) GetResources(ctx context.Context, req *auth.GetResourcesRequest) (*auth.GetResourcesResponse, error) {
+	return utils.WithSafePanic(ctx, req, pc.permissionService.GetResources)
 }

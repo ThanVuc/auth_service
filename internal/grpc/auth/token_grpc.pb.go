@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v6.31.1
-// source: auth_service/token.v1.proto
+// source: auth_service/token.proto
 
-package v1
+package auth
 
 import (
 	context "context"
@@ -19,8 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	TokenService_RefreshToken_FullMethodName = "/grpc.TokenService/RefreshToken"
-	TokenService_RevokeToken_FullMethodName  = "/grpc.TokenService/RevokeToken"
+	TokenService_RefreshToken_FullMethodName = "/auth.TokenService/RefreshToken"
+	TokenService_RevokeToken_FullMethodName  = "/auth.TokenService/RevokeToken"
 )
 
 // TokenServiceClient is the client API for TokenService service.
@@ -148,7 +148,7 @@ func _TokenService_RevokeToken_Handler(srv interface{}, ctx context.Context, dec
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var TokenService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "grpc.TokenService",
+	ServiceName: "auth.TokenService",
 	HandlerType: (*TokenServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -161,5 +161,5 @@ var TokenService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "auth_service/token.v1.proto",
+	Metadata: "auth_service/token.proto",
 }

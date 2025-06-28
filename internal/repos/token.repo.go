@@ -6,7 +6,7 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-type TokenRepo struct {
+type tokenRepo struct {
 	logger  *loggers.LoggerZap
 	redisDb *redis.Client
 }

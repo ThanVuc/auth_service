@@ -4,6 +4,7 @@ sql:
     queries:
       - "sql/query"
       - "sql/query/auth"
+      - "sql/query/permission"
     schema: "sql/schema"
     gen:
       go:

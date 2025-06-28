@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v6.31.1
-// source: auth_service/role.v1.proto
+// source: auth_service/role.proto
 
-package v1
+package auth
 
 import (
 	context "context"
@@ -19,12 +19,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	RoleService_GetRoles_FullMethodName            = "/grpc.RoleService/GetRoles"
-	RoleService_CreateRole_FullMethodName          = "/grpc.RoleService/CreateRole"
-	RoleService_UpdateRole_FullMethodName          = "/grpc.RoleService/UpdateRole"
-	RoleService_DeleteRole_FullMethodName          = "/grpc.RoleService/DeleteRole"
-	RoleService_DisableOrEnableRole_FullMethodName = "/grpc.RoleService/DisableOrEnableRole"
-	RoleService_AssignRoleToUser_FullMethodName    = "/grpc.RoleService/AssignRoleToUser"
+	RoleService_GetRoles_FullMethodName            = "/auth.RoleService/GetRoles"
+	RoleService_CreateRole_FullMethodName          = "/auth.RoleService/CreateRole"
+	RoleService_UpdateRole_FullMethodName          = "/auth.RoleService/UpdateRole"
+	RoleService_DeleteRole_FullMethodName          = "/auth.RoleService/DeleteRole"
+	RoleService_DisableOrEnableRole_FullMethodName = "/auth.RoleService/DisableOrEnableRole"
+	RoleService_AssignRoleToUser_FullMethodName    = "/auth.RoleService/AssignRoleToUser"
 )
 
 // RoleServiceClient is the client API for RoleService service.
@@ -284,7 +284,7 @@ func _RoleService_AssignRoleToUser_Handler(srv interface{}, ctx context.Context,
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var RoleService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "grpc.RoleService",
+	ServiceName: "auth.RoleService",
 	HandlerType: (*RoleServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -313,5 +313,5 @@ var RoleService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "auth_service/role.v1.proto",
+	Metadata: "auth_service/role.proto",
 }

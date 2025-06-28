@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v6.31.1
-// source: auth_service/permission.v1.proto
+// source: auth_service/permission.proto
 
-package v1
+package auth
 
 import (
 	context "context"
@@ -19,20 +19,21 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PermissionService_GetPermissions_FullMethodName         = "/grpc.PermissionService/GetPermissions"
-	PermissionService_CreatePermission_FullMethodName       = "/grpc.PermissionService/CreatePermission"
-	PermissionService_UpdatePermission_FullMethodName       = "/grpc.PermissionService/UpdatePermission"
-	PermissionService_DeletePermission_FullMethodName       = "/grpc.PermissionService/DeletePermission"
-	PermissionService_AssignPermissionToRole_FullMethodName = "/grpc.PermissionService/AssignPermissionToRole"
+	PermissionService_GetResources_FullMethodName           = "/auth.PermissionService/GetResources"
+	PermissionService_GetActions_FullMethodName             = "/auth.PermissionService/GetActions"
+	PermissionService_GetPermissions_FullMethodName         = "/auth.PermissionService/GetPermissions"
+	PermissionService_CreatePermission_FullMethodName       = "/auth.PermissionService/CreatePermission"
+	PermissionService_UpdatePermission_FullMethodName       = "/auth.PermissionService/UpdatePermission"
+	PermissionService_DeletePermission_FullMethodName       = "/auth.PermissionService/DeletePermission"
+	PermissionService_AssignPermissionToRole_FullMethodName = "/auth.PermissionService/AssignPermissionToRole"
 )
 
 // PermissionServiceClient is the client API for PermissionService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-//
-// The gRPC service definition
 type PermissionServiceClient interface {
-	// A simple RPC
+	GetResources(ctx context.Context, in *GetResourcesRequest, opts ...grpc.CallOption) (*GetResourcesResponse, error)
+	GetActions(ctx context.Context, in *GetActionsRequest, opts ...grpc.CallOption) (*GetActionsResponse, error)
 	GetPermissions(ctx context.Context, in *GetPermissionsRequest, opts ...grpc.CallOption) (*GetPermissionsResponse, error)
 	CreatePermission(ctx context.Context, in *CreatePermissionRequest, opts ...grpc.CallOption) (*CreatePermissionResponse, error)
 	UpdatePermission(ctx context.Context, in *UpdatePermissionRequest, opts ...grpc.CallOption) (*UpdatePermissionResponse, error)
@@ -46,6 +47,26 @@ type permissionServiceClient struct {
 
 func NewPermissionServiceClient(cc grpc.ClientConnInterface) PermissionServiceClient {
 	return &permissionServiceClient{cc}
+}
+
+func (c *permissionServiceClient) GetResources(ctx context.Context, in *GetResourcesRequest, opts ...grpc.CallOption) (*GetResourcesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetResourcesResponse)
+	err := c.cc.Invoke(ctx, PermissionService_GetResources_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *permissionServiceClient) GetActions(ctx context.Context, in *GetActionsRequest, opts ...grpc.CallOption) (*GetActionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetActionsResponse)
+	err := c.cc.Invoke(ctx, PermissionService_GetActions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *permissionServiceClient) GetPermissions(ctx context.Context, in *GetPermissionsRequest, opts ...grpc.CallOption) (*GetPermissionsResponse, error) {
@@ -101,10 +122,9 @@ func (c *permissionServiceClient) AssignPermissionToRole(ctx context.Context, in
 // PermissionServiceServer is the server API for PermissionService service.
 // All implementations must embed UnimplementedPermissionServiceServer
 // for forward compatibility.
-//
-// The gRPC service definition
 type PermissionServiceServer interface {
-	// A simple RPC
+	GetResources(context.Context, *GetResourcesRequest) (*GetResourcesResponse, error)
+	GetActions(context.Context, *GetActionsRequest) (*GetActionsResponse, error)
 	GetPermissions(context.Context, *GetPermissionsRequest) (*GetPermissionsResponse, error)
 	CreatePermission(context.Context, *CreatePermissionRequest) (*CreatePermissionResponse, error)
 	UpdatePermission(context.Context, *UpdatePermissionRequest) (*UpdatePermissionResponse, error)
@@ -120,6 +140,12 @@ type PermissionServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedPermissionServiceServer struct{}
 
+func (UnimplementedPermissionServiceServer) GetResources(context.Context, *GetResourcesRequest) (*GetResourcesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetResources not implemented")
+}
+func (UnimplementedPermissionServiceServer) GetActions(context.Context, *GetActionsRequest) (*GetActionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetActions not implemented")
+}
 func (UnimplementedPermissionServiceServer) GetPermissions(context.Context, *GetPermissionsRequest) (*GetPermissionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPermissions not implemented")
 }
@@ -154,6 +180,42 @@ func RegisterPermissionServiceServer(s grpc.ServiceRegistrar, srv PermissionServ
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&PermissionService_ServiceDesc, srv)
+}
+
+func _PermissionService_GetResources_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetResourcesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PermissionServiceServer).GetResources(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PermissionService_GetResources_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PermissionServiceServer).GetResources(ctx, req.(*GetResourcesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PermissionService_GetActions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetActionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PermissionServiceServer).GetActions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PermissionService_GetActions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PermissionServiceServer).GetActions(ctx, req.(*GetActionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _PermissionService_GetPermissions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -250,9 +312,17 @@ func _PermissionService_AssignPermissionToRole_Handler(srv interface{}, ctx cont
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var PermissionService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "grpc.PermissionService",
+	ServiceName: "auth.PermissionService",
 	HandlerType: (*PermissionServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetResources",
+			Handler:    _PermissionService_GetResources_Handler,
+		},
+		{
+			MethodName: "GetActions",
+			Handler:    _PermissionService_GetActions_Handler,
+		},
 		{
 			MethodName: "GetPermissions",
 			Handler:    _PermissionService_GetPermissions_Handler,
@@ -275,5 +345,5 @@ var PermissionService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "auth_service/permission.v1.proto",
+	Metadata: "auth_service/permission.proto",
 }
