@@ -953,7 +953,8 @@ const file_auth_service_auth_proto_rawDesc = "" +
 	"\rResetPassword\x12\x1a.auth.ResetPasswordRequest\x1a\x1b.auth.ResetPasswordResponse\x12K\n" +
 	"\x0eForgotPassword\x12\x1b.auth.ForgotPasswordRequest\x1a\x1c.auth.ForgotPasswordResponse\x12`\n" +
 	"\x15ConfirmForgotPassword\x12\".auth.ConfirmForgotPasswordRequest\x1a#.auth.ConfirmForgotPasswordResponse\x12T\n" +
-	"\x11SaveRouteResource\x12\x1e.auth.SaveRouteResourceRequest\x1a\x1f.auth.SaveRouteResourceResponseB!Z\x1fauth_service/internal/grpc/authb\x06proto3"
+	"\x11SaveRouteResource\x12\x1e.auth.SaveRouteResourceRequest\x1a\x1f.auth.SaveRouteResourceResponseB\fZ\n" +
+	"proto/authb\x06proto3"
 
 var (
 	file_auth_service_auth_proto_rawDescOnce sync.Once

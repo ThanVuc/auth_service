@@ -3,6 +3,7 @@ package repos
 import (
 	"auth_service/internal/database"
 	"auth_service/pkg/loggers"
+	"auth_service/proto/auth"
 	"context"
 )
 
@@ -50,5 +51,40 @@ func (ar *authRepo) SyncActions(ctx context.Context, ids, resourceIds, names []s
 		return err
 	}
 
+	return nil
+}
+
+func (ar *authRepo) Login(ctx context.Context, req *auth.LoginRequest) error {
+	// TODO: Implement login repository logic
+	return nil
+}
+
+func (ar *authRepo) Register(ctx context.Context, req *auth.RegisterRequest) error {
+	// TODO: Implement register repository logic
+	return nil
+}
+
+func (ar *authRepo) ConfirmEmail(ctx context.Context, req *auth.ConfirmEmailRequest) error {
+	// TODO: Implement confirm email repository logic
+	return nil
+}
+
+func (ar *authRepo) Logout(ctx context.Context, req *auth.LogoutRequest) error {
+	// TODO: Implement logout repository logic
+	return nil
+}
+
+func (ar *authRepo) ForgotPassword(ctx context.Context, req *auth.ForgotPasswordRequest) error {
+	// TODO: Implement forgot password repository logic
+	return nil
+}
+
+func (ar *authRepo) ConfirmForgotPassword(ctx context.Context, req *auth.ConfirmForgotPasswordRequest) error {
+	// TODO: Implement confirm forgot password repository logic
+	return nil
+}
+
+func (ar *authRepo) ResetPassword(ctx context.Context, req *auth.ResetPasswordRequest) error {
+	// TODO: Implement reset password repository logic
 	return nil
 }

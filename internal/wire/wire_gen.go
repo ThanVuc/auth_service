@@ -8,6 +8,7 @@ package wire
 
 import (
 	"auth_service/internal/controller"
+	"auth_service/internal/mapper"
 	"auth_service/internal/repos"
 	"auth_service/internal/services"
 )
@@ -15,35 +16,30 @@ import (
 // Injectors from auth.wire.go:
 
 func InjectAuthWire() *controller.AuthController {
-	iAuthRepo := repos.NewAuthRepo()
-	iAuthService := services.NewAuthService(iAuthRepo)
-	authController := controller.NewAuthController(iAuthService)
+	authRepo := repos.NewAuthRepo()
+	authService := services.NewAuthService(authRepo)
+	authController := controller.NewAuthController(authService)
 	return authController
 }
 
-// Injectors from permission.wire.go:
-
 func InjectPermissionWire() *controller.PermissionController {
-	iPermissionRepo := repos.NewPermissionRepo()
-	iPermissionService := services.NewPermissionService(iPermissionRepo)
-	permissionController := controller.NewPermissionController(iPermissionService)
+	permissionRepo := repos.NewPermissionRepo()
+	permissionMapper := mapper.NewPermissionMapper()
+	permissionService := services.NewPermissionService(permissionRepo, permissionMapper)
+	permissionController := controller.NewPermissionController(permissionService)
 	return permissionController
 }
 
-// Injectors from role.wire.go:
-
 func InjectRoleWire() *controller.RoleController {
-	iRoleRepo := repos.NewRoleRepo()
-	iRoleService := services.NewRoleService(iRoleRepo)
-	roleController := controller.NewRoleController(iRoleService)
+	roleRepo := repos.NewRoleRepo()
+	roleService := services.NewRoleService(roleRepo)
+	roleController := controller.NewRoleController(roleService)
 	return roleController
 }
 
-// Injectors from token.wire.go:
-
 func InjectTokenWire() *controller.TokenController {
-	iTokenRepo := repos.NewTokenRepo()
-	iTokenService := services.NewTokenService(iTokenRepo)
-	tokenController := controller.NewTokenController(iTokenService)
+	tokenRepo := repos.NewTokenRepo()
+	tokenService := services.NewTokenService(tokenRepo)
+	tokenController := controller.NewTokenController(tokenService)
 	return tokenController
 }

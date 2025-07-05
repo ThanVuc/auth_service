@@ -125,6 +125,90 @@ func (x *Action) GetName() string {
 	return ""
 }
 
+type PermissionItem struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	PermId        string                 `protobuf:"bytes,1,opt,name=perm_id,json=permId,proto3" json:"perm_id,omitempty"`
+	PermName      string                 `protobuf:"bytes,2,opt,name=perm_name,json=permName,proto3" json:"perm_name,omitempty"`
+	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	IsRoot        bool                   `protobuf:"varint,4,opt,name=is_root,json=isRoot,proto3" json:"is_root,omitempty"`
+	Resource      *Resource              `protobuf:"bytes,5,opt,name=resource,proto3,oneof" json:"resource,omitempty"`
+	Actions       []*Action              `protobuf:"bytes,6,rep,name=actions,proto3" json:"actions,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PermissionItem) Reset() {
+	*x = PermissionItem{}
+	mi := &file_auth_service_common_auth_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PermissionItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PermissionItem) ProtoMessage() {}
+
+func (x *PermissionItem) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_service_common_auth_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PermissionItem.ProtoReflect.Descriptor instead.
+func (*PermissionItem) Descriptor() ([]byte, []int) {
+	return file_auth_service_common_auth_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *PermissionItem) GetPermId() string {
+	if x != nil {
+		return x.PermId
+	}
+	return ""
+}
+
+func (x *PermissionItem) GetPermName() string {
+	if x != nil {
+		return x.PermName
+	}
+	return ""
+}
+
+func (x *PermissionItem) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *PermissionItem) GetIsRoot() bool {
+	if x != nil {
+		return x.IsRoot
+	}
+	return false
+}
+
+func (x *PermissionItem) GetResource() *Resource {
+	if x != nil {
+		return x.Resource
+	}
+	return nil
+}
+
+func (x *PermissionItem) GetActions() []*Action {
+	if x != nil {
+		return x.Actions
+	}
+	return nil
+}
+
 var File_auth_service_common_auth_proto protoreflect.FileDescriptor
 
 const file_auth_service_common_auth_proto_rawDesc = "" +
@@ -135,7 +219,16 @@ const file_auth_service_common_auth_proto_rawDesc = "" +
 	"\x04name\x18\x02 \x01(\tR\x04name\",\n" +
 	"\x06Action\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04nameB!Z\x1fauth_service/internal/grpc/authb\x06proto3"
+	"\x04name\x18\x02 \x01(\tR\x04name\"\xe7\x01\n" +
+	"\x0ePermissionItem\x12\x17\n" +
+	"\aperm_id\x18\x01 \x01(\tR\x06permId\x12\x1b\n" +
+	"\tperm_name\x18\x02 \x01(\tR\bpermName\x12 \n" +
+	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x17\n" +
+	"\ais_root\x18\x04 \x01(\bR\x06isRoot\x12/\n" +
+	"\bresource\x18\x05 \x01(\v2\x0e.auth.ResourceH\x00R\bresource\x88\x01\x01\x12&\n" +
+	"\aactions\x18\x06 \x03(\v2\f.auth.ActionR\aactionsB\v\n" +
+	"\t_resourceB\fZ\n" +
+	"proto/authb\x06proto3"
 
 var (
 	file_auth_service_common_auth_proto_rawDescOnce sync.Once
@@ -149,17 +242,20 @@ func file_auth_service_common_auth_proto_rawDescGZIP() []byte {
 	return file_auth_service_common_auth_proto_rawDescData
 }
 
-var file_auth_service_common_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_auth_service_common_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_auth_service_common_auth_proto_goTypes = []any{
-	(*Resource)(nil), // 0: auth.Resource
-	(*Action)(nil),   // 1: auth.Action
+	(*Resource)(nil),       // 0: auth.Resource
+	(*Action)(nil),         // 1: auth.Action
+	(*PermissionItem)(nil), // 2: auth.PermissionItem
 }
 var file_auth_service_common_auth_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0, // 0: auth.PermissionItem.resource:type_name -> auth.Resource
+	1, // 1: auth.PermissionItem.actions:type_name -> auth.Action
+	2, // [2:2] is the sub-list for method output_type
+	2, // [2:2] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_auth_service_common_auth_proto_init() }
@@ -167,13 +263,14 @@ func file_auth_service_common_auth_proto_init() {
 	if File_auth_service_common_auth_proto != nil {
 		return
 	}
+	file_auth_service_common_auth_proto_msgTypes[2].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_auth_service_common_auth_proto_rawDesc), len(file_auth_service_common_auth_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

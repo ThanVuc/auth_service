@@ -3,10 +3,10 @@ package initialize
 import (
 	"auth_service/global"
 	"auth_service/internal/controller"
-	"auth_service/internal/grpc/auth"
 	"auth_service/internal/wire"
 	"auth_service/pkg/loggers"
 	"auth_service/pkg/settings"
+	"auth_service/proto/auth"
 	"context"
 	"fmt"
 	"net"
