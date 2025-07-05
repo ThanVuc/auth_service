@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"auth_service/internal/grpc/auth"
 	"auth_service/internal/services"
 	"auth_service/internal/utils"
+	"auth_service/proto/auth"
 	"context"
 )
 
@@ -19,40 +19,25 @@ func NewPermissionController(permissionService services.PermissionService) *Perm
 }
 
 func (pc *PermissionController) GetPermissions(ctx context.Context, req *auth.GetPermissionsRequest) (*auth.GetPermissionsResponse, error) {
-	response := &auth.GetPermissionsResponse{
-		Permissions: []string{},
-	}
-	return response, nil
+	return utils.WithSafePanic(ctx, req, pc.permissionService.GetPermissions)
 }
 
-func (pc *PermissionController) CreatePermission(ctx context.Context, req *auth.CreatePermissionRequest) (*auth.CreatePermissionResponse, error) {
-	response := &auth.CreatePermissionResponse{
-		PermissionId: "",
-	}
-	return response, nil
-}
-
-func (pc *PermissionController) UpdatePermission(ctx context.Context, req *auth.UpdatePermissionRequest) (*auth.UpdatePermissionResponse, error) {
-	response := &auth.UpdatePermissionResponse{
-		Success: true,
-	}
-	return response, nil
+func (pc *PermissionController) UpsertPermission(ctx context.Context, req *auth.UpsertPermissionRequest) (*auth.UpsertPermissionResponse, error) {
+	return utils.WithSafePanic(ctx, req, pc.permissionService.UpsertPermission)
 }
 
 func (pc *PermissionController) DeletePermission(ctx context.Context, req *auth.DeletePermissionRequest) (*auth.DeletePermissionResponse, error) {
-	response := &auth.DeletePermissionResponse{
-		Success: true,
-	}
-	return response, nil
+	return utils.WithSafePanic(ctx, req, pc.permissionService.DeletePermission)
 }
 
 func (pc *PermissionController) AssignPermissionToRole(ctx context.Context, req *auth.AssignPermissionRequest) (*auth.AssignPermissionResponse, error) {
-	response := &auth.AssignPermissionResponse{
-		Success: true,
-	}
-	return response, nil
+	return utils.WithSafePanic(ctx, req, pc.permissionService.AssignPermissionToRole)
 }
 
 func (pc *PermissionController) GetResources(ctx context.Context, req *auth.GetResourcesRequest) (*auth.GetResourcesResponse, error) {
 	return utils.WithSafePanic(ctx, req, pc.permissionService.GetResources)
+}
+
+func (pc *PermissionController) GetActions(ctx context.Context, req *auth.GetActionsRequest) (*auth.GetActionsResponse, error) {
+	return utils.WithSafePanic(ctx, req, pc.permissionService.GetActions)
 }

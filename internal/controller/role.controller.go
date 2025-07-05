@@ -1,8 +1,9 @@
 package controller
 
 import (
-	"auth_service/internal/grpc/auth"
 	"auth_service/internal/services"
+	"auth_service/internal/utils"
+	"auth_service/proto/auth"
 	"context"
 )
 
@@ -18,43 +19,21 @@ func NewRoleController(roleService services.RoleService) *RoleController {
 }
 
 func (pc *RoleController) GetRoles(ctx context.Context, req *auth.GetRolesRequest) (*auth.GetRolesResponse, error) {
-	response := &auth.GetRolesResponse{
-		Roles: []string{},
-	}
-	return response, nil
+	return utils.WithSafePanic(ctx, req, pc.roleService.GetRoles)
 }
 
-func (pc *RoleController) CreateRole(ctx context.Context, req *auth.CreateRoleRequest) (*auth.CreateRoleResponse, error) {
-	response := &auth.CreateRoleResponse{
-		RoleId: "",
-	}
-	return response, nil
-}
-
-func (pc *RoleController) UpdateRole(ctx context.Context, req *auth.UpdateRoleRequest) (*auth.UpdateRoleResponse, error) {
-	response := &auth.UpdateRoleResponse{
-		Success: true,
-	}
-	return response, nil
+func (pc *RoleController) UpsertRole(ctx context.Context, req *auth.UpsertRoleRequest) (*auth.UpsertRoleResponse, error) {
+	return utils.WithSafePanic(ctx, req, pc.roleService.UpsertRole)
 }
 
 func (pc *RoleController) DeleteRole(ctx context.Context, req *auth.DeleteRoleRequest) (*auth.DeleteRoleResponse, error) {
-	response := &auth.DeleteRoleResponse{
-		Success: true,
-	}
-	return response, nil
+	return utils.WithSafePanic(ctx, req, pc.roleService.DeleteRole)
 }
 
 func (pc *RoleController) DisableOrEnableRole(ctx context.Context, req *auth.DisableOrEnableRoleRequest) (*auth.DisableOrEnableRoleResponse, error) {
-	response := &auth.DisableOrEnableRoleResponse{
-		Success: true,
-	}
-	return response, nil
+	return utils.WithSafePanic(ctx, req, pc.roleService.DisableOrEnableRole)
 }
 
 func (pc *RoleController) AssignRoleToUser(ctx context.Context, req *auth.AssignRoleRequest) (*auth.AssignRoleResponse, error) {
-	response := &auth.AssignRoleResponse{
-		Success: true,
-	}
-	return response, nil
+	return utils.WithSafePanic(ctx, req, pc.roleService.AssignRoleToUser)
 }

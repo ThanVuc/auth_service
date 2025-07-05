@@ -1,8 +1,9 @@
 package controller
 
 import (
-	"auth_service/internal/grpc/auth"
 	"auth_service/internal/services"
+	"auth_service/internal/utils"
+	"auth_service/proto/auth"
 	"context"
 )
 
@@ -20,14 +21,9 @@ func NewTokenController(
 }
 
 func (tc *TokenController) RefreshToken(ctx context.Context, req *auth.RefreshTokenRequest) (*auth.RefreshTokenResponse, error) {
-	return &auth.RefreshTokenResponse{
-		Token:        "",
-		RefreshToken: "",
-	}, nil
+	return utils.WithSafePanic(ctx, req, tc.tokenService.RefreshToken)
 }
 
 func (tc *TokenController) RevokeToken(ctx context.Context, req *auth.RevokeTokenRequest) (*auth.RevokeTokenResponse, error) {
-	return &auth.RevokeTokenResponse{
-		Success: true,
-	}, nil
+	return utils.WithSafePanic(ctx, req, tc.tokenService.RevokeToken)
 }

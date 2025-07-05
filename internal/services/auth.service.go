@@ -1,9 +1,9 @@
 package services
 
 import (
-	"auth_service/internal/grpc/auth"
 	"auth_service/internal/repos"
 	"auth_service/pkg/loggers"
+	"auth_service/proto/auth"
 	"context"
 	"fmt"
 
@@ -64,4 +64,39 @@ func (as *authService) SaveRouteResource(ctx context.Context, req *auth.SaveRout
 	}
 
 	return resp, nil
+}
+
+func (as *authService) Login(ctx context.Context, req *auth.LoginRequest) (*auth.LoginResponse, error) {
+	// TODO: Implement login logic
+	return &auth.LoginResponse{}, nil
+}
+
+func (as *authService) Register(ctx context.Context, req *auth.RegisterRequest) (*auth.RegisterResponse, error) {
+	// TODO: Implement register logic
+	return &auth.RegisterResponse{}, nil
+}
+
+func (as *authService) ConfirmEmail(ctx context.Context, req *auth.ConfirmEmailRequest) (*auth.ConfirmEmailResponse, error) {
+	// TODO: Implement confirm email logic
+	return &auth.ConfirmEmailResponse{}, nil
+}
+
+func (as *authService) Logout(ctx context.Context, req *auth.LogoutRequest) (*auth.LogoutResponse, error) {
+	// TODO: Implement logout logic
+	return &auth.LogoutResponse{}, nil
+}
+
+func (as *authService) ForgotPassword(ctx context.Context, req *auth.ForgotPasswordRequest) (*auth.ForgotPasswordResponse, error) {
+	// TODO: Implement forgot password logic
+	return &auth.ForgotPasswordResponse{}, nil
+}
+
+func (as *authService) ConfirmForgotPassword(ctx context.Context, req *auth.ConfirmForgotPasswordRequest) (*auth.ConfirmForgotPasswordResponse, error) {
+	// TODO: Implement confirm forgot password logic
+	return &auth.ConfirmForgotPasswordResponse{}, nil
+}
+
+func (as *authService) ResetPassword(ctx context.Context, req *auth.ResetPasswordRequest) (*auth.ResetPasswordResponse, error) {
+	// TODO: Implement reset password logic
+	return &auth.ResetPasswordResponse{}, nil
 }

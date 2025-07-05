@@ -222,7 +222,8 @@ const file_auth_service_token_proto_rawDesc = "" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess2\x99\x01\n" +
 	"\fTokenService\x12E\n" +
 	"\fRefreshToken\x12\x19.auth.RefreshTokenRequest\x1a\x1a.auth.RefreshTokenResponse\x12B\n" +
-	"\vRevokeToken\x12\x18.auth.RevokeTokenRequest\x1a\x19.auth.RevokeTokenResponseB!Z\x1fauth_service/internal/grpc/authb\x06proto3"
+	"\vRevokeToken\x12\x18.auth.RevokeTokenRequest\x1a\x19.auth.RevokeTokenResponseB\fZ\n" +
+	"proto/authb\x06proto3"
 
 var (
 	file_auth_service_token_proto_rawDescOnce sync.Once

@@ -7,7 +7,94 @@ package database
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
+
+const addActionToPermission = `-- name: AddActionToPermission :exec
+INSERT INTO permission_actions (perm_id, action_id)
+SELECT $1, unnest($2::TEXT[])
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM permission_actions
+    WHERE perm_id = $1 AND action_id = ANY($2::TEXT[])
+)
+`
+
+type AddActionToPermissionParams struct {
+	PermID  pgtype.UUID
+	Column2 []string
+}
+
+func (q *Queries) AddActionToPermission(ctx context.Context, arg AddActionToPermissionParams) error {
+	_, err := q.db.Exec(ctx, addActionToPermission, arg.PermID, arg.Column2)
+	return err
+}
+
+const countRootPermissions = `-- name: CountRootPermissions :one
+select count(perm_id) as total
+from permissions
+where is_root = true and
+($1::TEXT is null or name ilike '%' || $1 || '%') and
+($2::TEXT is null or resource_id = $2)
+`
+
+type CountRootPermissionsParams struct {
+	Column1 string
+	Column2 string
+}
+
+func (q *Queries) CountRootPermissions(ctx context.Context, arg CountRootPermissionsParams) (int64, error) {
+	row := q.db.QueryRow(ctx, countRootPermissions, arg.Column1, arg.Column2)
+	var total int64
+	err := row.Scan(&total)
+	return total, err
+}
+
+const countTotalPermissions = `-- name: CountTotalPermissions :one
+select count(perm_id) as total
+from permissions
+Where
+($1::TEXT is null or name ilike '%' || $1 || '%') and
+($2::TEXT is null or resource_id = $1)
+`
+
+type CountTotalPermissionsParams struct {
+	Column1 string
+	Column2 string
+}
+
+func (q *Queries) CountTotalPermissions(ctx context.Context, arg CountTotalPermissionsParams) (int64, error) {
+	row := q.db.QueryRow(ctx, countTotalPermissions, arg.Column1, arg.Column2)
+	var total int64
+	err := row.Scan(&total)
+	return total, err
+}
+
+const deleteActionToPermission = `-- name: DeleteActionToPermission :exec
+DELETE FROM permission_actions
+WHERE perm_id = $1 AND action_id = ANY($2::TEXT[])
+`
+
+type DeleteActionToPermissionParams struct {
+	PermID  pgtype.UUID
+	Column2 []string
+}
+
+func (q *Queries) DeleteActionToPermission(ctx context.Context, arg DeleteActionToPermissionParams) error {
+	_, err := q.db.Exec(ctx, deleteActionToPermission, arg.PermID, arg.Column2)
+	return err
+}
+
+const deletePermission = `-- name: DeletePermission :exec
+delete from permissions
+where perm_id = $1
+`
+
+func (q *Queries) DeletePermission(ctx context.Context, permID pgtype.UUID) error {
+	_, err := q.db.Exec(ctx, deletePermission, permID)
+	return err
+}
 
 const getActions = `-- name: GetActions :many
 select action_id, name
@@ -30,6 +117,85 @@ func (q *Queries) GetActions(ctx context.Context, resourceID string) ([]GetActio
 	for rows.Next() {
 		var i GetActionsRow
 		if err := rows.Scan(&i.ActionID, &i.Name); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getActionsByPermissionId = `-- name: GetActionsByPermissionId :many
+select pa.pa_id, pa.action_id
+from permission_actions pa
+where pa.perm_id = $1
+`
+
+type GetActionsByPermissionIdRow struct {
+	PaID     pgtype.UUID
+	ActionID string
+}
+
+func (q *Queries) GetActionsByPermissionId(ctx context.Context, permID pgtype.UUID) ([]GetActionsByPermissionIdRow, error) {
+	rows, err := q.db.Query(ctx, getActionsByPermissionId, permID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetActionsByPermissionIdRow
+	for rows.Next() {
+		var i GetActionsByPermissionIdRow
+		if err := rows.Scan(&i.PaID, &i.ActionID); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getPermissions = `-- name: GetPermissions :many
+select perm_id, name, is_root
+from permissions
+Where
+($1::TEXT is null or name ilike '%' || $1 || '%') and
+($2::TEXT is null or resource_id = $1)
+Order by perm_id
+limit $3 offset $4
+`
+
+type GetPermissionsParams struct {
+	Column1 string
+	Column2 string
+	Limit   int32
+	Offset  int32
+}
+
+type GetPermissionsRow struct {
+	PermID pgtype.UUID
+	Name   string
+	IsRoot bool
+}
+
+func (q *Queries) GetPermissions(ctx context.Context, arg GetPermissionsParams) ([]GetPermissionsRow, error) {
+	rows, err := q.db.Query(ctx, getPermissions,
+		arg.Column1,
+		arg.Column2,
+		arg.Limit,
+		arg.Offset,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetPermissionsRow
+	for rows.Next() {
+		var i GetPermissionsRow
+		if err := rows.Scan(&i.PermID, &i.Name, &i.IsRoot); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -68,4 +234,51 @@ func (q *Queries) GetResources(ctx context.Context) ([]GetResourcesRow, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const insertPermission = `-- name: InsertPermission :one
+INSERT INTO permissions (name, resource_id, description)
+VALUES ($1, $2, $3)
+RETURNING perm_id
+`
+
+type InsertPermissionParams struct {
+	Name        string
+	ResourceID  string
+	Description pgtype.Text
+}
+
+func (q *Queries) InsertPermission(ctx context.Context, arg InsertPermissionParams) (pgtype.UUID, error) {
+	row := q.db.QueryRow(ctx, insertPermission, arg.Name, arg.ResourceID, arg.Description)
+	var perm_id pgtype.UUID
+	err := row.Scan(&perm_id)
+	return perm_id, err
+}
+
+const updatePermission = `-- name: UpdatePermission :one
+UPDATE permissions
+SET name = $2,
+    resource_id = $3,
+    description = $4
+WHERE perm_id = $1
+RETURNING perm_id
+`
+
+type UpdatePermissionParams struct {
+	PermID      pgtype.UUID
+	Name        string
+	ResourceID  string
+	Description pgtype.Text
+}
+
+func (q *Queries) UpdatePermission(ctx context.Context, arg UpdatePermissionParams) (pgtype.UUID, error) {
+	row := q.db.QueryRow(ctx, updatePermission,
+		arg.PermID,
+		arg.Name,
+		arg.ResourceID,
+		arg.Description,
+	)
+	var perm_id pgtype.UUID
+	err := row.Scan(&perm_id)
+	return perm_id, err
 }

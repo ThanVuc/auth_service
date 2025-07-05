@@ -1,8 +1,8 @@
 package consumers
 
 import (
-	"auth_service/internal/grpc/auth"
 	"auth_service/pkg/loggers"
+	"auth_service/proto/auth"
 	"context"
 	"encoding/json"
 	"os"
