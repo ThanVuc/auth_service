@@ -35,8 +35,8 @@ const countRootPermissions = `-- name: CountRootPermissions :one
 select count(perm_id) as total
 from permissions
 where is_root = true and
-($1::TEXT is null or name ilike '%' || $1 || '%') and
-($2::TEXT is null or resource_id = $2)
+($1::TEXT IS NULL OR $1::TEXT = '' OR name ILIKE '%' || $1::TEXT || '%') AND
+($2::TEXT IS NULL OR $2::TEXT = '' OR resource_id = $2::TEXT)
 `
 
 type CountRootPermissionsParams struct {
@@ -55,8 +55,8 @@ const countTotalPermissions = `-- name: CountTotalPermissions :one
 select count(perm_id) as total
 from permissions
 Where
-($1::TEXT is null or name ilike '%' || $1 || '%') and
-($2::TEXT is null or resource_id = $1)
+($1::TEXT IS NULL OR $1::TEXT = '' OR name ILIKE '%' || $1::TEXT || '%') AND
+($2::TEXT IS NULL OR $2::TEXT = '' OR resource_id = $2::TEXT)
 `
 
 type CountTotalPermissionsParams struct {
@@ -158,12 +158,75 @@ func (q *Queries) GetActionsByPermissionId(ctx context.Context, permID pgtype.UU
 	return items, nil
 }
 
+const getPermission = `-- name: GetPermission :many
+SELECT
+    p.perm_id,
+    p.name AS permission_name,
+    p.resource_id,
+    p.is_root,
+    r.name AS resource_name,
+    p.description,
+    p.updated_at,
+    p.created_at,
+    a.action_id,
+    a.name AS action_name
+FROM permissions p
+JOIN resources r ON r.resource_id = p.resource_id
+LEFT JOIN permission_actions pa ON pa.perm_id = p.perm_id
+LEFT JOIN actions a ON a.action_id = pa.action_id
+WHERE p.perm_id = $1
+`
+
+type GetPermissionRow struct {
+	PermID         pgtype.UUID
+	PermissionName string
+	ResourceID     string
+	IsRoot         bool
+	ResourceName   string
+	Description    pgtype.Text
+	UpdatedAt      pgtype.Timestamp
+	CreatedAt      pgtype.Timestamp
+	ActionID       pgtype.Text
+	ActionName     pgtype.Text
+}
+
+func (q *Queries) GetPermission(ctx context.Context, permID pgtype.UUID) ([]GetPermissionRow, error) {
+	rows, err := q.db.Query(ctx, getPermission, permID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetPermissionRow
+	for rows.Next() {
+		var i GetPermissionRow
+		if err := rows.Scan(
+			&i.PermID,
+			&i.PermissionName,
+			&i.ResourceID,
+			&i.IsRoot,
+			&i.ResourceName,
+			&i.Description,
+			&i.UpdatedAt,
+			&i.CreatedAt,
+			&i.ActionID,
+			&i.ActionName,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getPermissions = `-- name: GetPermissions :many
 select perm_id, name, is_root
 from permissions
 Where
-($1::TEXT is null or name ilike '%' || $1 || '%') and
-($2::TEXT is null or resource_id = $1)
+($1::TEXT IS NULL OR $1::TEXT = '' OR name ILIKE '%' || $1::TEXT || '%') AND
+($2::TEXT IS NULL OR $2::TEXT = '' OR resource_id = $2::TEXT)
 Order by perm_id
 limit $3 offset $4
 `

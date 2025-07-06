@@ -14,7 +14,7 @@ func ToPagination(page, pageSize int32) models.Pagination {
 }
 
 func ToPageInfo(page, pageSize, totalItems int32) *common.PageInfo {
-	totalPages := int32(math.Round(float64(totalItems / pageSize)))
+	totalPages := int32(math.Ceil(float64(totalItems) / float64(pageSize)))
 
 	return &common.PageInfo{
 		TotalItems: totalItems,

@@ -10,13 +10,12 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
-	"github.com/jackc/pgx/v5/pgxpool"
+	"go.uber.org/zap"
 )
 
 type permissionRepo struct {
 	logger *loggers.LoggerZap
 	sqlc   *database.Queries
-	pool   *pgxpool.Pool
 }
 
 func (r *permissionRepo) GetResources(ctx context.Context) ([]database.GetResourcesRow, error) {
@@ -49,13 +48,18 @@ func (r *permissionRepo) GetPermissions(ctx context.Context, req *auth.GetPermis
 		},
 	)
 	if err != nil {
-		r.logger.ErrorString("failed to get permissions in database")
+		r.logger.ErrorString("failed to get permissions in database",
+			zap.Error(err),
+			zap.String("search", req.Search),
+			zap.String("resourceId", req.ResourceId),
+			zap.Int32("limit", pagination.Limit),
+			zap.Int32("offset", pagination.Offset))
 		return nil, 0, 0, err
 	}
 
-	total_perms, err := r.sqlc.CountRootPermissions(
+	total_perms, err := r.sqlc.CountTotalPermissions(
 		ctx,
-		database.CountRootPermissionsParams{
+		database.CountTotalPermissionsParams{
 			Column1: req.Search,
 			Column2: req.ResourceId,
 		},
@@ -176,12 +180,39 @@ func (r *permissionRepo) UpdateActionsToPermission(ctx context.Context, tx pgx.T
 	return nil
 }
 
-func (r *permissionRepo) DeletePermission(ctx context.Context, req *auth.DeletePermissionRequest) error {
-	// TODO: Implement delete permission logic
-	return nil
+func (r *permissionRepo) GetPermission(ctx context.Context, req *auth.GetPermissionRequest) (*[]database.GetPermissionRow, error) {
+	permissionIdUUID, err := utils.ToUUID(req.PermissionId)
+	if err != nil {
+		r.logger.ErrorString("failed to convert permission id to UUID")
+		return nil, err
+	}
+
+	permission, err := r.sqlc.GetPermission(ctx, permissionIdUUID)
+	if err != nil {
+		r.logger.ErrorString("failed to get permission in database")
+		return nil, err
+	}
+
+	if permission == nil {
+		r.logger.ErrorString("permission not found in database")
+		return nil, sql.ErrNoRows
+	}
+
+	return &permission, nil
 }
 
-func (r *permissionRepo) AssignPermissionToRole(ctx context.Context, req *auth.AssignPermissionRequest) error {
-	// TODO: Implement assign permission to role logic
+func (r *permissionRepo) DeletePermission(ctx context.Context, req *auth.DeletePermissionRequest) error {
+	permissionIdUUID, err := utils.ToUUID(req.PermissionId)
+	if err != nil {
+		r.logger.ErrorString("failed to convert permission id to UUID")
+		return err
+	}
+
+	err = r.sqlc.DeletePermission(ctx, permissionIdUUID)
+	if err != nil {
+		r.logger.ErrorString("failed to delete permission in database")
+		return err
+	}
+
 	return nil
 }

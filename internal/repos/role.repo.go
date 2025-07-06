@@ -31,8 +31,3 @@ func (r *roleRepo) DisableOrEnableRole(ctx context.Context, req *auth.DisableOrE
 	// TODO: Implement disable/enable role logic
 	return nil
 }
-
-func (r *roleRepo) AssignRoleToUser(ctx context.Context, req *auth.AssignRoleRequest) error {
-	// TODO: Implement assign role to user logic
-	return nil
-}

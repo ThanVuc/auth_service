@@ -33,7 +33,3 @@ func (pc *RoleController) DeleteRole(ctx context.Context, req *auth.DeleteRoleRe
 func (pc *RoleController) DisableOrEnableRole(ctx context.Context, req *auth.DisableOrEnableRoleRequest) (*auth.DisableOrEnableRoleResponse, error) {
 	return utils.WithSafePanic(ctx, req, pc.roleService.DisableOrEnableRole)
 }
-
-func (pc *RoleController) AssignRoleToUser(ctx context.Context, req *auth.AssignRoleRequest) (*auth.AssignRoleResponse, error) {
-	return utils.WithSafePanic(ctx, req, pc.roleService.AssignRoleToUser)
-}

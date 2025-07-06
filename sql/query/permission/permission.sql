@@ -11,8 +11,8 @@ where resource_id = $1;
 select perm_id, name, is_root
 from permissions
 Where
-($1::TEXT is null or name ilike '%' || $1 || '%') and
-($2::TEXT is null or resource_id = $1)
+($1::TEXT IS NULL OR $1::TEXT = '' OR name ILIKE '%' || $1::TEXT || '%') AND
+($2::TEXT IS NULL OR $2::TEXT = '' OR resource_id = $2::TEXT)
 Order by perm_id
 limit $3 offset $4;
 
@@ -20,19 +20,15 @@ limit $3 offset $4;
 select count(perm_id) as total
 from permissions
 Where
-($1::TEXT is null or name ilike '%' || $1 || '%') and
-($2::TEXT is null or resource_id = $1);
+($1::TEXT IS NULL OR $1::TEXT = '' OR name ILIKE '%' || $1::TEXT || '%') AND
+($2::TEXT IS NULL OR $2::TEXT = '' OR resource_id = $2::TEXT);
 
 -- name: CountRootPermissions :one
 select count(perm_id) as total
 from permissions
 where is_root = true and
-($1::TEXT is null or name ilike '%' || $1 || '%') and
-($2::TEXT is null or resource_id = $2);
-
--- name: DeletePermission :exec
-delete from permissions
-where perm_id = $1;
+($1::TEXT IS NULL OR $1::TEXT = '' OR name ILIKE '%' || $1::TEXT || '%') AND
+($2::TEXT IS NULL OR $2::TEXT = '' OR resource_id = $2::TEXT);
 
 -- name: InsertPermission :one
 INSERT INTO permissions (name, resource_id, description)
@@ -64,3 +60,25 @@ WHERE NOT EXISTS (
 -- name: DeleteActionToPermission :exec
 DELETE FROM permission_actions
 WHERE perm_id = $1 AND action_id = ANY($2::TEXT[]);
+
+-- name: GetPermission :many
+SELECT
+    p.perm_id,
+    p.name AS permission_name,
+    p.resource_id,
+    p.is_root,
+    r.name AS resource_name,
+    p.description,
+    p.updated_at,
+    p.created_at,
+    a.action_id,
+    a.name AS action_name
+FROM permissions p
+JOIN resources r ON r.resource_id = p.resource_id
+LEFT JOIN permission_actions pa ON pa.perm_id = p.perm_id
+LEFT JOIN actions a ON a.action_id = pa.action_id
+WHERE p.perm_id = $1;
+
+-- name: DeletePermission :exec
+delete from permissions
+where perm_id = $1;
