@@ -46,6 +46,7 @@ type Role struct {
 	Description pgtype.Text
 	CreatedAt   pgtype.Timestamp
 	UpdatedAt   pgtype.Timestamp
+	IsRoot      bool
 }
 
 type RolePermission struct {

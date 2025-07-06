@@ -7,6 +7,7 @@ import (
 	"auth_service/pkg/loggers"
 	"auth_service/proto/auth"
 	"context"
+	"fmt"
 	"math"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -54,7 +55,7 @@ func (ps *permissionService) GetPermissions(ctx context.Context, req *auth.GetPe
 	if err != nil {
 		return &auth.GetPermissionsResponse{
 			Error: utils.DatabaseError("Failed to get permissions"),
-		}, nil
+		}, err
 	}
 
 	if total_perms == 0 {
@@ -86,11 +87,36 @@ func (ps *permissionService) GetPermissions(ctx context.Context, req *auth.GetPe
 	return resp, nil
 }
 
+func (ps *permissionService) GetPermission(ctx context.Context, req *auth.GetPermissionRequest) (*auth.GetPermissionResponse, error) {
+	permission, err := ps.permissionRepo.GetPermission(ctx, req)
+	if err != nil {
+		ps.logger.ErrorString("failed to get permission from database")
+		return &auth.GetPermissionResponse{
+			Error: utils.DatabaseError("Failed to get permission"),
+		}, err
+	}
+
+	resp := &auth.GetPermissionResponse{
+		Permission: ps.permissionMapper.ConvertDbPermissionRowToGrpcPermission(permission),
+	}
+
+	return resp, nil
+}
+
 func (ps *permissionService) roundToTwoDecimal(val float64) float64 {
 	return math.Round(val*100) / 100
 }
 
 func (ps *permissionService) UpsertPermission(ctx context.Context, req *auth.UpsertPermissionRequest) (*auth.UpsertPermissionResponse, error) {
+	if ps.pool == nil {
+		ps.logger.ErrorString("database pool is nil")
+		return &auth.UpsertPermissionResponse{
+			IsSuccess:    false,
+			PermissionId: "",
+			Error:        utils.DatabaseError("Database connection not available"),
+		}, fmt.Errorf("database pool is nil")
+	}
+
 	tx, err := ps.pool.Begin(ctx)
 	if err != nil {
 		ps.logger.ErrorString("failed to begin transaction for upserting permission")
@@ -159,11 +185,16 @@ func (ps *permissionService) UpsertPermission(ctx context.Context, req *auth.Ups
 }
 
 func (ps *permissionService) DeletePermission(ctx context.Context, req *auth.DeletePermissionRequest) (*auth.DeletePermissionResponse, error) {
-	// TODO: Implement delete permission logic
-	return &auth.DeletePermissionResponse{}, nil
-}
-
-func (ps *permissionService) AssignPermissionToRole(ctx context.Context, req *auth.AssignPermissionRequest) (*auth.AssignPermissionResponse, error) {
-	// TODO: Implement assign permission to role logic
-	return &auth.AssignPermissionResponse{}, nil
+	err := ps.permissionRepo.DeletePermission(ctx, req)
+	if err != nil {
+		ps.logger.ErrorString("failed to delete permission from database")
+		return &auth.DeletePermissionResponse{
+			Success: false,
+			Error:   utils.DatabaseError("Failed to delete permission"),
+		}, err
+	}
+	return &auth.DeletePermissionResponse{
+		Success: true,
+		Error:   nil,
+	}, nil
 }

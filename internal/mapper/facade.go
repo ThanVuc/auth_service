@@ -10,6 +10,7 @@ type (
 		ConvertDbResourcesRowToGrpcResources(resources []database.GetResourcesRow) []*auth.Resource
 		ConvertDbActionsRowToGrpcActions(resources []database.GetActionsRow) []*auth.Action
 		ConvertDbPermissionsRowToGrpcPermissions(permissions []database.GetPermissionsRow) []*auth.PermissionItem
+		ConvertDbPermissionRowToGrpcPermission(permission *[]database.GetPermissionRow) *auth.PermissionItem
 	}
 )
 

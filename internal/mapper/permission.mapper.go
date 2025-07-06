@@ -43,3 +43,43 @@ func (p *permissionMapper) ConvertDbPermissionsRowToGrpcPermissions(permissions 
 
 	return result
 }
+
+func (p *permissionMapper) ConvertDbPermissionRowToGrpcPermission(permission *[]database.GetPermissionRow) *auth.PermissionItem {
+	resp := &auth.PermissionItem{}
+	if permission == nil || len(*permission) == 0 {
+		return resp
+	}
+
+	actions := make([]*auth.Action, 0, len((*permission)))
+	for _, perm := range *permission {
+		if perm.ActionID.Valid && perm.ActionName.Valid {
+			actions = append(actions, &auth.Action{
+				Id:   perm.ActionID.String,
+				Name: perm.ActionName.String,
+			})
+		}
+	}
+
+	perm := (*permission)[0]
+	resp.PermId = perm.PermID.String()
+	resp.PermName = perm.PermissionName
+	resp.Resource = &auth.Resource{
+		Id:   perm.ResourceID,
+		Name: perm.ResourceName,
+	}
+	resp.Description = perm.Description.String
+	resp.IsRoot = perm.IsRoot
+	resp.Actions = actions
+
+	if perm.CreatedAt.Valid {
+		timestamp := perm.CreatedAt.Time.Unix()
+		resp.CreatedAt = &timestamp
+	}
+
+	if perm.UpdatedAt.Valid {
+		timestamp := perm.UpdatedAt.Time.Unix()
+		resp.UpdatedAt = &timestamp
+	}
+
+	return resp
+}

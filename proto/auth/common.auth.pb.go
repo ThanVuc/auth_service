@@ -23,8 +23,8 @@ const (
 
 type Resource struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -75,8 +75,8 @@ func (x *Resource) GetName() string {
 
 type Action struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -127,12 +127,14 @@ func (x *Action) GetName() string {
 
 type PermissionItem struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	PermId        string                 `protobuf:"bytes,1,opt,name=perm_id,json=permId,proto3" json:"perm_id,omitempty"`
-	PermName      string                 `protobuf:"bytes,2,opt,name=perm_name,json=permName,proto3" json:"perm_name,omitempty"`
-	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-	IsRoot        bool                   `protobuf:"varint,4,opt,name=is_root,json=isRoot,proto3" json:"is_root,omitempty"`
-	Resource      *Resource              `protobuf:"bytes,5,opt,name=resource,proto3,oneof" json:"resource,omitempty"`
-	Actions       []*Action              `protobuf:"bytes,6,rep,name=actions,proto3" json:"actions,omitempty"`
+	PermId        string                 `protobuf:"bytes,1,opt,name=perm_id,json=permId,proto3" json:"perm_id"`
+	PermName      string                 `protobuf:"bytes,2,opt,name=perm_name,json=permName,proto3" json:"perm_name"`
+	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description"`
+	IsRoot        bool                   `protobuf:"varint,4,opt,name=is_root,json=isRoot,proto3" json:"is_root"`
+	Resource      *Resource              `protobuf:"bytes,5,opt,name=resource,proto3,oneof" json:"resource"`
+	Actions       []*Action              `protobuf:"bytes,6,rep,name=actions,proto3" json:"actions"`
+	UpdatedAt     *int64                 `protobuf:"varint,7,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at"`
+	CreatedAt     *int64                 `protobuf:"varint,8,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -209,6 +211,20 @@ func (x *PermissionItem) GetActions() []*Action {
 	return nil
 }
 
+func (x *PermissionItem) GetUpdatedAt() int64 {
+	if x != nil && x.UpdatedAt != nil {
+		return *x.UpdatedAt
+	}
+	return 0
+}
+
+func (x *PermissionItem) GetCreatedAt() int64 {
+	if x != nil && x.CreatedAt != nil {
+		return *x.CreatedAt
+	}
+	return 0
+}
+
 var File_auth_service_common_auth_proto protoreflect.FileDescriptor
 
 const file_auth_service_common_auth_proto_rawDesc = "" +
@@ -219,15 +235,21 @@ const file_auth_service_common_auth_proto_rawDesc = "" +
 	"\x04name\x18\x02 \x01(\tR\x04name\",\n" +
 	"\x06Action\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\"\xe7\x01\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\"\xcd\x02\n" +
 	"\x0ePermissionItem\x12\x17\n" +
 	"\aperm_id\x18\x01 \x01(\tR\x06permId\x12\x1b\n" +
 	"\tperm_name\x18\x02 \x01(\tR\bpermName\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x17\n" +
 	"\ais_root\x18\x04 \x01(\bR\x06isRoot\x12/\n" +
 	"\bresource\x18\x05 \x01(\v2\x0e.auth.ResourceH\x00R\bresource\x88\x01\x01\x12&\n" +
-	"\aactions\x18\x06 \x03(\v2\f.auth.ActionR\aactionsB\v\n" +
-	"\t_resourceB\fZ\n" +
+	"\aactions\x18\x06 \x03(\v2\f.auth.ActionR\aactions\x12\"\n" +
+	"\n" +
+	"updated_at\x18\a \x01(\x03H\x01R\tupdatedAt\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"created_at\x18\b \x01(\x03H\x02R\tcreatedAt\x88\x01\x01B\v\n" +
+	"\t_resourceB\r\n" +
+	"\v_updated_atB\r\n" +
+	"\v_created_atB\fZ\n" +
 	"proto/authb\x06proto3"
 
 var (

@@ -31,7 +31,7 @@ type (
 		GetActionsByPermissionId(ctx context.Context, tx pgx.Tx, permId pgtype.UUID) ([]string, error)
 		UpdateActionsToPermission(ctx context.Context, tx pgx.Tx, permId pgtype.UUID, addActionIds []string, deleteActionIds []string) error
 		DeletePermission(ctx context.Context, req *auth.DeletePermissionRequest) error
-		AssignPermissionToRole(ctx context.Context, req *auth.AssignPermissionRequest) error
+		GetPermission(ctx context.Context, req *auth.GetPermissionRequest) (*[]database.GetPermissionRow, error)
 	}
 
 	RoleRepo interface {
@@ -39,7 +39,6 @@ type (
 		UpsertRole(ctx context.Context, req *auth.UpsertRoleRequest) error
 		DeleteRole(ctx context.Context, req *auth.DeleteRoleRequest) error
 		DisableOrEnableRole(ctx context.Context, req *auth.DisableOrEnableRoleRequest) error
-		AssignRoleToUser(ctx context.Context, req *auth.AssignRoleRequest) error
 	}
 
 	TokenRepo interface {
@@ -59,7 +58,6 @@ func NewPermissionRepo() PermissionRepo {
 	return &permissionRepo{
 		sqlc:   database.New(global.PostgresPool),
 		logger: global.Logger,
-		pool:   global.PostgresPool,
 	}
 }
 

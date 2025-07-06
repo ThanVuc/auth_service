@@ -78,8 +78,8 @@ func (ErrorCode) EnumDescriptor() ([]byte, []int) {
 
 type Error struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Code          ErrorCode              `protobuf:"varint,1,opt,name=code,proto3,enum=common.ErrorCode" json:"code,omitempty"`
-	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	Code          ErrorCode              `protobuf:"varint,1,opt,name=code,proto3,enum=common.ErrorCode" json:"code"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

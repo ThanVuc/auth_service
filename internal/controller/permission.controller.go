@@ -18,8 +18,20 @@ func NewPermissionController(permissionService services.PermissionService) *Perm
 	}
 }
 
+func (pc *PermissionController) GetResources(ctx context.Context, req *auth.GetResourcesRequest) (*auth.GetResourcesResponse, error) {
+	return utils.WithSafePanic(ctx, req, pc.permissionService.GetResources)
+}
+
+func (pc *PermissionController) GetActions(ctx context.Context, req *auth.GetActionsRequest) (*auth.GetActionsResponse, error) {
+	return utils.WithSafePanic(ctx, req, pc.permissionService.GetActions)
+}
+
 func (pc *PermissionController) GetPermissions(ctx context.Context, req *auth.GetPermissionsRequest) (*auth.GetPermissionsResponse, error) {
 	return utils.WithSafePanic(ctx, req, pc.permissionService.GetPermissions)
+}
+
+func (pc *PermissionController) GetPermission(ctx context.Context, req *auth.GetPermissionRequest) (*auth.GetPermissionResponse, error) {
+	return utils.WithSafePanic(ctx, req, pc.permissionService.GetPermission)
 }
 
 func (pc *PermissionController) UpsertPermission(ctx context.Context, req *auth.UpsertPermissionRequest) (*auth.UpsertPermissionResponse, error) {
@@ -28,16 +40,4 @@ func (pc *PermissionController) UpsertPermission(ctx context.Context, req *auth.
 
 func (pc *PermissionController) DeletePermission(ctx context.Context, req *auth.DeletePermissionRequest) (*auth.DeletePermissionResponse, error) {
 	return utils.WithSafePanic(ctx, req, pc.permissionService.DeletePermission)
-}
-
-func (pc *PermissionController) AssignPermissionToRole(ctx context.Context, req *auth.AssignPermissionRequest) (*auth.AssignPermissionResponse, error) {
-	return utils.WithSafePanic(ctx, req, pc.permissionService.AssignPermissionToRole)
-}
-
-func (pc *PermissionController) GetResources(ctx context.Context, req *auth.GetResourcesRequest) (*auth.GetResourcesResponse, error) {
-	return utils.WithSafePanic(ctx, req, pc.permissionService.GetResources)
-}
-
-func (pc *PermissionController) GetActions(ctx context.Context, req *auth.GetActionsRequest) (*auth.GetActionsResponse, error) {
-	return utils.WithSafePanic(ctx, req, pc.permissionService.GetActions)
 }
