@@ -30,15 +30,17 @@ type (
 		UpsertPermission(ctx context.Context, tx pgx.Tx, req *auth.UpsertPermissionRequest) (*pgtype.UUID, error)
 		GetActionsByPermissionId(ctx context.Context, tx pgx.Tx, permId pgtype.UUID) ([]string, error)
 		UpdateActionsToPermission(ctx context.Context, tx pgx.Tx, permId pgtype.UUID, addActionIds []string, deleteActionIds []string) error
-		DeletePermission(ctx context.Context, req *auth.DeletePermissionRequest) error
+		DeletePermission(ctx context.Context, req *auth.DeletePermissionRequest) (bool, error)
 		GetPermission(ctx context.Context, req *auth.GetPermissionRequest) (*[]database.GetPermissionRow, error)
 	}
 
 	RoleRepo interface {
-		GetRoles(ctx context.Context, req *auth.GetRolesRequest) error
+		GetRoles(ctx context.Context, req *auth.GetRolesRequest) ([]database.GetRolesRow, int32, int32, error)
+		GetRoleById(ctx context.Context, req *auth.GetRoleRequest) (*[]database.GetRoleByIdRow, error)
 		UpsertRole(ctx context.Context, req *auth.UpsertRoleRequest) error
-		DeleteRole(ctx context.Context, req *auth.DeleteRoleRequest) error
-		DisableOrEnableRole(ctx context.Context, req *auth.DisableOrEnableRoleRequest) error
+		DeleteRole(ctx context.Context, req *auth.DeleteRoleRequest) (bool, error)
+		DisableOrEnableRole(ctx context.Context, req *auth.DisableOrEnableRoleRequest) (bool, error)
+		CountUsersByRoles(ctx context.Context, roleIds []pgtype.UUID) (*[]database.CountUsersByRolesRow, error)
 	}
 
 	TokenRepo interface {

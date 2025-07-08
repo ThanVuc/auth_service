@@ -35,6 +35,7 @@ func InjectPermissionWire() *controller.PermissionController {
 func InjectRoleWire() *controller.RoleController {
 	wire.Build(
 		repos.NewRoleRepo,
+		mapper.NewRoleMapper,
 		services.NewRoleService,
 		controller.NewRoleController,
 	)

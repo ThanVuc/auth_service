@@ -22,6 +22,10 @@ func (pc *RoleController) GetRoles(ctx context.Context, req *auth.GetRolesReques
 	return utils.WithSafePanic(ctx, req, pc.roleService.GetRoles)
 }
 
+func (pc *RoleController) GetRole(ctx context.Context, req *auth.GetRoleRequest) (*auth.GetRoleResponse, error) {
+	return utils.WithSafePanic(ctx, req, pc.roleService.GetRoleById)
+}
+
 func (pc *RoleController) UpsertRole(ctx context.Context, req *auth.UpsertRoleRequest) (*auth.UpsertRoleResponse, error) {
 	return utils.WithSafePanic(ctx, req, pc.roleService.UpsertRole)
 }

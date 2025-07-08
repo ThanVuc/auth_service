@@ -34,6 +34,7 @@ type (
 		UpsertRole(ctx context.Context, req *auth.UpsertRoleRequest) (*auth.UpsertRoleResponse, error)
 		DeleteRole(ctx context.Context, req *auth.DeleteRoleRequest) (*auth.DeleteRoleResponse, error)
 		DisableOrEnableRole(ctx context.Context, req *auth.DisableOrEnableRoleRequest) (*auth.DisableOrEnableRoleResponse, error)
+		GetRoleById(ctx context.Context, req *auth.GetRoleRequest) (*auth.GetRoleResponse, error)
 	}
 
 	TokenService interface {
@@ -63,9 +64,13 @@ func NewPermissionService(
 	}
 }
 
-func NewRoleService(roleRepo repos.RoleRepo) RoleService {
+func NewRoleService(
+	roleRepo repos.RoleRepo,
+	roleMapper mapper.RoleMapper,
+) RoleService {
 	return &roleService{
-		repo: roleRepo,
+		roleRepo:   roleRepo,
+		roleMapper: roleMapper,
 	}
 }
 

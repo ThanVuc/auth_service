@@ -47,6 +47,7 @@ type Role struct {
 	CreatedAt   pgtype.Timestamp
 	UpdatedAt   pgtype.Timestamp
 	IsRoot      bool
+	IsActive    bool
 }
 
 type RolePermission struct {

@@ -646,6 +646,7 @@ type DeletePermissionResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success"`
 	Error         *common.Error          `protobuf:"bytes,2,opt,name=error,proto3,oneof" json:"error"`
+	Message       *string                `protobuf:"bytes,3,opt,name=message,proto3,oneof" json:"message"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -692,6 +693,13 @@ func (x *DeletePermissionResponse) GetError() *common.Error {
 		return x.Error
 	}
 	return nil
+}
+
+func (x *DeletePermissionResponse) GetMessage() string {
+	if x != nil && x.Message != nil {
+		return *x.Message
+	}
+	return ""
 }
 
 var File_auth_service_permission_proto protoreflect.FileDescriptor
@@ -751,11 +759,14 @@ const file_auth_service_permission_proto_rawDesc = "" +
 	"\x05error\x18\x03 \x01(\v2\r.common.ErrorH\x00R\x05error\x88\x01\x01B\b\n" +
 	"\x06_error\">\n" +
 	"\x17DeletePermissionRequest\x12#\n" +
-	"\rpermission_id\x18\x01 \x01(\tR\fpermissionId\"h\n" +
+	"\rpermission_id\x18\x01 \x01(\tR\fpermissionId\"\x93\x01\n" +
 	"\x18DeletePermissionResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12(\n" +
-	"\x05error\x18\x02 \x01(\v2\r.common.ErrorH\x00R\x05error\x88\x01\x01B\b\n" +
-	"\x06_error2\xd8\x03\n" +
+	"\x05error\x18\x02 \x01(\v2\r.common.ErrorH\x00R\x05error\x88\x01\x01\x12\x1d\n" +
+	"\amessage\x18\x03 \x01(\tH\x01R\amessage\x88\x01\x01B\b\n" +
+	"\x06_errorB\n" +
+	"\n" +
+	"\b_message2\xd8\x03\n" +
 	"\x11PermissionService\x12E\n" +
 	"\fGetResources\x12\x19.auth.GetResourcesRequest\x1a\x1a.auth.GetResourcesResponse\x12?\n" +
 	"\n" +

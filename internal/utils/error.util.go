@@ -1,8 +1,11 @@
 package utils
 
 import (
+	"auth_service/global"
 	"auth_service/proto/common"
 	"runtime/debug"
+
+	"go.uber.org/zap"
 )
 
 var ErrorMessage = map[string]string{
@@ -11,51 +14,58 @@ var ErrorMessage = map[string]string{
 	"RuntimeError":  "An unexpected error occurred",
 }
 
-func DatabaseError(detail string) *common.Error {
-	err := &common.Error{
+func DatabaseError(err error) *common.Error {
+	message := "Database operation failed"
+	if err != nil {
+		message += ": " + err.Error()
+	}
+	e := &common.Error{
 		Code:    common.ErrorCode_ERROR_CODE_DATABASE_ERROR,
-		Message: "Database operation failed: " + detail,
+		Message: message,
 	}
-	writeTrace()
-	return err
+	writeTrace(err)
+	return e
 }
 
-func NotFoundError(detail string) *common.Error {
-	err := &common.Error{
+func NotFoundError(err error) *common.Error {
+	e := &common.Error{
 		Code:    common.ErrorCode_ERROR_CODE_NOT_FOUND,
-		Message: "Resource not found: " + detail,
+		Message: "Not found error",
 	}
-	writeTrace()
-	return err
+	writeTrace(err)
+	return e
 }
 
-func RuntimeError(detail string) *common.Error {
-	err := &common.Error{
+func RuntimeError(err error) *common.Error {
+	e := &common.Error{
 		Code:    common.ErrorCode_ERROR_CODE_RUN_TIME_ERROR,
-		Message: "An unexpected error occurred: " + detail,
+		Message: "An unexpected error occurred: runtime error",
 	}
-	writeTrace()
-	return err
+	writeTrace(err)
+	return e
 }
 
-func UnorthorizedError(detail string) *common.Error {
-	err := &common.Error{
+func UnauthorizedError(err error) *common.Error {
+	e := &common.Error{
 		Code:    common.ErrorCode_ERROR_CODE_UNAUTHORIZED,
-		Message: "Unauthorized access: " + detail,
+		Message: "Unauthorized access",
 	}
-	writeTrace()
-	return err
+	writeTrace(err)
+	return e
 }
 
-func PermissionDeniedError(detail string) *common.Error {
-	err := &common.Error{
+func PermissionDeniedError(err error) *common.Error {
+	e := &common.Error{
 		Code:    common.ErrorCode_ERROR_CODE_PERMISSION_DENIED,
-		Message: "Permission denied: " + detail,
+		Message: "Permission denied",
 	}
-	writeTrace()
-	return err
+	writeTrace(err)
+	return e
 }
 
-func writeTrace() {
-	debug.PrintStack()
+func writeTrace(err error) {
+	if err != nil {
+		global.Logger.ErrorString("Error occurred", zap.Error(err))
+		debug.PrintStack()
+	}
 }
