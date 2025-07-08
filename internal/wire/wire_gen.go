@@ -32,7 +32,8 @@ func InjectPermissionWire() *controller.PermissionController {
 
 func InjectRoleWire() *controller.RoleController {
 	roleRepo := repos.NewRoleRepo()
-	roleService := services.NewRoleService(roleRepo)
+	roleMapper := mapper.NewRoleMapper()
+	roleService := services.NewRoleService(roleRepo, roleMapper)
 	roleController := controller.NewRoleController(roleService)
 	return roleController
 }

@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"math"
+
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
@@ -24,4 +26,16 @@ func ToUUID(id string) (pgtype.UUID, error) {
 		Bytes: uuid,
 		Valid: true,
 	}, nil
+}
+
+func RoundToTwoDecimal(val float64) float64 {
+	return math.Round(val*100) / 100
+}
+
+func FromPgTypeTimeToUnix(t pgtype.Timestamp) *int64 {
+	if !t.Valid {
+		return nil
+	}
+	unixTime := t.Time.Unix()
+	return &unixTime
 }

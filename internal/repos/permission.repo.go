@@ -201,18 +201,18 @@ func (r *permissionRepo) GetPermission(ctx context.Context, req *auth.GetPermiss
 	return &permission, nil
 }
 
-func (r *permissionRepo) DeletePermission(ctx context.Context, req *auth.DeletePermissionRequest) error {
+func (r *permissionRepo) DeletePermission(ctx context.Context, req *auth.DeletePermissionRequest) (bool, error) {
 	permissionIdUUID, err := utils.ToUUID(req.PermissionId)
 	if err != nil {
 		r.logger.ErrorString("failed to convert permission id to UUID")
-		return err
+		return false, err
 	}
 
 	err = r.sqlc.DeletePermission(ctx, permissionIdUUID)
 	if err != nil {
 		r.logger.ErrorString("failed to delete permission in database")
-		return err
+		return false, err
 	}
 
-	return nil
+	return true, nil
 }

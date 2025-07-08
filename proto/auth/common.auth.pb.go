@@ -225,6 +225,114 @@ func (x *PermissionItem) GetCreatedAt() int64 {
 	return 0
 }
 
+type RoleItem struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RoleId        string                 `protobuf:"bytes,1,opt,name=role_id,json=roleId,proto3" json:"role_id"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name"`
+	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description"`
+	IsRoot        bool                   `protobuf:"varint,4,opt,name=is_root,json=isRoot,proto3" json:"is_root"`
+	Permissions   []*PermissionItem      `protobuf:"bytes,5,rep,name=permissions,proto3" json:"permissions"`
+	UpdatedAt     *int64                 `protobuf:"varint,6,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at"`
+	CreatedAt     *int64                 `protobuf:"varint,7,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at"`
+	TotalUsers    int32                  `protobuf:"varint,8,opt,name=total_users,json=totalUsers,proto3" json:"total_users"`
+	IsActive      bool                   `protobuf:"varint,9,opt,name=is_active,json=isActive,proto3" json:"is_active"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RoleItem) Reset() {
+	*x = RoleItem{}
+	mi := &file_auth_service_common_auth_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RoleItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RoleItem) ProtoMessage() {}
+
+func (x *RoleItem) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_service_common_auth_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RoleItem.ProtoReflect.Descriptor instead.
+func (*RoleItem) Descriptor() ([]byte, []int) {
+	return file_auth_service_common_auth_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *RoleItem) GetRoleId() string {
+	if x != nil {
+		return x.RoleId
+	}
+	return ""
+}
+
+func (x *RoleItem) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *RoleItem) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *RoleItem) GetIsRoot() bool {
+	if x != nil {
+		return x.IsRoot
+	}
+	return false
+}
+
+func (x *RoleItem) GetPermissions() []*PermissionItem {
+	if x != nil {
+		return x.Permissions
+	}
+	return nil
+}
+
+func (x *RoleItem) GetUpdatedAt() int64 {
+	if x != nil && x.UpdatedAt != nil {
+		return *x.UpdatedAt
+	}
+	return 0
+}
+
+func (x *RoleItem) GetCreatedAt() int64 {
+	if x != nil && x.CreatedAt != nil {
+		return *x.CreatedAt
+	}
+	return 0
+}
+
+func (x *RoleItem) GetTotalUsers() int32 {
+	if x != nil {
+		return x.TotalUsers
+	}
+	return 0
+}
+
+func (x *RoleItem) GetIsActive() bool {
+	if x != nil {
+		return x.IsActive
+	}
+	return false
+}
+
 var File_auth_service_common_auth_proto protoreflect.FileDescriptor
 
 const file_auth_service_common_auth_proto_rawDesc = "" +
@@ -249,6 +357,21 @@ const file_auth_service_common_auth_proto_rawDesc = "" +
 	"created_at\x18\b \x01(\x03H\x02R\tcreatedAt\x88\x01\x01B\v\n" +
 	"\t_resourceB\r\n" +
 	"\v_updated_atB\r\n" +
+	"\v_created_at\"\xce\x02\n" +
+	"\bRoleItem\x12\x17\n" +
+	"\arole_id\x18\x01 \x01(\tR\x06roleId\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
+	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x17\n" +
+	"\ais_root\x18\x04 \x01(\bR\x06isRoot\x126\n" +
+	"\vpermissions\x18\x05 \x03(\v2\x14.auth.PermissionItemR\vpermissions\x12\"\n" +
+	"\n" +
+	"updated_at\x18\x06 \x01(\x03H\x00R\tupdatedAt\x88\x01\x01\x12\"\n" +
+	"\n" +
+	"created_at\x18\a \x01(\x03H\x01R\tcreatedAt\x88\x01\x01\x12\x1f\n" +
+	"\vtotal_users\x18\b \x01(\x05R\n" +
+	"totalUsers\x12\x1b\n" +
+	"\tis_active\x18\t \x01(\bR\bisActiveB\r\n" +
+	"\v_updated_atB\r\n" +
 	"\v_created_atB\fZ\n" +
 	"proto/authb\x06proto3"
 
@@ -264,20 +387,22 @@ func file_auth_service_common_auth_proto_rawDescGZIP() []byte {
 	return file_auth_service_common_auth_proto_rawDescData
 }
 
-var file_auth_service_common_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_auth_service_common_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_auth_service_common_auth_proto_goTypes = []any{
 	(*Resource)(nil),       // 0: auth.Resource
 	(*Action)(nil),         // 1: auth.Action
 	(*PermissionItem)(nil), // 2: auth.PermissionItem
+	(*RoleItem)(nil),       // 3: auth.RoleItem
 }
 var file_auth_service_common_auth_proto_depIdxs = []int32{
 	0, // 0: auth.PermissionItem.resource:type_name -> auth.Resource
 	1, // 1: auth.PermissionItem.actions:type_name -> auth.Action
-	2, // [2:2] is the sub-list for method output_type
-	2, // [2:2] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	2, // 2: auth.RoleItem.permissions:type_name -> auth.PermissionItem
+	3, // [3:3] is the sub-list for method output_type
+	3, // [3:3] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_auth_service_common_auth_proto_init() }
@@ -286,13 +411,14 @@ func file_auth_service_common_auth_proto_init() {
 		return
 	}
 	file_auth_service_common_auth_proto_msgTypes[2].OneofWrappers = []any{}
+	file_auth_service_common_auth_proto_msgTypes[3].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_auth_service_common_auth_proto_rawDesc), len(file_auth_service_common_auth_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
