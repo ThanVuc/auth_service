@@ -37,10 +37,12 @@ type (
 	RoleRepo interface {
 		GetRoles(ctx context.Context, req *auth.GetRolesRequest) ([]database.GetRolesRow, int32, int32, error)
 		GetRoleById(ctx context.Context, req *auth.GetRoleRequest) (*[]database.GetRoleByIdRow, error)
-		UpsertRole(ctx context.Context, req *auth.UpsertRoleRequest) error
+		UpsertRole(ctx context.Context, tx pgx.Tx, req *auth.UpsertRoleRequest) (string, error)
 		DeleteRole(ctx context.Context, req *auth.DeleteRoleRequest) (bool, error)
 		DisableOrEnableRole(ctx context.Context, req *auth.DisableOrEnableRoleRequest) (bool, error)
 		CountUsersByRoles(ctx context.Context, roleIds []pgtype.UUID) (*[]database.CountUsersByRolesRow, error)
+		GetPermissionIdsByRole(ctx context.Context, tx pgx.Tx, roleId string) ([]pgtype.UUID, error)
+		UpsertPermissionsForRole(ctx context.Context, tx pgx.Tx, roleId string, addPerms *[]pgtype.UUID, delPerms *[]pgtype.UUID) (bool, error)
 	}
 
 	TokenRepo interface {

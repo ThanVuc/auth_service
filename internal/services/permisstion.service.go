@@ -141,19 +141,8 @@ func (ps *permissionService) UpsertPermission(ctx context.Context, req *auth.Ups
 		}, err
 	}
 
-	addActionIds := make([]string, 0)
-	deleteActionIds := make([]string, 0)
-	for _, action := range req.ActionsIds {
-		if !utils.Contains(dbActions, action) {
-			addActionIds = append(addActionIds, action)
-		}
-	}
-
-	for _, dbAction := range dbActions {
-		if !utils.Contains(req.ActionsIds, dbAction) {
-			deleteActionIds = append(deleteActionIds, dbAction)
-		}
-	}
+	addActionIds := utils.Difference(req.ActionIds, dbActions)
+	deleteActionIds := utils.Difference(dbActions, req.ActionIds)
 
 	err = ps.permissionRepo.UpdateActionsToPermission(ctx, tx, *permId, addActionIds, deleteActionIds)
 	if err != nil {

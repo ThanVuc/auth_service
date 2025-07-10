@@ -6,13 +6,16 @@ import (
 	"auth_service/internal/utils"
 	"auth_service/proto/auth"
 	"context"
+	"errors"
 
 	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type roleService struct {
 	roleRepo   repos.RoleRepo
 	roleMapper mapper.RoleMapper
+	pool       *pgxpool.Pool
 }
 
 func (rs *roleService) GetRoles(ctx context.Context, req *auth.GetRolesRequest) (*auth.GetRolesResponse, error) {
@@ -90,8 +93,74 @@ func (rs *roleService) GetRoleById(ctx context.Context, req *auth.GetRoleRequest
 }
 
 func (rs *roleService) UpsertRole(ctx context.Context, req *auth.UpsertRoleRequest) (*auth.UpsertRoleResponse, error) {
-	// TODO: Implement upsert role logic
-	return &auth.UpsertRoleResponse{}, nil
+	tx, err := rs.pool.Begin(ctx)
+	if err != nil {
+		return &auth.UpsertRoleResponse{
+			Error: utils.DatabaseError(err),
+		}, err
+	}
+
+	roleId, err := rs.roleRepo.UpsertRole(ctx, tx, req)
+	if err != nil {
+		tx.Rollback(ctx)
+		return &auth.UpsertRoleResponse{
+			Error: utils.DatabaseError(err),
+		}, err
+	}
+
+	if req.PermissionIds != nil {
+		// Get existing permissions for the role
+		existingPerms, err := rs.roleRepo.GetPermissionIdsByRole(ctx, tx, roleId)
+		if err != nil {
+			tx.Rollback(ctx)
+			return &auth.UpsertRoleResponse{
+				Error: utils.DatabaseError(err),
+			}, err
+		}
+
+		reqPermUUIDs := make([]pgtype.UUID, 0, len(req.PermissionIds))
+		for _, permId := range req.PermissionIds {
+			permUUID, err := utils.ToUUID(permId)
+			if err != nil {
+				tx.Rollback(ctx)
+				return &auth.UpsertRoleResponse{
+					Error: utils.RuntimeError(errors.New("Invalid permission ID format: " + permId)),
+				}, err
+			}
+			reqPermUUIDs = append(reqPermUUIDs, permUUID)
+		}
+
+		addPerms := utils.Difference(reqPermUUIDs, existingPerms)
+		delPerms := utils.Difference(existingPerms, reqPermUUIDs)
+
+		if len(addPerms) > 0 || len(delPerms) > 0 {
+			isSuccess, err := rs.roleRepo.UpsertPermissionsForRole(ctx, tx, roleId, &addPerms, &delPerms)
+			if err != nil {
+				tx.Rollback(ctx)
+				return &auth.UpsertRoleResponse{
+					Error: utils.DatabaseError(err),
+				}, err
+			}
+			if !isSuccess {
+				tx.Rollback(ctx)
+				msg := "Failed to update permissions for the role"
+				return &auth.UpsertRoleResponse{
+					IsSuccess: false,
+					Message:   msg,
+				}, nil
+			}
+		}
+	}
+	if err := tx.Commit(ctx); err != nil {
+		return &auth.UpsertRoleResponse{
+			Error: utils.DatabaseError(err),
+		}, err
+	}
+
+	return &auth.UpsertRoleResponse{
+		IsSuccess: true,
+		Message:   "Role upserted successfully",
+	}, nil
 }
 
 func (rs *roleService) DeleteRole(ctx context.Context, req *auth.DeleteRoleRequest) (*auth.DeleteRoleResponse, error) {
@@ -136,8 +205,4 @@ func (rs *roleService) DisableOrEnableRole(ctx context.Context, req *auth.Disabl
 		Success: true,
 		Message: nil,
 	}, nil
-}
-
-func (rs *roleService) GetRole(ctx context.Context, req *auth.GetRoleRequest) (*auth.GetRoleResponse, error) {
-	return &auth.GetRoleResponse{}, nil
 }

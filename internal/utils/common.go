@@ -39,3 +39,18 @@ func FromPgTypeTimeToUnix(t pgtype.Timestamp) *int64 {
 	unixTime := t.Time.Unix()
 	return &unixTime
 }
+
+func Difference[T comparable](a, b []T) []T {
+	m := make(map[T]struct{}, len(b))
+	for _, item := range b {
+		m[item] = struct{}{}
+	}
+
+	var diff []T
+	for _, item := range a {
+		if _, found := m[item]; !found {
+			diff = append(diff, item)
+		}
+	}
+	return diff
+}
