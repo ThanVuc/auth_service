@@ -468,7 +468,7 @@ type UpsertPermissionRequest struct {
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name"`
 	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description"`
 	ResourceId    string                 `protobuf:"bytes,4,opt,name=resource_id,json=resourceId,proto3" json:"resource_id"`
-	ActionsIds    []string               `protobuf:"bytes,5,rep,name=actions_ids,json=actionsIds,proto3" json:"actions_ids"`
+	ActionIds     []string               `protobuf:"bytes,5,rep,name=action_ids,json=actionIds,proto3" json:"action_ids"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -531,9 +531,9 @@ func (x *UpsertPermissionRequest) GetResourceId() string {
 	return ""
 }
 
-func (x *UpsertPermissionRequest) GetActionsIds() []string {
+func (x *UpsertPermissionRequest) GetActionIds() []string {
 	if x != nil {
-		return x.ActionsIds
+		return x.ActionIds
 	}
 	return nil
 }
@@ -742,15 +742,15 @@ const file_auth_service_permission_proto_rawDesc = "" +
 	"permission\x18\x01 \x01(\v2\x14.auth.PermissionItemR\n" +
 	"permission\x12(\n" +
 	"\x05error\x18\x02 \x01(\v2\r.common.ErrorH\x00R\x05error\x88\x01\x01B\b\n" +
-	"\x06_error\"\xcd\x01\n" +
+	"\x06_error\"\xcb\x01\n" +
 	"\x17UpsertPermissionRequest\x12(\n" +
 	"\rpermission_id\x18\x01 \x01(\tH\x00R\fpermissionId\x88\x01\x01\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x1f\n" +
 	"\vresource_id\x18\x04 \x01(\tR\n" +
-	"resourceId\x12\x1f\n" +
-	"\vactions_ids\x18\x05 \x03(\tR\n" +
-	"actionsIdsB\x10\n" +
+	"resourceId\x12\x1d\n" +
+	"\n" +
+	"action_ids\x18\x05 \x03(\tR\tactionIdsB\x10\n" +
 	"\x0e_permission_id\"\x92\x01\n" +
 	"\x18UpsertPermissionResponse\x12\x1d\n" +
 	"\n" +

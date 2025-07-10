@@ -71,6 +71,7 @@ func NewRoleService(
 	return &roleService{
 		roleRepo:   roleRepo,
 		roleMapper: roleMapper,
+		pool:       global.PostgresPool,
 	}
 }
 

@@ -32,10 +32,7 @@ const (
 // AuthServiceClient is the client API for AuthService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-//
-// The gRPC service definition
 type AuthServiceClient interface {
-	// A simple RPC
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error)
 	ConfirmEmail(ctx context.Context, in *ConfirmEmailRequest, opts ...grpc.CallOption) (*ConfirmEmailResponse, error)
@@ -137,10 +134,7 @@ func (c *authServiceClient) SaveRouteResource(ctx context.Context, in *SaveRoute
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility.
-//
-// The gRPC service definition
 type AuthServiceServer interface {
-	// A simple RPC
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	Register(context.Context, *RegisterRequest) (*RegisterResponse, error)
 	ConfirmEmail(context.Context, *ConfirmEmailRequest) (*ConfirmEmailResponse, error)

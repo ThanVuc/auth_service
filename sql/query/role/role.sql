@@ -50,3 +50,36 @@ from roles r
 left join user_roles ur on r.role_id = ur.role_id
 where r.role_id = any($1::uuid[])
 group by r.role_id;
+
+-- name: IsRootRole :one
+select is_root
+from roles
+where role_id = $1;
+
+-- name: InsertRole :one
+insert into roles (name, description)
+values ($1, $2)
+returning role_id;
+
+-- name: UpdateRole :execrows
+update roles
+set name = $1, description = $2
+where role_id = $3 and is_root = false;
+
+-- name: AddPermissionsToRole :execrows
+insert into role_permissions (role_id, perm_id)
+select $1, unnest($2::UUID[])
+where not exists (
+    select 1
+    from role_permissions
+    where role_id = $1 and perm_id = any($2::UUID[])
+);
+
+-- name: RemovePermissionsFromRole :execrows
+delete from role_permissions
+where role_id = $1 and perm_id = any($2::uuid[]);
+
+-- name: GetPermissionIdsByRole :many
+select perm_id
+from role_permissions
+where role_id = $1;

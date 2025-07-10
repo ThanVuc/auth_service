@@ -11,6 +11,29 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const addPermissionsToRole = `-- name: AddPermissionsToRole :execrows
+insert into role_permissions (role_id, perm_id)
+select $1, unnest($2::UUID[])
+where not exists (
+    select 1
+    from role_permissions
+    where role_id = $1 and perm_id = any($2::UUID[])
+)
+`
+
+type AddPermissionsToRoleParams struct {
+	RoleID  pgtype.UUID
+	Column2 []pgtype.UUID
+}
+
+func (q *Queries) AddPermissionsToRole(ctx context.Context, arg AddPermissionsToRoleParams) (int64, error) {
+	result, err := q.db.Exec(ctx, addPermissionsToRole, arg.RoleID, arg.Column2)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
+}
+
 const countRootRoles = `-- name: CountRootRoles :one
 select count(role_id) as total
 from roles
@@ -97,6 +120,32 @@ func (q *Queries) DisableOrEnableRole(ctx context.Context, roleID pgtype.UUID) (
 		return 0, err
 	}
 	return result.RowsAffected(), nil
+}
+
+const getPermissionIdsByRole = `-- name: GetPermissionIdsByRole :many
+select perm_id
+from role_permissions
+where role_id = $1
+`
+
+func (q *Queries) GetPermissionIdsByRole(ctx context.Context, roleID pgtype.UUID) ([]pgtype.UUID, error) {
+	rows, err := q.db.Query(ctx, getPermissionIdsByRole, roleID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []pgtype.UUID
+	for rows.Next() {
+		var perm_id pgtype.UUID
+		if err := rows.Scan(&perm_id); err != nil {
+			return nil, err
+		}
+		items = append(items, perm_id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getRoleById = `-- name: GetRoleById :many
@@ -208,4 +257,73 @@ func (q *Queries) GetRoles(ctx context.Context, arg GetRolesParams) ([]GetRolesR
 		return nil, err
 	}
 	return items, nil
+}
+
+const insertRole = `-- name: InsertRole :one
+insert into roles (name, description)
+values ($1, $2)
+returning role_id
+`
+
+type InsertRoleParams struct {
+	Name        string
+	Description pgtype.Text
+}
+
+func (q *Queries) InsertRole(ctx context.Context, arg InsertRoleParams) (pgtype.UUID, error) {
+	row := q.db.QueryRow(ctx, insertRole, arg.Name, arg.Description)
+	var role_id pgtype.UUID
+	err := row.Scan(&role_id)
+	return role_id, err
+}
+
+const isRootRole = `-- name: IsRootRole :one
+select is_root
+from roles
+where role_id = $1
+`
+
+func (q *Queries) IsRootRole(ctx context.Context, roleID pgtype.UUID) (bool, error) {
+	row := q.db.QueryRow(ctx, isRootRole, roleID)
+	var is_root bool
+	err := row.Scan(&is_root)
+	return is_root, err
+}
+
+const removePermissionsFromRole = `-- name: RemovePermissionsFromRole :execrows
+delete from role_permissions
+where role_id = $1 and perm_id = any($2::uuid[])
+`
+
+type RemovePermissionsFromRoleParams struct {
+	RoleID  pgtype.UUID
+	Column2 []pgtype.UUID
+}
+
+func (q *Queries) RemovePermissionsFromRole(ctx context.Context, arg RemovePermissionsFromRoleParams) (int64, error) {
+	result, err := q.db.Exec(ctx, removePermissionsFromRole, arg.RoleID, arg.Column2)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
+}
+
+const updateRole = `-- name: UpdateRole :execrows
+update roles
+set name = $1, description = $2
+where role_id = $3 and is_root = false
+`
+
+type UpdateRoleParams struct {
+	Name        string
+	Description pgtype.Text
+	RoleID      pgtype.UUID
+}
+
+func (q *Queries) UpdateRole(ctx context.Context, arg UpdateRoleParams) (int64, error) {
+	result, err := q.db.Exec(ctx, updateRole, arg.Name, arg.Description, arg.RoleID)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
 }

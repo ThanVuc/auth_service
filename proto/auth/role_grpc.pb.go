@@ -29,8 +29,6 @@ const (
 // RoleServiceClient is the client API for RoleService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-//
-// The gRPC service definition
 type RoleServiceClient interface {
 	GetRoles(ctx context.Context, in *GetRolesRequest, opts ...grpc.CallOption) (*GetRolesResponse, error)
 	GetRole(ctx context.Context, in *GetRoleRequest, opts ...grpc.CallOption) (*GetRoleResponse, error)
@@ -100,8 +98,6 @@ func (c *roleServiceClient) DisableOrEnableRole(ctx context.Context, in *Disable
 // RoleServiceServer is the server API for RoleService service.
 // All implementations must embed UnimplementedRoleServiceServer
 // for forward compatibility.
-//
-// The gRPC service definition
 type RoleServiceServer interface {
 	GetRoles(context.Context, *GetRolesRequest) (*GetRolesResponse, error)
 	GetRole(context.Context, *GetRoleRequest) (*GetRoleResponse, error)
