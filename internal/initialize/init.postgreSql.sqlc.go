@@ -8,13 +8,8 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	_ "github.com/jackc/pgx/v5/stdlib"
+	"go.uber.org/zap"
 )
-
-func checkInitError(err error) {
-	if err != nil {
-		panic("failed to initialize PostgreSQL: " + err.Error())
-	}
-}
 
 /*
 @Author: Sinh
@@ -28,14 +23,34 @@ func InitPostgreSQL() {
 	logger := global.Logger
 	dsn := "host=%s user=%s password=%s dbname=%s port=%d sslmode=disable TimeZone=Asia/Shanghai"
 	configs := global.Config.Postgres
+	println(dsn)
 	var connectString = fmt.Sprintf(dsn, configs.Host, configs.User, configs.Password, configs.Database, configs.Port)
 	ctx := context.Background()
-	config, err := pgxpool.ParseConfig(connectString)
-	checkInitError(err)
-	setPostgresConfig(config)
-	pool, err := pgxpool.NewWithConfig(ctx, config)
-	checkInitError(err)
-	global.PostgresPool = pool
+	for {
+		config, err := pgxpool.ParseConfig(connectString)
+		if err != nil {
+			logger.ErrorString("Failed to parse PostgreSQL connection string", zap.Error(err))
+			time.Sleep(5 * time.Second)
+			continue
+		}
+		setPostgresConfig(config)
+		pool, err := pgxpool.NewWithConfig(ctx, config)
+		if err != nil {
+			logger.ErrorString("Failed to create PostgreSQL connection pool", zap.Error(err))
+			time.Sleep(5 * time.Second)
+			continue
+		}
+
+		if err := pool.Ping(ctx); err != nil {
+			logger.ErrorString("Failed to ping PostgreSQL", zap.Error(err))
+			pool.Close()
+			time.Sleep(5 * time.Second)
+			continue
+		}
+
+		global.PostgresPool = pool
+		break
+	}
 	logger.InfoString("PostgreSQL connection pool initialized")
 }
 
