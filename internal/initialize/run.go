@@ -1,6 +1,7 @@
 package initialize
 
 import (
+	"auth_service/global"
 	"context"
 	"os"
 	"os/signal"
@@ -24,19 +25,16 @@ func Run() {
 	LoadConfig()
 	InitLogger()
 	InitPostgreSQL()
+	RunMigrations(global.PostgresPool)
 	// InitRedis()
 	// InitRabbitMQ()
 
-	// Listen for OS signals to gracefully shut down the application
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
 	NewAuthService().RunServers(ctx, wg)
 
-	// InitAllConsumers(ctx, global.Logger)
-
-	// Wait for a signal to stop the application and cancel the context
 	<-stop
 	cancel()
 
-	wg.Wait() // Wait for all goroutines to finish
+	wg.Wait()
 }

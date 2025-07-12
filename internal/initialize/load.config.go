@@ -3,6 +3,7 @@ package initialize
 import (
 	"auth_service/global"
 	"fmt"
+	"os"
 
 	"github.com/spf13/viper"
 )
@@ -16,8 +17,14 @@ The configuration file file is loaded to the global.Config variable.
 func LoadConfig() {
 	viper := viper.New()
 	// Add both the relative path and current directory for flexibility
-	viper.AddConfigPath("./config/")
-	viper.SetConfigName("dev")
+	print("Loading configuration...")
+	env := os.Getenv("GO_ENV")
+	if env == "" {
+		env = "dev"
+	}
+
+	viper.AddConfigPath("./")
+	viper.SetConfigName(env)
 	viper.SetConfigType("yaml")
 
 	// Read in the config file
