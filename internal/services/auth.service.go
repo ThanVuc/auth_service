@@ -2,18 +2,18 @@ package services
 
 import (
 	"auth_service/internal/repos"
-	"auth_service/pkg/loggers"
 	"auth_service/proto/auth"
 	"auth_service/proto/common"
 	"context"
 	"fmt"
 
+	"github.com/thanvuc/go-core-lib/log"
 	"go.uber.org/zap"
 )
 
 type authService struct {
 	authRepo repos.AuthRepo
-	logger   *loggers.LoggerZap
+	logger   log.Logger
 }
 
 func (as *authService) SaveRouteResource(ctx context.Context, req *auth.SaveRouteResourceRequest) (*auth.SaveRouteResourceResponse, error) {

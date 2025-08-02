@@ -3,17 +3,17 @@ package repos
 import (
 	"auth_service/internal/database"
 	"auth_service/internal/utils"
-	"auth_service/pkg/loggers"
 	"auth_service/proto/auth"
 	"context"
 	"database/sql"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/thanvuc/go-core-lib/log"
 )
 
 type permissionRepo struct {
-	logger *loggers.LoggerZap
+	logger log.Logger
 	sqlc   *database.Queries
 }
 

@@ -2,11 +2,15 @@ package initialize
 
 import (
 	"auth_service/global"
-	"auth_service/pkg/loggers"
+	"os"
+
+	"github.com/thanvuc/go-core-lib/log"
 )
 
 func InitLogger() {
-	global.Logger = loggers.NewLogger(
-		global.Config.Log,
-	)
+	env := os.Getenv("GO_ENV")
+	global.Logger = log.NewLogger(log.Config{
+		Env:   env,
+		Level: global.Config.Log.Level,
+	})
 }

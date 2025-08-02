@@ -4,7 +4,6 @@ import (
 	"auth_service/global"
 	"auth_service/internal/controller"
 	"auth_service/internal/wire"
-	"auth_service/pkg/loggers"
 	"auth_service/pkg/settings"
 	"auth_service/proto/auth"
 	"context"
@@ -12,6 +11,7 @@ import (
 	"net"
 	"sync"
 
+	"github.com/thanvuc/go-core-lib/log"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
@@ -21,7 +21,7 @@ type AuthServer struct {
 	permissionServiceServer *controller.PermissionController
 	roleServiceServer       *controller.RoleController
 	tokenServiceServer      *controller.TokenController
-	logger                  *loggers.LoggerZap
+	logger                  log.Logger
 	config                  *settings.Server
 }
 

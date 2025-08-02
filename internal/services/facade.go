@@ -55,7 +55,7 @@ func NewPermissionService(
 	return &permissionService{
 		permissionRepo:   permissionRepo,
 		permissionMapper: mapper,
-		logger:           *global.Logger,
+		logger:           global.Logger,
 		pool:             global.PostgresPool,
 	}
 }

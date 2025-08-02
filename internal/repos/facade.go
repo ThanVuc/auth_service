@@ -67,7 +67,6 @@ func NewRoleRepo() RoleRepo {
 
 func NewTokenRepo() TokenRepo {
 	return &tokenRepo{
-		redisDb: global.RedisDb,
-		logger:  global.Logger,
+		logger: global.Logger,
 	}
 }

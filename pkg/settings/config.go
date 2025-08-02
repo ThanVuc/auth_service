@@ -35,6 +35,7 @@ type Redis struct {
 	Password string `mapstructure:"password" json:"password" yaml:"password"`
 	DB       int    `mapstructure:"db" json:"db" yaml:"db"`
 	PoolSize int    `mapstructure:"pool_size" json:"pool_size" yaml:"pool_size"`
+	MinIdle  int    `mapstructure:"min_idle" json:"min_idle" yaml:"min_idle"`
 }
 
 type Log struct {

@@ -4,18 +4,18 @@ import (
 	"auth_service/internal/mapper"
 	"auth_service/internal/repos"
 	"auth_service/internal/utils"
-	"auth_service/pkg/loggers"
 	"auth_service/proto/auth"
 	"context"
 	"fmt"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/thanvuc/go-core-lib/log"
 )
 
 type permissionService struct {
 	permissionRepo   repos.PermissionRepo
 	permissionMapper mapper.PermissionMapper
-	logger           loggers.LoggerZap
+	logger           log.Logger
 	pool             *pgxpool.Pool
 }
 

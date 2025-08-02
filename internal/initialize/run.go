@@ -7,6 +7,8 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
+
+	"go.uber.org/zap"
 )
 
 /*
@@ -25,7 +27,11 @@ func Run() {
 	LoadConfig()
 	InitLogger()
 	InitPostgreSQL()
+	InitRedis()
+
 	RunMigrations(global.PostgresPool)
+
+	logger := global.Logger
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
@@ -33,6 +39,17 @@ func Run() {
 
 	<-stop
 	cancel()
+	err := global.RedisDb.Close()
+	if err != nil {
+		logger.Error("Failed to close Redis connection", "", zap.Error(err))
+	} else {
+		global.Logger.Info("Redis connection closed successfully", "")
+	}
+	if err := global.Logger.Sync(); err != nil {
+		logger.Error("Failed to sync logger", "", zap.Error(err))
+	} else {
+		global.Logger.Info("Logger synced successfully", "")
+	}
 
 	wg.Wait()
 }
