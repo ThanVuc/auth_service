@@ -16,7 +16,7 @@ func InitRabbitMQ() error {
 	url := fmt.Sprintf("amqp://%s:%s@%s:%d/", config.User, config.Password, config.Host, config.Port)
 	conn, err := amqp.Dial(url)
 	if err != nil {
-		logger.ErrorString("mq.GetConnection: failed to connect to RabbitMQ", zap.String("error", err.Error()))
+		logger.Error("mq.GetConnection: failed to connect to RabbitMQ", "", zap.Error(err))
 		return err
 	}
 
@@ -27,11 +27,11 @@ func InitRabbitMQ() error {
 	global.RabbitMQSharedChannel, err = global.RabbitMQConnection.Channel()
 
 	if err != nil {
-		logger.ErrorString("mq.GetConnection: failed to open a channel", zap.String("error", err.Error()))
+		logger.Error("mq.GetConnection: failed to open a channel", "", zap.Error(err))
 		return err
 	}
 
-	logger.InfoString("mq.GetConnection: RabbitMQ connection established successfully")
+	logger.Info("mq.GetConnection: RabbitMQ connection established successfully", "")
 	return nil
 }
 
@@ -40,13 +40,13 @@ func CloseConnection() error {
 	if global.RabbitMQConnection != nil {
 		err := global.RabbitMQConnection.Close()
 		if err != nil {
-			logger.ErrorString("mq.CloseConnection: failed to close RabbitMQ connection", zap.String("error", err.Error()))
+			logger.Info("mq.CloseConnection: failed to close RabbitMQ connection", "")
 			return err
 		}
-		logger.InfoString("mq.CloseConnection: RabbitMQ connection closed successfully")
+		logger.Info("mq.CloseConnection: RabbitMQ connection closed successfully", "")
 		return nil
 	}
 
-	logger.InfoString("mq.CloseConnection: no RabbitMQ connection to close")
+	logger.Info("mq.CloseConnection: no RabbitMQ connection to close", "")
 	return nil
 }

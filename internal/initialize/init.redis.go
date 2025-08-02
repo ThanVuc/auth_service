@@ -33,7 +33,7 @@ func InitRedis() {
 		panic("Failed to connect to Redis: " + err.Error())
 	}
 
-	global.Logger.InfoString("Redis connection established successfully")
+	global.Logger.Info("Redis connection established successfully", "")
 	global.RedisDb = rdb
 }
 

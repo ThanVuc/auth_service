@@ -3,8 +3,6 @@ package utils
 import (
 	"auth_service/global"
 	"context"
-	"fmt"
-	"runtime/debug"
 
 	"go.uber.org/zap"
 )
@@ -14,16 +12,26 @@ func WithSafePanic[TReq any, TResp any](
 	req TReq,
 	f func(context.Context, TReq) (TResp, error),
 ) (TResp, error) {
+	requestId := GetRequestIDFromOutgoingContext(ctx)
 	defer func() {
 		if r := recover(); r != nil {
 			logger := global.Logger
-			stack := string(debug.Stack())
-			logger.ErrorString("Recovered from panic", zap.Any("error", r),
-				zap.Any("request", req),
-				zap.String("stacktrace", stack))
-
-			fmt.Println("stacktrace: \n" + stack)
+			logger.Error("Recovered from panic",
+				requestId,
+				zap.Any("error", r),
+			)
 		}
 	}()
-	return f(ctx, req)
+
+	resp, err := f(ctx, req)
+	if err != nil {
+		logger := global.Logger
+		logger.Error("Error occurred in WithSafePanic",
+			requestId,
+			zap.Error(err),
+		)
+		return resp, err
+	}
+
+	return resp, err
 }

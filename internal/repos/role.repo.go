@@ -73,7 +73,6 @@ func (r *roleRepo) DeleteRole(ctx context.Context, req *auth.DeleteRoleRequest) 
 	count, err := r.sqlc.DeleteRole(ctx, roleId)
 
 	if err != nil {
-		println("Failed to delete role from database:", err)
 		return false, err
 	}
 
@@ -92,7 +91,6 @@ func (r *roleRepo) DisableOrEnableRole(ctx context.Context, req *auth.DisableOrE
 
 	count, err := r.sqlc.DisableOrEnableRole(ctx, roleId)
 	if err != nil {
-		r.logger.ErrorString("failed to disable or enable role in database")
 		return false, err
 	}
 
@@ -112,14 +110,12 @@ func (r *roleRepo) UpsertRole(ctx context.Context, tx pgx.Tx, req *auth.UpsertRo
 		})
 
 		if err != nil {
-			r.logger.ErrorString("failed to insert role in database")
 			return "", err
 		}
 		return roleId.String(), nil
 	}
 	roleId, err := utils.ToUUID(*req.RoleId)
 	if err != nil {
-		r.logger.ErrorString("failed to convert role id to UUID")
 		return "", err
 	}
 	rowCount, err := sqlcTx.UpdateRole(ctx, database.UpdateRoleParams{
@@ -129,12 +125,10 @@ func (r *roleRepo) UpsertRole(ctx context.Context, tx pgx.Tx, req *auth.UpsertRo
 	})
 
 	if err != nil {
-		r.logger.ErrorString("failed to update role in database")
 		return "", err
 	}
 
 	if rowCount == 0 {
-		r.logger.ErrorString("no rows updated while trying to update role in database")
 		return "", pgx.ErrNoRows
 	}
 
@@ -144,18 +138,15 @@ func (r *roleRepo) UpsertRole(ctx context.Context, tx pgx.Tx, req *auth.UpsertRo
 func (r *roleRepo) GetPermissionIdsByRole(ctx context.Context, tx pgx.Tx, roleId string) ([]pgtype.UUID, error) {
 	roleIdUUID, err := utils.ToUUID(roleId)
 	if err != nil {
-		r.logger.ErrorString("failed to convert role id to UUID")
 		return nil, err
 	}
 
 	if roleIdUUID == (pgtype.UUID{}) {
-		r.logger.ErrorString("role id is empty")
 		return nil, pgx.ErrNoRows
 	}
 
 	permIds, err := r.sqlc.GetPermissionIdsByRole(ctx, roleIdUUID)
 	if err != nil {
-		r.logger.ErrorString("failed to get permission ids by role")
 		return nil, err
 	}
 
@@ -165,12 +156,10 @@ func (r *roleRepo) GetPermissionIdsByRole(ctx context.Context, tx pgx.Tx, roleId
 func (r *roleRepo) UpsertPermissionsForRole(ctx context.Context, tx pgx.Tx, roleId string, addPerms *[]pgtype.UUID, delPerms *[]pgtype.UUID) (bool, error) {
 	roleIdUUID, err := utils.ToUUID(roleId)
 	if err != nil {
-		r.logger.ErrorString("failed to convert role id to UUID")
 		return false, err
 	}
 
 	if roleIdUUID == (pgtype.UUID{}) {
-		r.logger.ErrorString("role id is empty")
 		return false, pgx.ErrNoRows
 	}
 
@@ -182,12 +171,10 @@ func (r *roleRepo) UpsertPermissionsForRole(ctx context.Context, tx pgx.Tx, role
 		})
 
 		if err != nil {
-			r.logger.ErrorString("failed to add permissions to role in database")
 			return false, err
 		}
 
 		if count == 0 {
-			r.logger.ErrorString("no permissions added to role in database")
 			return false, pgx.ErrNoRows
 		}
 	}
@@ -199,12 +186,10 @@ func (r *roleRepo) UpsertPermissionsForRole(ctx context.Context, tx pgx.Tx, role
 		})
 
 		if err != nil {
-			r.logger.ErrorString("failed to remove permissions from role in database")
 			return false, err
 		}
 
 		if count == 0 {
-			r.logger.ErrorString("no permissions removed from role in database")
 			return false, pgx.ErrNoRows
 		}
 	}

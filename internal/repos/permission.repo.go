@@ -10,7 +10,6 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
-	"go.uber.org/zap"
 )
 
 type permissionRepo struct {
@@ -21,7 +20,6 @@ type permissionRepo struct {
 func (r *permissionRepo) GetResources(ctx context.Context) ([]database.GetResourcesRow, error) {
 	resources, err := r.sqlc.GetResources(ctx)
 	if err != nil {
-		r.logger.ErrorString("failed to get resources in database")
 		return nil, err
 	}
 	return resources, nil
@@ -30,7 +28,6 @@ func (r *permissionRepo) GetResources(ctx context.Context) ([]database.GetResour
 func (r *permissionRepo) GetActions(ctx context.Context, resourceId string) ([]database.GetActionsRow, error) {
 	actions, err := r.sqlc.GetActions(ctx, resourceId)
 	if err != nil {
-		r.logger.ErrorString("failed to get actions in database")
 		return nil, err
 	}
 	return actions, nil
@@ -48,12 +45,6 @@ func (r *permissionRepo) GetPermissions(ctx context.Context, req *auth.GetPermis
 		},
 	)
 	if err != nil {
-		r.logger.ErrorString("failed to get permissions in database",
-			zap.Error(err),
-			zap.String("search", req.Search),
-			zap.String("resourceId", req.ResourceId),
-			zap.Int32("limit", pagination.Limit),
-			zap.Int32("offset", pagination.Offset))
 		return nil, 0, 0, err
 	}
 
@@ -66,7 +57,6 @@ func (r *permissionRepo) GetPermissions(ctx context.Context, req *auth.GetPermis
 	)
 
 	if err != nil {
-		r.logger.ErrorString("failed to count permissions in database")
 		return nil, 0, 0, err
 	}
 
@@ -88,7 +78,6 @@ func (r *permissionRepo) UpsertPermission(ctx context.Context, tx pgx.Tx, req *a
 		// Update existing permission
 		var permUUID pgtype.UUID
 		if err := permUUID.Scan(*req.PermissionId); err != nil {
-			r.logger.ErrorString("failed to parse permission id to UUID")
 			return nil, err
 		}
 
@@ -103,12 +92,10 @@ func (r *permissionRepo) UpsertPermission(ctx context.Context, tx pgx.Tx, req *a
 		)
 
 		if err != nil && err == sql.ErrNoRows {
-			r.logger.ErrorString("The permission does not exist in the database")
 			return nil, err
 		}
 
 		if err != nil {
-			r.logger.ErrorString("failed to update permission in database")
 			return nil, err
 		}
 
@@ -125,7 +112,6 @@ func (r *permissionRepo) UpsertPermission(ctx context.Context, tx pgx.Tx, req *a
 	)
 
 	if err != nil {
-		r.logger.ErrorString("failed to create permission in database")
 		return nil, err
 	}
 
@@ -136,7 +122,6 @@ func (r *permissionRepo) GetActionsByPermissionId(ctx context.Context, tx pgx.Tx
 	sqlcTx := r.sqlc.WithTx(tx)
 	actions, err := sqlcTx.GetActionsByPermissionId(ctx, permId)
 	if err != nil {
-		r.logger.ErrorString("failed to get actions by permission id in database")
 		return nil, err
 	}
 
@@ -158,7 +143,6 @@ func (r *permissionRepo) UpdateActionsToPermission(ctx context.Context, tx pgx.T
 			},
 		)
 		if err != nil {
-			r.logger.ErrorString("failed to add actions to permission in database")
 			return err
 		}
 	}
@@ -172,7 +156,6 @@ func (r *permissionRepo) UpdateActionsToPermission(ctx context.Context, tx pgx.T
 			},
 		)
 		if err != nil {
-			r.logger.ErrorString("failed to delete actions from permission in database")
 			return err
 		}
 	}
@@ -183,18 +166,15 @@ func (r *permissionRepo) UpdateActionsToPermission(ctx context.Context, tx pgx.T
 func (r *permissionRepo) GetPermission(ctx context.Context, req *auth.GetPermissionRequest) (*[]database.GetPermissionRow, error) {
 	permissionIdUUID, err := utils.ToUUID(req.PermissionId)
 	if err != nil {
-		r.logger.ErrorString("failed to convert permission id to UUID")
 		return nil, err
 	}
 
 	permission, err := r.sqlc.GetPermission(ctx, permissionIdUUID)
 	if err != nil {
-		r.logger.ErrorString("failed to get permission in database")
 		return nil, err
 	}
 
 	if permission == nil {
-		r.logger.ErrorString("permission not found in database")
 		return nil, sql.ErrNoRows
 	}
 
@@ -204,13 +184,11 @@ func (r *permissionRepo) GetPermission(ctx context.Context, req *auth.GetPermiss
 func (r *permissionRepo) DeletePermission(ctx context.Context, req *auth.DeletePermissionRequest) (bool, error) {
 	permissionIdUUID, err := utils.ToUUID(req.PermissionId)
 	if err != nil {
-		r.logger.ErrorString("failed to convert permission id to UUID")
 		return false, err
 	}
 
 	err = r.sqlc.DeletePermission(ctx, permissionIdUUID)
 	if err != nil {
-		r.logger.ErrorString("failed to delete permission in database")
 		return false, err
 	}
 

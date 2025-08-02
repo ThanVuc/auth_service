@@ -47,15 +47,15 @@ func WriteToJsonFile(fileName string) {
 	filePath := "./backup/" + fileName + ".json"
 	file, err := os.OpenFile(filePath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
 	if err != nil {
-		logger.ErrorString("Failed to open file for writing", zap.Error(err))
+		logger.Error("Failed to open file for writing", "", zap.Error(err))
 	}
 	defer file.Close()
 
 	encoder := json.NewEncoder(file)
 	encoder.SetIndent("", "  ")
 	if err := encoder.Encode(resourceList); err != nil {
-		logger.ErrorString("Failed to encode resource list to JSON", zap.Error(err))
+		logger.Error("Failed to encode resource list to JSON", "", zap.Error(err))
 	} else {
-		logger.InfoString("Resource list written to JSON file successfully", zap.String("file_path", filePath))
+		logger.Info("Resource list written to JSON file successfully", "", zap.String("file_path", filePath))
 	}
 }

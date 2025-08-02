@@ -16,6 +16,7 @@ require (
 
 require (
 	github.com/mfridman/interpolate v0.0.2 // indirect
+	github.com/rabbitmq/amqp091-go v1.10.0 // indirect
 	github.com/sethvargo/go-retry v0.3.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250324211829-b45e905df463 // indirect
 )
