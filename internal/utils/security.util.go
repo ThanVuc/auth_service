@@ -13,9 +13,9 @@ func WithSafePanic[TReq any, TResp any](
 	f func(context.Context, TReq) (TResp, error),
 ) (TResp, error) {
 	requestId := GetRequestIDFromOutgoingContext(ctx)
+	logger := global.Logger
 	defer func() {
 		if r := recover(); r != nil {
-			logger := global.Logger
 			logger.Error("Recovered from panic",
 				requestId,
 				zap.Any("error", r),
@@ -25,7 +25,6 @@ func WithSafePanic[TReq any, TResp any](
 
 	resp, err := f(ctx, req)
 	if err != nil {
-		logger := global.Logger
 		logger.Error("Error occurred in WithSafePanic",
 			requestId,
 			zap.Error(err),

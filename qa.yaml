@@ -15,6 +15,7 @@ redis:
   password: redis1234
   db: 0
   pool_size: 10
+  min_idle: 2
 
 log:
   level: DEBUG
@@ -23,12 +24,6 @@ log:
   max_backups: 3
   max_age: 15
   compress: true
-
-rabbitmq:
-  host: rabbitmq
-  port: 5672
-  user: guest
-  password: guest
 
 server:
   host: 0.0.0.0

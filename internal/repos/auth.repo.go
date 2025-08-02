@@ -2,13 +2,14 @@ package repos
 
 import (
 	"auth_service/internal/database"
-	"auth_service/pkg/loggers"
 	"context"
+
+	"github.com/thanvuc/go-core-lib/log"
 )
 
 type authRepo struct {
 	sqlc   *database.Queries
-	logger *loggers.LoggerZap
+	logger log.Logger
 }
 
 // All the below methods are for testing purposes only

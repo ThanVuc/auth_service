@@ -1,26 +1,21 @@
 package controller
 
 import (
-	"auth_service/global"
-	"auth_service/proto/auth"
-	"auth_service/proto/common"
-
 	"auth_service/internal/services"
 	"auth_service/internal/utils"
-	"auth_service/pkg/loggers"
+	"auth_service/proto/auth"
+	"auth_service/proto/common"
 	"context"
 )
 
 type AuthController struct {
 	auth.UnimplementedAuthServiceServer
 	authService services.AuthService
-	logger      *loggers.LoggerZap
 }
 
 func NewAuthController(authService services.AuthService) *AuthController {
 	return &AuthController{
 		authService: authService,
-		logger:      global.Logger,
 	}
 }
 

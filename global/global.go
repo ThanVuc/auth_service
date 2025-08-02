@@ -1,12 +1,12 @@
 package global
 
 import (
-	"auth_service/pkg/loggers"
 	"auth_service/pkg/settings"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/redis/go-redis/v9"
 	"github.com/streadway/amqp"
+	"github.com/thanvuc/go-core-lib/cache"
+	"github.com/thanvuc/go-core-lib/log"
 )
 
 /*
@@ -16,9 +16,9 @@ import (
 */
 var (
 	Config                settings.Config
-	Logger                *loggers.LoggerZap
+	Logger                log.Logger
 	PostgresPool          *pgxpool.Pool
-	RedisDb               *redis.Client
+	RedisDb               *cache.RedisCache
 	RabbitMQConnection    *amqp.Connection
 	RabbitMQSharedChannel *amqp.Channel
 )

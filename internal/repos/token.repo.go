@@ -1,16 +1,14 @@
 package repos
 
 import (
-	"auth_service/pkg/loggers"
 	"auth_service/proto/auth"
 	"context"
 
-	"github.com/redis/go-redis/v9"
+	"github.com/thanvuc/go-core-lib/log"
 )
 
 type tokenRepo struct {
-	logger  *loggers.LoggerZap
-	redisDb *redis.Client
+	logger log.Logger
 }
 
 func (r *tokenRepo) RefreshToken(ctx context.Context, req *auth.RefreshTokenRequest) error {
