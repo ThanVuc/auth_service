@@ -45,8 +45,8 @@ func (as *AuthServer) runServiceServer(ctx context.Context, wg *sync.WaitGroup) 
 	defer wg.Done()
 	lis, err := as.createListener()
 	if err != nil {
-		as.logger.ErrorString("Failed to create listener",
-			zap.Error(err),
+		as.logger.Error("Failed to create listener",
+			"", zap.Error(err),
 		)
 		return
 	}
@@ -63,19 +63,19 @@ func (as *AuthServer) runServiceServer(ctx context.Context, wg *sync.WaitGroup) 
 
 func (as *AuthServer) gracefullyShutdownServer(ctx context.Context, server *grpc.Server) {
 	<-ctx.Done()
-	as.logger.InfoString("gRPC server is shutting down...")
+	as.logger.Info("gRPC server is shutting down...", "")
 	server.GracefulStop()
-	as.logger.InfoString("gRPC server stopped gracefully!")
+	as.logger.Info("gRPC server stopped gracefully!", "")
 }
 
 func (as *AuthServer) serverListening(server *grpc.Server, lis net.Listener) {
-	as.logger.InfoString(fmt.Sprintf("gRPC server listening on %s:%d", as.config.Host, lis.Addr().(*net.TCPAddr).Port))
+	as.logger.Info(fmt.Sprintf("gRPC server listening on %s:%d", as.config.Host, lis.Addr().(*net.TCPAddr).Port), "")
 	if err := server.Serve(lis); err != nil {
 		if err == grpc.ErrServerStopped {
-			as.logger.InfoString("gRPC server exited normally")
+			as.logger.Info("gRPC server exited normally", "")
 		} else {
-			as.logger.ErrorString("Failed to serve gRPC server",
-				zap.Error(err),
+			as.logger.Error("Failed to serve gRPC server",
+				"", zap.Error(err),
 			)
 		}
 	}
@@ -102,7 +102,7 @@ func (as *AuthServer) createListener() (net.Listener, error) {
 	lis := net.Listener(nil)
 	lis, err = net.Listen("tcp", fmt.Sprintf("%s:%d", as.config.Host, as.config.AuthPort))
 	if err != nil {
-		as.logger.ErrorString("Failed to listen: %v", zap.String("error", err.Error()))
+		as.logger.Error("Failed to listen: %v", "", zap.Error(err))
 		return nil, err
 	}
 

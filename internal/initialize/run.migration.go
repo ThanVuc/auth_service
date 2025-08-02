@@ -6,7 +6,6 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jackc/pgx/v5/stdlib"
 	"github.com/pressly/goose/v3"
-	"go.uber.org/zap"
 )
 
 func RunMigrations(db *pgxpool.Pool) {
@@ -21,5 +20,5 @@ func RunMigrations(db *pgxpool.Pool) {
 		panic("Failed to apply migrations: " + err.Error())
 	}
 
-	logger.InfoString("Migrations applied successfully from", zap.String("migrationsDir", migrationsDir))
+	logger.Info("Migrations applied successfully from", "")
 }

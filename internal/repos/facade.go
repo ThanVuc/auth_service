@@ -14,13 +14,6 @@ type (
 	AuthRepo interface {
 		SyncResources(ctx context.Context, ids []string, names []string) error
 		SyncActions(ctx context.Context, ids, resourceIds, names []string) error
-		Login(ctx context.Context, req *auth.LoginRequest) error
-		Register(ctx context.Context, req *auth.RegisterRequest) error
-		ConfirmEmail(ctx context.Context, req *auth.ConfirmEmailRequest) error
-		Logout(ctx context.Context, req *auth.LogoutRequest) error
-		ForgotPassword(ctx context.Context, req *auth.ForgotPasswordRequest) error
-		ConfirmForgotPassword(ctx context.Context, req *auth.ConfirmForgotPasswordRequest) error
-		ResetPassword(ctx context.Context, req *auth.ResetPasswordRequest) error
 	}
 
 	PermissionRepo interface {

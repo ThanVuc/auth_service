@@ -5,19 +5,15 @@ import (
 	"auth_service/internal/mapper"
 	"auth_service/internal/repos"
 	"auth_service/proto/auth"
+	"auth_service/proto/common"
 	"context"
 )
 
 type (
 	AuthService interface {
 		SaveRouteResource(ctx context.Context, items *auth.SaveRouteResourceRequest) (*auth.SaveRouteResourceResponse, error)
-		Login(ctx context.Context, req *auth.LoginRequest) (*auth.LoginResponse, error)
-		Register(ctx context.Context, req *auth.RegisterRequest) (*auth.RegisterResponse, error)
-		ConfirmEmail(ctx context.Context, req *auth.ConfirmEmailRequest) (*auth.ConfirmEmailResponse, error)
-		Logout(ctx context.Context, req *auth.LogoutRequest) (*auth.LogoutResponse, error)
-		ForgotPassword(ctx context.Context, req *auth.ForgotPasswordRequest) (*auth.ForgotPasswordResponse, error)
-		ConfirmForgotPassword(ctx context.Context, req *auth.ConfirmForgotPasswordRequest) (*auth.ConfirmForgotPasswordResponse, error)
-		ResetPassword(ctx context.Context, req *auth.ResetPasswordRequest) (*auth.ResetPasswordResponse, error)
+		LoginWithGoogle(ctx context.Context, req *auth.LoginWithGoogleRequest) (*auth.LoginWithGoogleResponse, error)
+		Logout(ctx context.Context, req *auth.LogoutRequest) (*common.EmptyResponse, error)
 	}
 
 	PermissionService interface {

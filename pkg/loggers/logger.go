@@ -1,10 +1,10 @@
 package loggers
 
 import (
-	"auth_service/internal/models"
-	"auth_service/pkg/response"
 	"auth_service/pkg/settings"
+	"fmt"
 	"os"
+	"runtime/debug"
 	"time"
 
 	"github.com/natefinch/lumberjack"
@@ -14,34 +14,58 @@ import (
 
 type LoggerZap struct {
 	*zap.Logger
+	env string
 }
 
 func (l *LoggerZap) Error(
-	errRes response.ErrorResponse,
+	errorMessage string,
 	requestId string,
-	stack []byte,
+	fields ...zap.Field,
 ) {
-	l.Logger.Error(errRes.Message,
-		zap.Int("status_code", errRes.StatusCode),
-		zap.String("error_reason", errRes.CodeReason),
-		zap.String("message", errRes.Message),
-		zap.String("request_id", requestId),
-		zap.String("stack", string(stack)),
+	if l.env == "dev" {
+		println("Error:", errorMessage)
+		println("Request ID:", requestId)
+		for _, field := range fields {
+			println(fmt.Sprintf("%v", field))
+		}
+		println("Stack Trace:", string(debug.Stack()))
+		return
+	}
+
+	l.Logger.Error(
+		errorMessage,
+		append([]zap.Field{
+			zap.String("request_id", requestId),
+			zap.Stack("stack_trace"),
+		}, fields...)...,
 	)
 }
 
-func (l *LoggerZap) ErrorString(message string, fields ...zap.Field) {
-	l.Logger.Error(message, fields...)
-}
-
 // Overwrite the Error method to accept a LogString
-func (l *LoggerZap) Info(message models.LogString, fields ...zap.Field) {
-	l.Logger.Info(message.String(), fields...)
+func (l *LoggerZap) Info(
+	message string,
+	requestId string,
+	fields ...zap.Field,
+) {
+	l.Logger.Info(
+		message,
+		append([]zap.Field{
+			zap.String("request_id", requestId),
+		}, fields...)...,
+	)
 }
 
-// Overwrite the Info method to accept a string message
-func (l *LoggerZap) InfoString(message string, fields ...zap.Field) {
-	l.Logger.Info(message, fields...)
+func (l *LoggerZap) Warn(
+	message string,
+	requestId string,
+	fields ...zap.Field,
+) {
+	l.Logger.Warn(
+		message,
+		append([]zap.Field{
+			zap.String("request_id", requestId),
+		}, fields...)...,
+	)
 }
 
 // Create a new LoggerZap instance with the provided configuration
@@ -63,8 +87,15 @@ func NewLogger(cfg settings.Log) *LoggerZap {
 		zapcore.NewMultiWriteSyncer(zapcore.AddSync(os.Stdout), zapcore.AddSync(&hook)),
 		level,
 	)
+
+	env := os.Getenv("GO_ENV")
+	if env == "" {
+		env = "dev"
+	}
+
 	return &LoggerZap{
 		Logger: zap.New(core, zap.AddCaller()),
+		env:    env,
 	}
 }
 
@@ -76,7 +107,7 @@ func getEncoder() zapcore.Encoder {
 	encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
 	encoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
 	encoderConfig.EncodeCaller = zapcore.ShortCallerEncoder
-	return zapcore.NewJSONEncoder(encoderConfig)
+	return zapcore.NewConsoleEncoder(encoderConfig)
 }
 
 // getLogLevelFromConfig returns the zapcore.Level based on the log level string from the config

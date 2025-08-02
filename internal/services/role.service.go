@@ -7,6 +7,7 @@ import (
 	"auth_service/proto/auth"
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -52,9 +53,9 @@ func (rs *roleService) GetRoles(ctx context.Context, req *auth.GetRolesRequest) 
 			Roles:      nil,
 			TotalRoles: 0,
 			NonRoot:    0,
-			Error:      utils.DatabaseError(err),
+			Error:      utils.DatabaseError(),
 			PageInfo:   utils.ToPageInfo(req.PageQuery.Page, req.PageQuery.PageSize, totalRoles),
-		}, err
+		}, fmt.Errorf("failed to count users by roles: %w", err)
 	}
 
 	roleCountsMap := make(map[pgtype.UUID]int32, 0)
@@ -83,8 +84,8 @@ func (rs *roleService) GetRoleById(ctx context.Context, req *auth.GetRoleRequest
 	if err != nil {
 		return &auth.GetRoleResponse{
 			Role:  nil,
-			Error: utils.DatabaseError(err),
-		}, err
+			Error: utils.DatabaseError(),
+		}, fmt.Errorf("failed to get role by ID: %w", err)
 	}
 
 	if len(*roles) == 0 {
@@ -102,20 +103,20 @@ func (rs *roleService) UpsertRole(ctx context.Context, req *auth.UpsertRoleReque
 	tx, err := rs.pool.Begin(ctx)
 	if err != nil {
 		return &auth.UpsertRoleResponse{
-			Error:     utils.DatabaseError(err),
+			Error:     utils.DatabaseError(),
 			IsSuccess: false,
 			Message:   "Failed to begin transaction",
-		}, err
+		}, fmt.Errorf("failed to begin transaction: %w", err)
 	}
 
 	roleId, err := rs.roleRepo.UpsertRole(ctx, tx, req)
 	if err != nil {
 		tx.Rollback(ctx)
 		return &auth.UpsertRoleResponse{
-			Error:     utils.DatabaseError(err),
+			Error:     utils.DatabaseError(),
 			IsSuccess: false,
 			Message:   "Failed to upsert role",
-		}, err
+		}, fmt.Errorf("failed to upsert role: %w", err)
 	}
 
 	if req.PermissionIds != nil {
@@ -124,10 +125,10 @@ func (rs *roleService) UpsertRole(ctx context.Context, req *auth.UpsertRoleReque
 		if err != nil {
 			tx.Rollback(ctx)
 			return &auth.UpsertRoleResponse{
-				Error:     utils.DatabaseError(err),
+				Error:     utils.DatabaseError(),
 				IsSuccess: false,
 				Message:   "Failed to get existing permissions for the role",
-			}, err
+			}, fmt.Errorf("failed to get existing permissions for the role: %w", err)
 		}
 
 		reqPermUUIDs := make([]pgtype.UUID, 0, len(req.PermissionIds))
@@ -136,10 +137,10 @@ func (rs *roleService) UpsertRole(ctx context.Context, req *auth.UpsertRoleReque
 			if err != nil {
 				tx.Rollback(ctx)
 				return &auth.UpsertRoleResponse{
-					Error:     utils.RuntimeError(errors.New("Invalid permission ID format: " + permId)),
+					Error:     utils.RuntimeError(),
 					IsSuccess: false,
 					Message:   "Invalid permission ID format",
-				}, err
+				}, fmt.Errorf("invalid permission ID format: %w", err)
 			}
 			reqPermUUIDs = append(reqPermUUIDs, permUUID)
 		}
@@ -152,10 +153,10 @@ func (rs *roleService) UpsertRole(ctx context.Context, req *auth.UpsertRoleReque
 			if err != nil {
 				tx.Rollback(ctx)
 				return &auth.UpsertRoleResponse{
-					Error:     utils.DatabaseError(err),
+					Error:     utils.DatabaseError(),
 					IsSuccess: false,
 					Message:   "Failed to update permissions for the role",
-				}, err
+				}, fmt.Errorf("failed to update permissions for the role: %w", err)
 			}
 			if !isSuccess {
 				tx.Rollback(ctx)
@@ -169,7 +170,7 @@ func (rs *roleService) UpsertRole(ctx context.Context, req *auth.UpsertRoleReque
 	}
 	if err := tx.Commit(ctx); err != nil {
 		return &auth.UpsertRoleResponse{
-			Error: utils.DatabaseError(err),
+			Error: utils.DatabaseError(),
 		}, err
 	}
 
@@ -184,10 +185,10 @@ func (rs *roleService) DeleteRole(ctx context.Context, req *auth.DeleteRoleReque
 	if err != nil {
 		msg := "failed to delete role from database"
 		return &auth.DeleteRoleResponse{
-			Error:   utils.DatabaseError(err),
+			Error:   utils.DatabaseError(),
 			Success: false,
 			Message: &msg,
-		}, err
+		}, fmt.Errorf("failed to delete role: %w", err)
 	}
 
 	if !isSuccess {
@@ -195,7 +196,7 @@ func (rs *roleService) DeleteRole(ctx context.Context, req *auth.DeleteRoleReque
 		return &auth.DeleteRoleResponse{
 			Success: false,
 			Message: &msg,
-		}, nil
+		}, errors.New("role not found or cannot be deleted")
 	}
 
 	return &auth.DeleteRoleResponse{
@@ -209,10 +210,10 @@ func (rs *roleService) DisableOrEnableRole(ctx context.Context, req *auth.Disabl
 
 	if err != nil {
 		return &auth.DisableOrEnableRoleResponse{
-			Error:   utils.DatabaseError(err),
+			Error:   utils.DatabaseError(),
 			Success: false,
 			Message: nil,
-		}, err
+		}, fmt.Errorf("failed to disable or enable role: %w", err)
 	}
 	if !isSuccess {
 		msg := "Role not found or cannot be disabled/enabled"

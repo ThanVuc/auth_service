@@ -4,6 +4,7 @@ import (
 	"auth_service/internal/repos"
 	"auth_service/pkg/loggers"
 	"auth_service/proto/auth"
+	"auth_service/proto/common"
 	"context"
 	"fmt"
 
@@ -25,7 +26,7 @@ func (as *authService) SaveRouteResource(ctx context.Context, req *auth.SaveRout
 	items := req.Items
 
 	if len(items) == 0 {
-		as.logger.ErrorString("no items to save", zap.Error(fmt.Errorf("error arise at SaveRouteResource/auth.service.go")))
+		as.logger.Error("no items to save: error arise at SaveRouteResource/auth.service.go", "", zap.Error(fmt.Errorf("no items to save")))
 		return nil, fmt.Errorf("no items to save")
 	}
 
@@ -48,13 +49,13 @@ func (as *authService) SaveRouteResource(ctx context.Context, req *auth.SaveRout
 	// Save resources
 	err := as.authRepo.SyncResources(ctx, resourceIds, reourceName)
 	if err != nil {
-		as.logger.ErrorString("Failed to sync resources", zap.Error(err))
+		as.logger.Error("Failed to sync resources", "", zap.Error(err))
 		return nil, err
 	}
 
 	err = as.authRepo.SyncActions(ctx, actionIds, actionResourceIds, actionName)
 	if err != nil {
-		as.logger.ErrorString("Failed to sync actions", zap.Error(err))
+		as.logger.Error("Failed to sync actions", "", zap.Error(err))
 		return nil, err
 	}
 
@@ -66,37 +67,12 @@ func (as *authService) SaveRouteResource(ctx context.Context, req *auth.SaveRout
 	return resp, nil
 }
 
-func (as *authService) Login(ctx context.Context, req *auth.LoginRequest) (*auth.LoginResponse, error) {
+func (as *authService) LoginWithGoogle(ctx context.Context, req *auth.LoginWithGoogleRequest) (*auth.LoginWithGoogleResponse, error) {
 	// TODO: Implement login logic
-	return &auth.LoginResponse{}, nil
+	return &auth.LoginWithGoogleResponse{}, nil
 }
 
-func (as *authService) Register(ctx context.Context, req *auth.RegisterRequest) (*auth.RegisterResponse, error) {
-	// TODO: Implement register logic
-	return &auth.RegisterResponse{}, nil
-}
-
-func (as *authService) ConfirmEmail(ctx context.Context, req *auth.ConfirmEmailRequest) (*auth.ConfirmEmailResponse, error) {
-	// TODO: Implement confirm email logic
-	return &auth.ConfirmEmailResponse{}, nil
-}
-
-func (as *authService) Logout(ctx context.Context, req *auth.LogoutRequest) (*auth.LogoutResponse, error) {
+func (as *authService) Logout(ctx context.Context, req *auth.LogoutRequest) (*common.EmptyResponse, error) {
 	// TODO: Implement logout logic
-	return &auth.LogoutResponse{}, nil
-}
-
-func (as *authService) ForgotPassword(ctx context.Context, req *auth.ForgotPasswordRequest) (*auth.ForgotPasswordResponse, error) {
-	// TODO: Implement forgot password logic
-	return &auth.ForgotPasswordResponse{}, nil
-}
-
-func (as *authService) ConfirmForgotPassword(ctx context.Context, req *auth.ConfirmForgotPasswordRequest) (*auth.ConfirmForgotPasswordResponse, error) {
-	// TODO: Implement confirm forgot password logic
-	return &auth.ConfirmForgotPasswordResponse{}, nil
-}
-
-func (as *authService) ResetPassword(ctx context.Context, req *auth.ResetPasswordRequest) (*auth.ResetPasswordResponse, error) {
-	// TODO: Implement reset password logic
-	return &auth.ResetPasswordResponse{}, nil
+	return &common.EmptyResponse{}, nil
 }

@@ -29,20 +29,20 @@ func InitPostgreSQL() {
 	for {
 		config, err := pgxpool.ParseConfig(connectString)
 		if err != nil {
-			logger.ErrorString("Failed to parse PostgreSQL connection string", zap.Error(err))
+			logger.Error("Failed to parse PostgreSQL connection string", "", zap.Error(err))
 			time.Sleep(5 * time.Second)
 			continue
 		}
 		setPostgresConfig(config)
 		pool, err := pgxpool.NewWithConfig(ctx, config)
 		if err != nil {
-			logger.ErrorString("Failed to create PostgreSQL connection pool", zap.Error(err))
+			logger.Error("Failed to create PostgreSQL connection pool", "", zap.Error(err))
 			time.Sleep(5 * time.Second)
 			continue
 		}
 
 		if err := pool.Ping(ctx); err != nil {
-			logger.ErrorString("Failed to ping PostgreSQL", zap.Error(err))
+			logger.Error("Failed to ping PostgreSQL", "", zap.Error(err))
 			pool.Close()
 			time.Sleep(5 * time.Second)
 			continue
@@ -51,7 +51,7 @@ func InitPostgreSQL() {
 		global.PostgresPool = pool
 		break
 	}
-	logger.InfoString("PostgreSQL connection pool initialized")
+	logger.Info("PostgreSQL connection pool initialized", "")
 }
 
 func setPostgresConfig(config *pgxpool.Config) {
