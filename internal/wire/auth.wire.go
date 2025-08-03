@@ -11,7 +11,7 @@ import (
 	"github.com/google/wire"
 )
 
-func InjectAuthWire() *controller.AuthController {
+func InjectAuthController() *controller.AuthController {
 	wire.Build(
 		repos.NewAuthRepo,
 		services.NewAuthService,
@@ -21,7 +21,7 @@ func InjectAuthWire() *controller.AuthController {
 	return nil
 }
 
-func InjectPermissionWire() *controller.PermissionController {
+func InjectPermissionController() *controller.PermissionController {
 	wire.Build(
 		repos.NewPermissionRepo,
 		mapper.NewPermissionMapper,
@@ -32,7 +32,7 @@ func InjectPermissionWire() *controller.PermissionController {
 	return nil
 }
 
-func InjectRoleWire() *controller.RoleController {
+func InjectRoleController() *controller.RoleController {
 	wire.Build(
 		repos.NewRoleRepo,
 		mapper.NewRoleMapper,
@@ -43,7 +43,7 @@ func InjectRoleWire() *controller.RoleController {
 	return nil
 }
 
-func InjectTokenWire() *controller.TokenController {
+func InjectTokenController() *controller.TokenController {
 	wire.Build(
 		repos.NewTokenRepo,
 		services.NewTokenService,

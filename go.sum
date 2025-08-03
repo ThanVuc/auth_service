@@ -139,6 +139,8 @@ github.com/thanvuc/go-core-lib v1.0.2 h1:KupJEpnuZiTzlSGHhne4kE4QPjSO1DRuuNfvPdk
 github.com/thanvuc/go-core-lib v1.0.2/go.mod h1:2MDXIyH0dKs1CCJZnRHdV9ny27efP5GHuPxuJjbDrUo=
 github.com/thanvuc/go-core-lib v1.0.3 h1:h0chE+m9/SE5bZoB1YsU4nukbO+9QcuQa5miG9hUS/I=
 github.com/thanvuc/go-core-lib v1.0.3/go.mod h1:2MDXIyH0dKs1CCJZnRHdV9ny27efP5GHuPxuJjbDrUo=
+github.com/thanvuc/go-core-lib v1.0.4 h1:hkm3DOgOGOJ9Kz2vYIpW6IJhXFN1IqgnTyR6iLbWa1g=
+github.com/thanvuc/go-core-lib v1.0.4/go.mod h1:2MDXIyH0dKs1CCJZnRHdV9ny27efP5GHuPxuJjbDrUo=
 github.com/twitchyliquid64/golang-asm v0.15.1 h1:SU5vSMR7hnwNxj24w34ZyCi/FmDZTkS4MhqMhdFk5YI=
 github.com/twitchyliquid64/golang-asm v0.15.1/go.mod h1:a1lVb/DtPvCB8fslRZhAngC2+aY1QWCk3Cedj/Gdt08=
 github.com/ugorji/go/codec v1.2.12 h1:9LC83zGrHhuUA9l16C9AHXAqEV/2wBQ4nkvumAE65EE=

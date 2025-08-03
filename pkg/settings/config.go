@@ -39,12 +39,7 @@ type Redis struct {
 }
 
 type Log struct {
-	Level       string `mapstructure:"level" json:"level" yaml:"level"`
-	FileLogPath string `mapstructure:"file_log_path" json:"file_log_path" yaml:"file_log_path"`
-	MaxSize     int    `mapstructure:"max_size" json:"max_size" yaml:"max_size"`
-	MaxBackups  int    `mapstructure:"max_backups" json:"max_backups" yaml:"max_backups"`
-	MaxAge      int    `mapstructure:"max_age" json:"max_age" yaml:"max_age"`
-	Compress    bool   `mapstructure:"compress" json:"compress" yaml:"compress"`
+	Level string `mapstructure:"level" json:"level" yaml:"level"`
 }
 
 type RabbitMQ struct {

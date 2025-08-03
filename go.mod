@@ -9,7 +9,7 @@ require (
 	github.com/jackc/pgx/v5 v5.7.5
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/redis/go-redis/v9 v9.11.0
-	github.com/thanvuc/go-core-lib v1.0.3
+	github.com/thanvuc/go-core-lib v1.0.4
 	go.uber.org/zap v1.27.0
 	google.golang.org/grpc v1.73.0
 )
