@@ -15,14 +15,14 @@ import (
 
 // Injectors from auth.wire.go:
 
-func InjectAuthWire() *controller.AuthController {
+func InjectAuthController() *controller.AuthController {
 	authRepo := repos.NewAuthRepo()
 	authService := services.NewAuthService(authRepo)
 	authController := controller.NewAuthController(authService)
 	return authController
 }
 
-func InjectPermissionWire() *controller.PermissionController {
+func InjectPermissionController() *controller.PermissionController {
 	permissionRepo := repos.NewPermissionRepo()
 	permissionMapper := mapper.NewPermissionMapper()
 	permissionService := services.NewPermissionService(permissionRepo, permissionMapper)
@@ -30,7 +30,7 @@ func InjectPermissionWire() *controller.PermissionController {
 	return permissionController
 }
 
-func InjectRoleWire() *controller.RoleController {
+func InjectRoleController() *controller.RoleController {
 	roleRepo := repos.NewRoleRepo()
 	roleMapper := mapper.NewRoleMapper()
 	roleService := services.NewRoleService(roleRepo, roleMapper)
@@ -38,7 +38,7 @@ func InjectRoleWire() *controller.RoleController {
 	return roleController
 }
 
-func InjectTokenWire() *controller.TokenController {
+func InjectTokenController() *controller.TokenController {
 	tokenRepo := repos.NewTokenRepo()
 	tokenService := services.NewTokenService(tokenRepo)
 	tokenController := controller.NewTokenController(tokenService)

@@ -39,13 +39,13 @@ func Run() {
 
 	<-stop
 	cancel()
-	err := global.RedisDb.Close()
+	err := global.RedisDb.Close(wg)
 	if err != nil {
 		logger.Error("Failed to close Redis connection", "", zap.Error(err))
 	} else {
 		global.Logger.Info("Redis connection closed successfully", "")
 	}
-	if err := global.Logger.Sync(); err != nil {
+	if err := global.Logger.Sync(wg); err != nil {
 		logger.Error("Failed to sync logger", "", zap.Error(err))
 	} else {
 		global.Logger.Info("Logger synced successfully", "")

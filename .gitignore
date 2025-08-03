@@ -33,6 +33,9 @@ Thumbs.db
 
 # Environment files
 /config
+dev.yaml
+qa.yaml
+prod.yaml
 
 # backup files
 /backup

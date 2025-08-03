@@ -27,13 +27,25 @@ type AuthServer struct {
 
 func NewAuthService() *AuthServer {
 	return &AuthServer{
-		authServiceServer:       wire.InjectAuthWire(),
-		permissionServiceServer: wire.InjectPermissionWire(),
-		roleServiceServer:       wire.InjectRoleWire(),
-		tokenServiceServer:      wire.InjectTokenWire(),
+		authServiceServer:       wire.InjectAuthController(),
+		permissionServiceServer: wire.InjectPermissionController(),
+		roleServiceServer:       wire.InjectRoleController(),
+		tokenServiceServer:      wire.InjectTokenController(),
 		logger:                  global.Logger,
 		config:                  &global.Config.Server,
 	}
+}
+
+// create server factory
+func (as *AuthServer) createServer() *grpc.Server {
+	server := grpc.NewServer()
+
+	auth.RegisterAuthServiceServer(server, as.authServiceServer)
+	auth.RegisterPermissionServiceServer(server, as.permissionServiceServer)
+	auth.RegisterRoleServiceServer(server, as.roleServiceServer)
+	auth.RegisterTokenServiceServer(server, as.tokenServiceServer)
+
+	return server
 }
 
 func (as *AuthServer) RunServers(ctx context.Context, wg *sync.WaitGroup) {
@@ -79,22 +91,6 @@ func (as *AuthServer) serverListening(server *grpc.Server, lis net.Listener) {
 			)
 		}
 	}
-}
-
-// create server factory
-func (as *AuthServer) createServer() *grpc.Server {
-	server := grpc.NewServer()
-	authServer := wire.InjectAuthWire()
-	permissionServer := wire.InjectPermissionWire()
-	roleServer := wire.InjectRoleWire()
-	tokenServer := wire.InjectTokenWire()
-
-	auth.RegisterAuthServiceServer(server, authServer)
-	auth.RegisterPermissionServiceServer(server, permissionServer)
-	auth.RegisterRoleServiceServer(server, roleServer)
-	auth.RegisterTokenServiceServer(server, tokenServer)
-
-	return server
 }
 
 func (as *AuthServer) createListener() (net.Listener, error) {
