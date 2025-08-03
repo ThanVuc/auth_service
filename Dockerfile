@@ -14,5 +14,6 @@ RUN go build -o auth_service ./main.go
 FROM alpine:latest
 WORKDIR /app
 COPY --from=builder /app/auth_service .
+COPY --from=builder /app/sql/schema /app/sql/schema
 RUN chmod +x /app/auth_service
 ENTRYPOINT ["./auth_service"]
