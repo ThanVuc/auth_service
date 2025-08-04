@@ -75,7 +75,6 @@ func (r *permissionRepo) UpsertPermission(ctx context.Context, tx pgx.Tx, req *a
 	sqlcTx := r.sqlc.WithTx(tx)
 
 	if req.PermissionId != nil {
-		// Update existing permission
 		var permUUID pgtype.UUID
 		if err := permUUID.Scan(*req.PermissionId); err != nil {
 			return nil, err

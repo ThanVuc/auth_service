@@ -8,7 +8,7 @@ from actions
 where resource_id = $1;
 
 -- name: GetPermissions :many
-select perm_id, name, is_root
+select perm_id, name, is_root, description
 from permissions
 Where
 ($1::TEXT IS NULL OR $1::TEXT = '' OR name ILIKE '%' || $1::TEXT || '%') AND

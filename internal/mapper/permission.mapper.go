@@ -35,9 +35,10 @@ func (p *permissionMapper) ConvertDbPermissionsRowToGrpcPermissions(permissions 
 	result := make([]*auth.PermissionItem, 0)
 	for _, permission := range permissions {
 		result = append(result, &auth.PermissionItem{
-			PermId:   permission.PermID.String(),
-			PermName: permission.Name,
-			IsRoot:   permission.IsRoot,
+			PermId:      permission.PermID.String(),
+			PermName:    permission.Name,
+			IsRoot:      permission.IsRoot,
+			Description: permission.Description.String,
 		})
 	}
 

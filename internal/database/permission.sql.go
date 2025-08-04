@@ -222,7 +222,7 @@ func (q *Queries) GetPermission(ctx context.Context, permID pgtype.UUID) ([]GetP
 }
 
 const getPermissions = `-- name: GetPermissions :many
-select perm_id, name, is_root
+select perm_id, name, is_root, description
 from permissions
 Where
 ($1::TEXT IS NULL OR $1::TEXT = '' OR name ILIKE '%' || $1::TEXT || '%') AND
@@ -239,9 +239,10 @@ type GetPermissionsParams struct {
 }
 
 type GetPermissionsRow struct {
-	PermID pgtype.UUID
-	Name   string
-	IsRoot bool
+	PermID      pgtype.UUID
+	Name        string
+	IsRoot      bool
+	Description pgtype.Text
 }
 
 func (q *Queries) GetPermissions(ctx context.Context, arg GetPermissionsParams) ([]GetPermissionsRow, error) {
@@ -258,7 +259,12 @@ func (q *Queries) GetPermissions(ctx context.Context, arg GetPermissionsParams) 
 	var items []GetPermissionsRow
 	for rows.Next() {
 		var i GetPermissionsRow
-		if err := rows.Scan(&i.PermID, &i.Name, &i.IsRoot); err != nil {
+		if err := rows.Scan(
+			&i.PermID,
+			&i.Name,
+			&i.IsRoot,
+			&i.Description,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
