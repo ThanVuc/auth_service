@@ -29,6 +29,7 @@ const (
 	ErrorCode_ERROR_CODE_DATABASE_ERROR    ErrorCode = 2
 	ErrorCode_ERROR_CODE_RUN_TIME_ERROR    ErrorCode = 3
 	ErrorCode_ERROR_CODE_PERMISSION_DENIED ErrorCode = 4
+	ErrorCode_ERROR_CODE_INTERNAL_ERROR    ErrorCode = 5
 )
 
 // Enum value maps for ErrorCode.
@@ -39,6 +40,7 @@ var (
 		2: "ERROR_CODE_DATABASE_ERROR",
 		3: "ERROR_CODE_RUN_TIME_ERROR",
 		4: "ERROR_CODE_PERMISSION_DENIED",
+		5: "ERROR_CODE_INTERNAL_ERROR",
 	}
 	ErrorCode_value = map[string]int32{
 		"ERROR_CODE_UNAUTHORIZED":      0,
@@ -46,6 +48,7 @@ var (
 		"ERROR_CODE_DATABASE_ERROR":    2,
 		"ERROR_CODE_RUN_TIME_ERROR":    3,
 		"ERROR_CODE_PERMISSION_DENIED": 4,
+		"ERROR_CODE_INTERNAL_ERROR":    5,
 	}
 )
 
@@ -135,13 +138,14 @@ const file_common_error_proto_rawDesc = "" +
 	"\x12common/error.proto\x12\x06common\"H\n" +
 	"\x05Error\x12%\n" +
 	"\x04code\x18\x01 \x01(\x0e2\x11.common.ErrorCodeR\x04code\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage*\xa2\x01\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage*\xc1\x01\n" +
 	"\tErrorCode\x12\x1b\n" +
 	"\x17ERROR_CODE_UNAUTHORIZED\x10\x00\x12\x18\n" +
 	"\x14ERROR_CODE_NOT_FOUND\x10\x01\x12\x1d\n" +
 	"\x19ERROR_CODE_DATABASE_ERROR\x10\x02\x12\x1d\n" +
 	"\x19ERROR_CODE_RUN_TIME_ERROR\x10\x03\x12 \n" +
-	"\x1cERROR_CODE_PERMISSION_DENIED\x10\x04B\x0eZ\fproto/commonb\x06proto3"
+	"\x1cERROR_CODE_PERMISSION_DENIED\x10\x04\x12\x1d\n" +
+	"\x19ERROR_CODE_INTERNAL_ERROR\x10\x05B\x0eZ\fproto/commonb\x06proto3"
 
 var (
 	file_common_error_proto_rawDescOnce sync.Once

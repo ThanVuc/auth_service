@@ -23,14 +23,5 @@ func WithSafePanic[TReq any, TResp any](
 		}
 	}()
 
-	resp, err := f(ctx, req)
-	if err != nil {
-		logger.Error("Error occurred in WithSafePanic",
-			requestId,
-			zap.Error(err),
-		)
-		return resp, err
-	}
-
-	return resp, err
+	return f(ctx, req)
 }

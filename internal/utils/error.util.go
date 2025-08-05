@@ -1,8 +1,14 @@
 package utils
 
 import (
+	"auth_service/global"
 	"auth_service/proto/common"
+	"context"
+
+	"go.uber.org/zap"
 )
+
+var logger = global.Logger
 
 var ErrorMessage = map[string]string{
 	"DatabaseError": "Database operation failed",
@@ -10,7 +16,9 @@ var ErrorMessage = map[string]string{
 	"RuntimeError":  "An unexpected error occurred",
 }
 
-func DatabaseError() *common.Error {
+func DatabaseError(ctx *context.Context, err error) *common.Error {
+	requestId := GetRequestIDFromOutgoingContext(*ctx)
+	logger.Error("Database operation failed", requestId, zap.Error(err))
 	e := &common.Error{
 		Code:    common.ErrorCode_ERROR_CODE_DATABASE_ERROR,
 		Message: "Database operation failed",
@@ -18,7 +26,9 @@ func DatabaseError() *common.Error {
 	return e
 }
 
-func NotFoundError() *common.Error {
+func NotFoundError(ctx *context.Context, err error) *common.Error {
+	requestId := GetRequestIDFromOutgoingContext(*ctx)
+	logger.Error("Resource not found", requestId, zap.Error(err))
 	e := &common.Error{
 		Code:    common.ErrorCode_ERROR_CODE_NOT_FOUND,
 		Message: "Not found error",
@@ -26,7 +36,9 @@ func NotFoundError() *common.Error {
 	return e
 }
 
-func RuntimeError() *common.Error {
+func RuntimeError(ctx *context.Context, err error) *common.Error {
+	requestId := GetRequestIDFromOutgoingContext(*ctx)
+	logger.Error("An unexpected error occurred: runtime error", requestId, zap.Error(err))
 	e := &common.Error{
 		Code:    common.ErrorCode_ERROR_CODE_RUN_TIME_ERROR,
 		Message: "An unexpected error occurred: runtime error",
@@ -34,7 +46,9 @@ func RuntimeError() *common.Error {
 	return e
 }
 
-func UnauthorizedError() *common.Error {
+func UnauthorizedError(ctx *context.Context, err error) *common.Error {
+	requestId := GetRequestIDFromOutgoingContext(*ctx)
+	logger.Error("Unauthorized access", requestId, zap.Error(err))
 	e := &common.Error{
 		Code:    common.ErrorCode_ERROR_CODE_UNAUTHORIZED,
 		Message: "Unauthorized access",
@@ -42,10 +56,22 @@ func UnauthorizedError() *common.Error {
 	return e
 }
 
-func PermissionDeniedError() *common.Error {
+func PermissionDeniedError(ctx *context.Context, err error) *common.Error {
+	requestId := GetRequestIDFromOutgoingContext(*ctx)
+	logger.Error("Permission denied", requestId, zap.Error(err))
 	e := &common.Error{
 		Code:    common.ErrorCode_ERROR_CODE_PERMISSION_DENIED,
 		Message: "Permission denied",
+	}
+	return e
+}
+
+func InternalServerError(ctx *context.Context, err error) *common.Error {
+	requestId := GetRequestIDFromOutgoingContext(*ctx)
+	logger.Error("Internal server error", requestId, zap.Error(err))
+	e := &common.Error{
+		Code:    common.ErrorCode_ERROR_CODE_INTERNAL_ERROR,
+		Message: "Internal server error",
 	}
 	return e
 }
