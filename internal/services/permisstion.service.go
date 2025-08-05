@@ -23,7 +23,7 @@ func (ps *permissionService) GetResources(ctx context.Context, req *auth.GetReso
 	dbResource, err := ps.permissionRepo.GetResources(ctx)
 	if err != nil {
 		return &auth.GetResourcesResponse{
-			Error:     utils.DatabaseError(),
+			Error:     utils.DatabaseError(&ctx, err),
 			Resources: nil,
 		}, err
 	}
@@ -39,7 +39,7 @@ func (ps *permissionService) GetActions(ctx context.Context, items *auth.GetActi
 	dbActions, err := ps.permissionRepo.GetActions(ctx, items.ResourceId)
 	if err != nil {
 		return &auth.GetActionsResponse{
-			Error:   utils.DatabaseError(),
+			Error:   utils.DatabaseError(&ctx, err),
 			Actions: nil,
 		}, err
 	}
@@ -55,7 +55,7 @@ func (ps *permissionService) GetPermissions(ctx context.Context, req *auth.GetPe
 	permissions, total_perms, total_root, err := ps.permissionRepo.GetPermissions(ctx, req)
 	if err != nil {
 		return &auth.GetPermissionsResponse{
-			Error:             utils.DatabaseError(),
+			Error:             utils.DatabaseError(&ctx, err),
 			Permissions:       nil,
 			TotalPermissions:  0,
 			Root:              0,
@@ -100,7 +100,7 @@ func (ps *permissionService) GetPermission(ctx context.Context, req *auth.GetPer
 	permission, err := ps.permissionRepo.GetPermission(ctx, req)
 	if err != nil {
 		return &auth.GetPermissionResponse{
-			Error:      utils.DatabaseError(),
+			Error:      utils.DatabaseError(&ctx, err),
 			Permission: nil,
 		}, err
 	}
@@ -117,7 +117,7 @@ func (ps *permissionService) UpsertPermission(ctx context.Context, req *auth.Ups
 		return &auth.UpsertPermissionResponse{
 			IsSuccess:    false,
 			PermissionId: "",
-			Error:        utils.DatabaseError(),
+			Error:        utils.DatabaseError(&ctx, fmt.Errorf("database pool is nil")),
 		}, fmt.Errorf("database pool is nil")
 	}
 
@@ -126,7 +126,7 @@ func (ps *permissionService) UpsertPermission(ctx context.Context, req *auth.Ups
 		return &auth.UpsertPermissionResponse{
 			IsSuccess:    false,
 			PermissionId: "",
-			Error:        utils.DatabaseError(),
+			Error:        utils.DatabaseError(&ctx, fmt.Errorf("failed to begin transaction: %w", err)),
 		}, err
 	}
 	defer tx.Rollback(ctx)
@@ -136,7 +136,7 @@ func (ps *permissionService) UpsertPermission(ctx context.Context, req *auth.Ups
 		return &auth.UpsertPermissionResponse{
 			IsSuccess:    false,
 			PermissionId: "",
-			Error:        utils.DatabaseError(),
+			Error:        utils.DatabaseError(&ctx, fmt.Errorf("failed to upsert permission: %w", err)),
 		}, err
 	}
 
@@ -145,7 +145,7 @@ func (ps *permissionService) UpsertPermission(ctx context.Context, req *auth.Ups
 		return &auth.UpsertPermissionResponse{
 			IsSuccess:    false,
 			PermissionId: "",
-			Error:        utils.DatabaseError(),
+			Error:        utils.DatabaseError(&ctx, fmt.Errorf("failed to get actions by permission ID: %w", err)),
 		}, err
 	}
 
@@ -157,7 +157,7 @@ func (ps *permissionService) UpsertPermission(ctx context.Context, req *auth.Ups
 		return &auth.UpsertPermissionResponse{
 			IsSuccess:    false,
 			PermissionId: "",
-			Error:        utils.DatabaseError(),
+			Error:        utils.DatabaseError(&ctx, fmt.Errorf("failed to update actions to permission: %w", err)),
 		}, err
 	}
 
@@ -165,7 +165,7 @@ func (ps *permissionService) UpsertPermission(ctx context.Context, req *auth.Ups
 		return &auth.UpsertPermissionResponse{
 			IsSuccess:    false,
 			PermissionId: "",
-			Error:        utils.DatabaseError(),
+			Error:        utils.DatabaseError(&ctx, fmt.Errorf("failed to commit transaction: %w", err)),
 		}, err
 	}
 
@@ -181,7 +181,7 @@ func (ps *permissionService) DeletePermission(ctx context.Context, req *auth.Del
 	if err != nil {
 		return &auth.DeletePermissionResponse{
 			Success: false,
-			Error:   utils.DatabaseError(),
+			Error:   utils.DatabaseError(&ctx, fmt.Errorf("failed to delete permission: %w", err)),
 			Message: nil,
 		}, fmt.Errorf("failed to delete permission: %w", err)
 	}
