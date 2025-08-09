@@ -24,7 +24,9 @@ const (
 type PageQuery struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Page          int32                  `protobuf:"varint,1,opt,name=page,proto3" json:"page"`
-	PageSize      int32                  `protobuf:"varint,10,opt,name=page_size,json=pageSize,proto3" json:"page_size"`
+	PageSize      int32                  `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size"`
+	SortBy        *string                `protobuf:"bytes,3,opt,name=sort_by,json=sortBy,proto3,oneof" json:"sort_by"`
+	PageIgnore    *bool                  `protobuf:"varint,4,opt,name=page_ignore,json=pageIgnore,proto3,oneof" json:"page_ignore"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -71,6 +73,20 @@ func (x *PageQuery) GetPageSize() int32 {
 		return x.PageSize
 	}
 	return 0
+}
+
+func (x *PageQuery) GetSortBy() string {
+	if x != nil && x.SortBy != nil {
+		return *x.SortBy
+	}
+	return ""
+}
+
+func (x *PageQuery) GetPageIgnore() bool {
+	if x != nil && x.PageIgnore != nil {
+		return *x.PageIgnore
+	}
+	return false
 }
 
 type PageInfo struct {
@@ -161,11 +177,16 @@ var File_common_pagination_proto protoreflect.FileDescriptor
 
 const file_common_pagination_proto_rawDesc = "" +
 	"\n" +
-	"\x17common/pagination.proto\x12\x06common\"<\n" +
+	"\x17common/pagination.proto\x12\x06common\"\x9c\x01\n" +
 	"\tPageQuery\x12\x12\n" +
 	"\x04page\x18\x01 \x01(\x05R\x04page\x12\x1b\n" +
-	"\tpage_size\x18\n" +
-	" \x01(\x05R\bpageSize\"\xb3\x01\n" +
+	"\tpage_size\x18\x02 \x01(\x05R\bpageSize\x12\x1c\n" +
+	"\asort_by\x18\x03 \x01(\tH\x00R\x06sortBy\x88\x01\x01\x12$\n" +
+	"\vpage_ignore\x18\x04 \x01(\bH\x01R\n" +
+	"pageIgnore\x88\x01\x01B\n" +
+	"\n" +
+	"\b_sort_byB\x0e\n" +
+	"\f_page_ignore\"\xb3\x01\n" +
 	"\bPageInfo\x12\x1f\n" +
 	"\vtotal_items\x18\x01 \x01(\x05R\n" +
 	"totalItems\x12\x1f\n" +
@@ -206,6 +227,7 @@ func file_common_pagination_proto_init() {
 	if File_common_pagination_proto != nil {
 		return
 	}
+	file_common_pagination_proto_msgTypes[0].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
