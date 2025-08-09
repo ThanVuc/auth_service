@@ -215,14 +215,15 @@ select role_id, name, is_root, is_active, description
 from roles
 Where
 ($1::TEXT IS NULL OR $1::TEXT = '' OR name ILIKE '%' || $1::TEXT || '%')
-Order by role_id
-limit $2 offset $3
+Order by created_at desc
+LIMIT NULLIF($2, 0)
+OFFSET CASE WHEN $3::INT IS NULL OR $3::INT < 0 THEN 0 ELSE $3::INT END
 `
 
 type GetRolesParams struct {
 	Column1 string
-	Limit   int32
-	Offset  int32
+	Column2 interface{}
+	Column3 int32
 }
 
 type GetRolesRow struct {
@@ -234,7 +235,7 @@ type GetRolesRow struct {
 }
 
 func (q *Queries) GetRoles(ctx context.Context, arg GetRolesParams) ([]GetRolesRow, error) {
-	rows, err := q.db.Query(ctx, getRoles, arg.Column1, arg.Limit, arg.Offset)
+	rows, err := q.db.Query(ctx, getRoles, arg.Column1, arg.Column2, arg.Column3)
 	if err != nil {
 		return nil, err
 	}

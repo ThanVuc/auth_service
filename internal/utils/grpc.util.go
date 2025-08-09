@@ -6,10 +6,31 @@ import (
 	"math"
 )
 
-func ToPagination(page, pageSize int32) models.Pagination {
+func ToPagination(pageQuery *common.PageQuery) models.Pagination {
+	if pageQuery == nil {
+		return models.Pagination{
+			Limit:  0,
+			Offset: 0,
+		}
+	}
+
+	if pageQuery.PageIgnore == nil || *pageQuery.PageIgnore {
+		return models.Pagination{
+			Limit:  0,
+			Offset: 0,
+		}
+	}
+
+	if pageQuery.PageSize <= 0 {
+		pageQuery.PageSize = 10
+	}
+	if pageQuery.Page <= 0 {
+		pageQuery.Page = 1
+	}
+
 	return models.Pagination{
-		Limit:  pageSize,
-		Offset: (page - 1) * pageSize,
+		Limit:  pageQuery.PageSize,
+		Offset: (pageQuery.Page - 1) * pageQuery.PageSize,
 	}
 }
 

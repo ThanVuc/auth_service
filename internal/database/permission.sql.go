@@ -227,15 +227,16 @@ from permissions
 Where
 ($1::TEXT IS NULL OR $1::TEXT = '' OR name ILIKE '%' || $1::TEXT || '%') AND
 ($2::TEXT IS NULL OR $2::TEXT = '' OR resource_id = $2::TEXT)
-Order by perm_id
-limit $3 offset $4
+Order by created_at desc
+LIMIT NULLIF($3, 0)
+OFFSET CASE WHEN $4::INT IS NULL OR $4::INT < 0 THEN 0 ELSE $4::INT END
 `
 
 type GetPermissionsParams struct {
 	Column1 string
 	Column2 string
-	Limit   int32
-	Offset  int32
+	Column3 interface{}
+	Column4 int32
 }
 
 type GetPermissionsRow struct {
@@ -249,8 +250,8 @@ func (q *Queries) GetPermissions(ctx context.Context, arg GetPermissionsParams) 
 	rows, err := q.db.Query(ctx, getPermissions,
 		arg.Column1,
 		arg.Column2,
-		arg.Limit,
-		arg.Offset,
+		arg.Column3,
+		arg.Column4,
 	)
 	if err != nil {
 		return nil, err

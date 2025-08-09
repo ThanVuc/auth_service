@@ -17,12 +17,12 @@ type roleRepo struct {
 }
 
 func (r *roleRepo) GetRoles(ctx context.Context, req *auth.GetRolesRequest) ([]database.GetRolesRow, int32, int32, error) {
-	pagination := utils.ToPagination(req.PageQuery.Page, req.PageQuery.PageSize)
+	pagination := utils.ToPagination(req.PageQuery)
 
 	roles, err := r.sqlc.GetRoles(ctx, database.GetRolesParams{
 		Column1: req.Search,
-		Limit:   pagination.Limit,
-		Offset:  pagination.Offset,
+		Column2: pagination.Limit,
+		Column3: pagination.Offset,
 	})
 
 	if err != nil {

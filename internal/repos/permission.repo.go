@@ -34,16 +34,17 @@ func (r *permissionRepo) GetActions(ctx context.Context, resourceId string) ([]d
 }
 
 func (r *permissionRepo) GetPermissions(ctx context.Context, req *auth.GetPermissionsRequest) ([]database.GetPermissionsRow, int32, int32, error) {
-	pagination := utils.ToPagination(req.PageQuery.Page, req.PageQuery.PageSize)
+	pagination := utils.ToPagination(req.PageQuery)
+
 	permissions, err := r.sqlc.GetPermissions(
 		ctx,
 		database.GetPermissionsParams{
 			Column1: req.Search,
 			Column2: req.ResourceId,
-			Limit:   pagination.Limit,
-			Offset:  pagination.Offset,
+			Column3: pagination.Limit,
 		},
 	)
+
 	if err != nil {
 		return nil, 0, 0, err
 	}
