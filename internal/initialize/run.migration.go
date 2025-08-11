@@ -9,7 +9,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func RunMigrations(db *pgxpool.Pool) {
+func runMigrations(db *pgxpool.Pool) {
 	// Folder where your migration files (.sql) are stored
 	migrationsDir := "./sql/schema"
 	logger := global.Logger

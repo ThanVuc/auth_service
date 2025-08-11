@@ -17,7 +17,7 @@ It constructs the connection string using the configuration from global.Config.R
 @Note: The Redis client is stored in global.RedisDb for use throughout the application.
 */
 
-func InitRedis() {
+func initRedis() {
 	redisConfig := global.Config.Redis
 	println("HOST: " + fmt.Sprintf("%s:%s", redisConfig.Host, strconv.Itoa(redisConfig.Port)))
 	redisClient := cache.NewRedisCache(cache.Config{

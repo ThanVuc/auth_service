@@ -19,7 +19,7 @@ This function uses the pgxpool package to create a connection pool for PostgreSQ
 It constructs the connection string using the configuration from global.Config.Postgres.
 @Note: The PostgreSQL connection pool is stored in global.PostgresPool for use throughout the application.
 */
-func InitPostgreSQL() {
+func initPostgreSQL() {
 	logger := global.Logger
 	dsn := "host=%s user=%s password=%s dbname=%s port=%d sslmode=disable TimeZone=Asia/Shanghai"
 	configs := global.Config.Postgres

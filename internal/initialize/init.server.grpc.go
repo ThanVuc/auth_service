@@ -2,8 +2,8 @@ package initialize
 
 import (
 	"auth_service/global"
-	"auth_service/internal/controller"
-	"auth_service/internal/wire"
+	"auth_service/internal/grpc/controller"
+	"auth_service/internal/grpc/wire"
 	"auth_service/pkg/settings"
 	"auth_service/proto/auth"
 	"context"
@@ -36,6 +36,11 @@ func NewAuthService() *AuthServer {
 	}
 }
 
+func (as *AuthServer) runServers(ctx context.Context, wg *sync.WaitGroup) {
+	wg.Add(1)
+	go as.runServiceServer(ctx, wg)
+}
+
 // create server factory
 func (as *AuthServer) createServer() *grpc.Server {
 	server := grpc.NewServer()
@@ -46,11 +51,6 @@ func (as *AuthServer) createServer() *grpc.Server {
 	auth.RegisterTokenServiceServer(server, as.tokenServiceServer)
 
 	return server
-}
-
-func (as *AuthServer) RunServers(ctx context.Context, wg *sync.WaitGroup) {
-	wg.Add(1)
-	go as.runServiceServer(ctx, wg)
 }
 
 func (as *AuthServer) runServiceServer(ctx context.Context, wg *sync.WaitGroup) {

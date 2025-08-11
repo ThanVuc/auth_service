@@ -1,4 +1,0 @@
-POST http://localhost:8080/v1/api/auth/create-author
-
-###
-POST http://localhost:8080/v1/api/roles
