@@ -11,45 +11,24 @@ import (
 	"go.uber.org/zap"
 )
 
-/*
-@Author: Sinh
-@Date: 2025/6/1
-@Description: Run initializes the application by loading the configuration,
-establishing database connections, and setting up the HTTP server with the specified routes.
-@Note: This function is the entry point for the application, setting up the necessary components
-*/
 func Run() {
-	print("gRPC servers are running...")
+	if err := initConfigAndResources(); err != nil {
+		global.Logger.Error("Failed to initialize configs and resources", "", zap.Error(err))
+		os.Exit(1)
+	}
+
 	ctx, cancel := context.WithCancel(context.Background())
 	wg := &sync.WaitGroup{}
-	defer cancel()
 
-	LoadConfig()
-	InitLogger()
-	InitPostgreSQL()
-	InitRedis()
-
-	RunMigrations(global.PostgresPool)
-
-	logger := global.Logger
+	startGrpcSerivces(ctx, wg)
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
-	NewAuthService().RunServers(ctx, wg)
 
 	<-stop
-	cancel()
-	err := global.RedisDb.Close(wg)
-	if err != nil {
-		logger.Error("Failed to close Redis connection", "", zap.Error(err))
-	} else {
-		global.Logger.Info("Redis connection closed successfully", "")
-	}
-	if err := global.Logger.Sync(wg); err != nil {
-		logger.Error("Failed to sync logger", "", zap.Error(err))
-	} else {
-		global.Logger.Info("Logger synced successfully", "")
-	}
+	global.Logger.Info("Shutdown signal received, shutting down...", "")
 
-	wg.Wait()
+	cancel()
+
+	gracefulShutdown(wg, global.Logger)
 }

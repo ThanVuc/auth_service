@@ -12,8 +12,9 @@ import (
 @Description: Load configuration from a YAML file using Viper.
 The configuration file file is loaded to the global.Config variable.
 */
-func LoadConfig() {
+func loadConfig() {
 	err := config.LoadConfig(&global.Config, "./")
+
 	if err != nil {
 		panic("Failed to load configuration: " + err.Error())
 	}
