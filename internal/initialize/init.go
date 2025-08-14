@@ -36,6 +36,9 @@ func gracefulShutdown(wg *sync.WaitGroup, logger log.Logger) {
 
 	global.PostgresPool.Close()
 
+	wg.Add(1)
+	global.EventBusConnector.Close(wg)
+
 	wg.Wait()
 }
 

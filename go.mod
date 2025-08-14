@@ -7,7 +7,6 @@ require (
 	github.com/google/wire v0.6.0
 	github.com/jackc/pgx/v5 v5.7.5
 	github.com/thanvuc/go-core-lib v1.0.10
-	github.com/wagslane/go-rabbitmq v0.15.0
 	go.uber.org/zap v1.27.0
 	google.golang.org/grpc v1.73.0
 )
@@ -18,6 +17,7 @@ require (
 	github.com/redis/go-redis/v9 v9.11.0 // indirect
 	github.com/sethvargo/go-retry v0.3.0 // indirect
 	github.com/spf13/viper v1.20.1 // indirect
+	github.com/wagslane/go-rabbitmq v0.15.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250324211829-b45e905df463 // indirect
 )
 
