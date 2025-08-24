@@ -5,6 +5,7 @@ import (
 	"auth_service/internal/grpc/repos"
 	"auth_service/internal/grpc/utils"
 	"auth_service/proto/auth"
+	"auth_service/proto/common"
 	"context"
 	"fmt"
 
@@ -21,7 +22,7 @@ func (ps *userService) GetUsers(ctx context.Context, req *auth.GetUsersRequest) 
 	users, totalUsers, limit, err := ps.userRepo.GetUsers(ctx, req)
 	if err != nil {
 		return &auth.GetUsersResponse{
-			Error:      utils.DatabaseError(&ctx, err),
+			Error:      utils.DatabaseError(ctx, err),
 			Users:      nil,
 			TotalUsers: 0,
 			PageInfo:   utils.ToPageInfo(req.PageQuery.Page, req.PageQuery.PageSize, totalUsers),
@@ -45,5 +46,20 @@ func (ps *userService) GetUsers(ctx context.Context, req *auth.GetUsersRequest) 
 	}
 
 	return resp, nil
+}
 
+func (us *userService) AssignRoleToUser(ctx context.Context, req *auth.AssignRoleToUserRequest) (*common.EmptyResponse, error) {
+	err := us.userRepo.AssignRoleToUser(ctx, req)
+	if err != nil {
+		return &common.EmptyResponse{
+			Success: utils.ToBoolPointer(false),
+			Message: utils.ToStringPointer("Failed to assign role to user"),
+			Error:   utils.DatabaseError(ctx, err),
+		}, err
+	}
+
+	return &common.EmptyResponse{
+		Success: utils.ToBoolPointer(true),
+		Message: utils.ToStringPointer("Role assigned successfully"),
+	}, nil
 }

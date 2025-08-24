@@ -2,7 +2,9 @@ package repos
 
 import (
 	"auth_service/global"
+	"auth_service/internal/constant"
 	"auth_service/internal/grpc/database"
+	"auth_service/internal/grpc/models"
 	"auth_service/proto/auth"
 	"context"
 
@@ -14,6 +16,8 @@ type (
 	AuthRepo interface {
 		SyncResources(ctx context.Context, ids []string, names []string) error
 		SyncActions(ctx context.Context, ids, resourceIds, names []string) error
+		RegisterUserWithExternalProvider(ctx context.Context, userInfo models.GoogleUserInfo, provider constant.Provider) (string, string, error)
+		LoginWithExternalProvider(ctx context.Context, sub string, email string) (*database.LoginWithExternalProviderRow, []pgtype.UUID, error)
 	}
 
 	PermissionRepo interface {
@@ -45,6 +49,10 @@ type (
 
 	UserRepo interface {
 		GetUsers(ctx context.Context, req *auth.GetUsersRequest) ([]database.GetUsersRow, int32, int32, error)
+		GetRoleIDsByUserID(ctx context.Context, userId pgtype.UUID) ([]pgtype.UUID, error)
+		AddNewRolesToUser(ctx context.Context, tx pgx.Tx, userId pgtype.UUID, ids []pgtype.UUID) error
+		RemoveRolesFromUser(ctx context.Context, tx pgx.Tx, userId pgtype.UUID, ids []pgtype.UUID) error
+		AssignRoleToUser(ctx context.Context, req *auth.AssignRoleToUserRequest) error
 	}
 )
 
@@ -52,6 +60,7 @@ func NewAuthRepo() AuthRepo {
 	return &authRepo{
 		sqlc:   database.New(global.PostgresPool),
 		logger: global.Logger,
+		pool:   global.PostgresPool,
 	}
 }
 
@@ -77,9 +86,8 @@ func NewTokenRepo() TokenRepo {
 
 func NewUserRepo() UserRepo {
 	return &userRepo{
-		sqlc:   database.New(global.PostgresPool),
 		logger: global.Logger,
+		sqlc:   database.New(global.PostgresPool),
+		pool:   global.PostgresPool,
 	}
 }
-
-

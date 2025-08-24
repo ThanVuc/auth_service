@@ -16,6 +16,14 @@ type Action struct {
 	UpdatedAt  pgtype.Timestamptz
 }
 
+type ExternalProvider struct {
+	ID        pgtype.UUID
+	Sub       string
+	Provider  string
+	CreatedAt pgtype.Timestamp
+	UserID    pgtype.UUID
+}
+
 type Outbox struct {
 	ID            pgtype.UUID
 	AggregateType string
@@ -27,7 +35,7 @@ type Outbox struct {
 	ProcessedAt   pgtype.Timestamptz
 	ErrorMessage  pgtype.Text
 	RetryCount    int32
-	RequestID     pgtype.UUID
+	RequestID     string
 }
 
 type Permission struct {
