@@ -37,6 +37,10 @@ type (
 		RefreshToken(ctx context.Context, req *auth.RefreshTokenRequest) (*auth.RefreshTokenResponse, error)
 		RevokeToken(ctx context.Context, req *auth.RevokeTokenRequest) (*auth.RevokeTokenResponse, error)
 	}
+
+	UserService interface {
+		GetUsers(ctx context.Context, req *auth.GetUsersRequest) (*auth.GetUsersResponse, error)
+	}
 )
 
 func NewAuthService(
@@ -74,5 +78,16 @@ func NewRoleService(
 func NewTokenService(tokenRepo repos.TokenRepo) TokenService {
 	return &tokenService{
 		tokenRepo: tokenRepo,
+	}
+}
+
+func NewUserService(
+	userRepo repos.UserRepo,
+	userMapper mapper.UserMapper,
+) UserService {
+	return &userService{
+		userRepo:   userRepo,
+		userMapper: userMapper,
+		logger:     global.Logger,
 	}
 }

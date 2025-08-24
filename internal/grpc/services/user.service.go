@@ -1,0 +1,49 @@
+package services
+
+import (
+	"auth_service/internal/grpc/mapper"
+	"auth_service/internal/grpc/repos"
+	"auth_service/internal/grpc/utils"
+	"auth_service/proto/auth"
+	"context"
+	"fmt"
+
+	"github.com/thanvuc/go-core-lib/log"
+)
+
+type userService struct {
+	userRepo   repos.UserRepo
+	userMapper mapper.UserMapper
+	logger     log.Logger
+}
+
+func (ps *userService) GetUsers(ctx context.Context, req *auth.GetUsersRequest) (*auth.GetUsersResponse, error) {
+	users, totalUsers, limit, err := ps.userRepo.GetUsers(ctx, req)
+	if err != nil {
+		return &auth.GetUsersResponse{
+			Error:      utils.DatabaseError(&ctx, err),
+			Users:      nil,
+			TotalUsers: 0,
+			PageInfo:   utils.ToPageInfo(req.PageQuery.Page, req.PageQuery.PageSize, totalUsers),
+		}, fmt.Errorf("failed to get users: %w", err)
+	}
+
+	if totalUsers == 0 {
+		return &auth.GetUsersResponse{
+			Error:      nil,
+			Users:      nil,
+			TotalUsers: 0,
+			PageInfo:   utils.ToPageInfo(req.PageQuery.Page, req.PageQuery.PageSize, totalUsers),
+		}, err
+	}
+
+	usersIterm := ps.userMapper.ConvertDbUsersRowToGrpcUsers(users)
+	resp := &auth.GetUsersResponse{
+		Users:      usersIterm,
+		TotalUsers: totalUsers,
+		PageInfo:   utils.ToPageInfo(req.PageQuery.Page, limit, totalUsers),
+	}
+
+	return resp, nil
+
+}

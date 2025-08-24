@@ -21,6 +21,7 @@ type AuthServer struct {
 	permissionServiceServer *controller.PermissionController
 	roleServiceServer       *controller.RoleController
 	tokenServiceServer      *controller.TokenController
+	userServiceServer       *controller.UserController
 	logger                  log.Logger
 	config                  *settings.Server
 }
@@ -31,6 +32,7 @@ func NewAuthService() *AuthServer {
 		permissionServiceServer: wire.InjectPermissionController(),
 		roleServiceServer:       wire.InjectRoleController(),
 		tokenServiceServer:      wire.InjectTokenController(),
+		userServiceServer:       wire.InjectUserController(),
 		logger:                  global.Logger,
 		config:                  &global.Config.Server,
 	}
@@ -49,6 +51,7 @@ func (as *AuthServer) createServer() *grpc.Server {
 	auth.RegisterPermissionServiceServer(server, as.permissionServiceServer)
 	auth.RegisterRoleServiceServer(server, as.roleServiceServer)
 	auth.RegisterTokenServiceServer(server, as.tokenServiceServer)
+	auth.RegisterUserServiceServer(server, as.userServiceServer)
 
 	return server
 }

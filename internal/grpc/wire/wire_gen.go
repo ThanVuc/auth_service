@@ -44,3 +44,12 @@ func InjectTokenController() *controller.TokenController {
 	tokenController := controller.NewTokenController(tokenService)
 	return tokenController
 }
+
+
+func InjectUserController() *controller.UserController {
+	userRepo := repos.NewUserRepo()
+	userMapper := mapper.NewUserMapper()
+	userService := services.NewUserService(userRepo, userMapper)
+	userController := controller.NewUserController(userService)
+	return userController
+}

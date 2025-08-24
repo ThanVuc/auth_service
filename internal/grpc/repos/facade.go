@@ -42,6 +42,10 @@ type (
 		RefreshToken(ctx context.Context, req *auth.RefreshTokenRequest) error
 		RevokeToken(ctx context.Context, req *auth.RevokeTokenRequest) error
 	}
+
+	UserRepo interface {
+		GetUsers(ctx context.Context, req *auth.GetUsersRequest) ([]database.GetUsersRow, int32, int32, error)
+	}
 )
 
 func NewAuthRepo() AuthRepo {
@@ -70,3 +74,12 @@ func NewTokenRepo() TokenRepo {
 		logger: global.Logger,
 	}
 }
+
+func NewUserRepo() UserRepo {
+	return &userRepo{
+		sqlc:   database.New(global.PostgresPool),
+		logger: global.Logger,
+	}
+}
+
+
