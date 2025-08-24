@@ -6,6 +6,7 @@ sql:
       - "sql/query/auth"
       - "sql/query/permission"
       - "sql/query/role"
+      - "sql/query/user"
     schema: "sql/schema"
     gen:
       go:

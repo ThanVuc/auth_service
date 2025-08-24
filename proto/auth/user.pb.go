@@ -9,7 +9,9 @@ package auth
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	common "auth_service/proto/common"
 	reflect "reflect"
+	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -20,21 +22,188 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type GetUsersRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Search        string                 `protobuf:"bytes,1,opt,name=search,proto3" json:"search"`
+	PageQuery     *common.PageQuery      `protobuf:"bytes,2,opt,name=page_query,json=pageQuery,proto3" json:"page_query"`
+	RoleId        string                 `protobuf:"bytes,3,opt,name=role_id,json=roleId,proto3" json:"role_id"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetUsersRequest) Reset() {
+	*x = GetUsersRequest{}
+	mi := &file_auth_service_user_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetUsersRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetUsersRequest) ProtoMessage() {}
+
+func (x *GetUsersRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_service_user_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetUsersRequest.ProtoReflect.Descriptor instead.
+func (*GetUsersRequest) Descriptor() ([]byte, []int) {
+	return file_auth_service_user_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *GetUsersRequest) GetSearch() string {
+	if x != nil {
+		return x.Search
+	}
+	return ""
+}
+
+func (x *GetUsersRequest) GetPageQuery() *common.PageQuery {
+	if x != nil {
+		return x.PageQuery
+	}
+	return nil
+}
+
+func (x *GetUsersRequest) GetRoleId() string {
+	if x != nil {
+		return x.RoleId
+	}
+	return ""
+}
+
+type GetUsersResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Users         []*UserItem            `protobuf:"bytes,1,rep,name=users,proto3" json:"users"`
+	PageInfo      *common.PageInfo       `protobuf:"bytes,2,opt,name=page_info,json=pageInfo,proto3" json:"page_info"`
+	TotalUsers    int32                  `protobuf:"varint,3,opt,name=total_users,json=totalUsers,proto3" json:"total_users"`
+	Error         *common.Error          `protobuf:"bytes,4,opt,name=error,proto3,oneof" json:"error"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetUsersResponse) Reset() {
+	*x = GetUsersResponse{}
+	mi := &file_auth_service_user_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetUsersResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetUsersResponse) ProtoMessage() {}
+
+func (x *GetUsersResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_service_user_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetUsersResponse.ProtoReflect.Descriptor instead.
+func (*GetUsersResponse) Descriptor() ([]byte, []int) {
+	return file_auth_service_user_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *GetUsersResponse) GetUsers() []*UserItem {
+	if x != nil {
+		return x.Users
+	}
+	return nil
+}
+
+func (x *GetUsersResponse) GetPageInfo() *common.PageInfo {
+	if x != nil {
+		return x.PageInfo
+	}
+	return nil
+}
+
+func (x *GetUsersResponse) GetTotalUsers() int32 {
+	if x != nil {
+		return x.TotalUsers
+	}
+	return 0
+}
+
+func (x *GetUsersResponse) GetError() *common.Error {
+	if x != nil {
+		return x.Error
+	}
+	return nil
+}
+
 var File_auth_service_user_proto protoreflect.FileDescriptor
 
 const file_auth_service_user_proto_rawDesc = "" +
 	"\n" +
-	"\x17auth_service/user.proto\x12\x04auth2\r\n" +
-	"\vUserServiceB\fZ\n" +
+	"\x17auth_service/user.proto\x12\x04auth\x1a\x1eauth_service/common.auth.proto\x1a\x12common/error.proto\x1a\x17common/pagination.proto\"t\n" +
+	"\x0fGetUsersRequest\x12\x16\n" +
+	"\x06search\x18\x01 \x01(\tR\x06search\x120\n" +
+	"\n" +
+	"page_query\x18\x02 \x01(\v2\x11.common.PageQueryR\tpageQuery\x12\x17\n" +
+	"\arole_id\x18\x03 \x01(\tR\x06roleId\"\xbc\x01\n" +
+	"\x10GetUsersResponse\x12$\n" +
+	"\x05users\x18\x01 \x03(\v2\x0e.auth.UserItemR\x05users\x12-\n" +
+	"\tpage_info\x18\x02 \x01(\v2\x10.common.PageInfoR\bpageInfo\x12\x1f\n" +
+	"\vtotal_users\x18\x03 \x01(\x05R\n" +
+	"totalUsers\x12(\n" +
+	"\x05error\x18\x04 \x01(\v2\r.common.ErrorH\x00R\x05error\x88\x01\x01B\b\n" +
+	"\x06_error2H\n" +
+	"\vUserService\x129\n" +
+	"\bGetUsers\x12\x15.auth.GetUsersRequest\x1a\x16.auth.GetUsersResponseB\fZ\n" +
 	"proto/authb\x06proto3"
 
-var file_auth_service_user_proto_goTypes = []any{}
+var (
+	file_auth_service_user_proto_rawDescOnce sync.Once
+	file_auth_service_user_proto_rawDescData []byte
+)
+
+func file_auth_service_user_proto_rawDescGZIP() []byte {
+	file_auth_service_user_proto_rawDescOnce.Do(func() {
+		file_auth_service_user_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_auth_service_user_proto_rawDesc), len(file_auth_service_user_proto_rawDesc)))
+	})
+	return file_auth_service_user_proto_rawDescData
+}
+
+var file_auth_service_user_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_auth_service_user_proto_goTypes = []any{
+	(*GetUsersRequest)(nil),  // 0: auth.GetUsersRequest
+	(*GetUsersResponse)(nil), // 1: auth.GetUsersResponse
+	(*common.PageQuery)(nil), // 2: common.PageQuery
+	(*UserItem)(nil),         // 3: auth.UserItem
+	(*common.PageInfo)(nil),  // 4: common.PageInfo
+	(*common.Error)(nil),     // 5: common.Error
+}
 var file_auth_service_user_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	2, // 0: auth.GetUsersRequest.page_query:type_name -> common.PageQuery
+	3, // 1: auth.GetUsersResponse.users:type_name -> auth.UserItem
+	4, // 2: auth.GetUsersResponse.page_info:type_name -> common.PageInfo
+	5, // 3: auth.GetUsersResponse.error:type_name -> common.Error
+	0, // 4: auth.UserService.GetUsers:input_type -> auth.GetUsersRequest
+	1, // 5: auth.UserService.GetUsers:output_type -> auth.GetUsersResponse
+	5, // [5:6] is the sub-list for method output_type
+	4, // [4:5] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_auth_service_user_proto_init() }
@@ -42,18 +211,21 @@ func file_auth_service_user_proto_init() {
 	if File_auth_service_user_proto != nil {
 		return
 	}
+	file_auth_service_common_auth_proto_init()
+	file_auth_service_user_proto_msgTypes[1].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_auth_service_user_proto_rawDesc), len(file_auth_service_user_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   0,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_auth_service_user_proto_goTypes,
 		DependencyIndexes: file_auth_service_user_proto_depIdxs,
+		MessageInfos:      file_auth_service_user_proto_msgTypes,
 	}.Build()
 	File_auth_service_user_proto = out.File
 	file_auth_service_user_proto_goTypes = nil
