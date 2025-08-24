@@ -20,7 +20,7 @@ type roleService struct {
 }
 
 func (rs *roleService) GetRoles(ctx context.Context, req *auth.GetRolesRequest) (*auth.GetRolesResponse, error) {
-	roles, totalRoles, total_root, err := rs.roleRepo.GetRoles(ctx, req)
+	roles, totalRoles, totalRoot, err := rs.roleRepo.GetRoles(ctx, req)
 
 	if err != nil {
 		return &auth.GetRolesResponse{
@@ -53,7 +53,7 @@ func (rs *roleService) GetRoles(ctx context.Context, req *auth.GetRolesRequest) 
 			Roles:      nil,
 			TotalRoles: 0,
 			NonRoot:    0,
-			Error:      utils.DatabaseError(&ctx, fmt.Errorf("failed to count users by roles: %w", err)),
+			Error:      utils.DatabaseError(ctx, fmt.Errorf("failed to count users by roles: %w", err)),
 			PageInfo:   utils.ToPageInfo(req.PageQuery.Page, req.PageQuery.PageSize, totalRoles),
 		}, fmt.Errorf("failed to count users by roles: %w", err)
 	}
@@ -63,16 +63,16 @@ func (rs *roleService) GetRoles(ctx context.Context, req *auth.GetRolesRequest) 
 		roleCountsMap[userCount.RoleID] = int32(userCount.TotalUsers)
 	}
 
-	nonRoot := totalRoles - total_root
-	root_percentage := utils.RoundToTwoDecimal((float64(total_root/totalRoles) * 100))
-	non_root_percentage := 100 - root_percentage
+	nonRoot := totalRoles - totalRoot
+	rootPercentage := utils.RoundToTwoDecimal((float64(totalRoot/totalRoles) * 100))
+	nonRootPercentage := 100 - rootPercentage
 	resp := &auth.GetRolesResponse{
 		Roles:             rs.roleMapper.ConvertDbRolesRowToGrpcRoles(roles, roleCountsMap),
 		TotalRoles:        totalRoles,
 		NonRoot:           nonRoot,
-		Root:              total_root,
-		RootPercentage:    root_percentage,
-		NonRootPercentage: non_root_percentage,
+		Root:              totalRoot,
+		RootPercentage:    rootPercentage,
+		NonRootPercentage: nonRootPercentage,
 		PageInfo:          utils.ToPageInfo(req.PageQuery.Page, req.PageQuery.PageSize, totalRoles),
 	}
 
@@ -84,7 +84,7 @@ func (rs *roleService) GetRoleById(ctx context.Context, req *auth.GetRoleRequest
 	if err != nil {
 		return &auth.GetRoleResponse{
 			Role:  nil,
-			Error: utils.DatabaseError(&ctx, fmt.Errorf("failed to get role by ID: %w", err)),
+			Error: utils.DatabaseError(ctx, fmt.Errorf("failed to get role by ID: %w", err)),
 		}, fmt.Errorf("failed to get role by ID: %w", err)
 	}
 
@@ -103,7 +103,7 @@ func (rs *roleService) UpsertRole(ctx context.Context, req *auth.UpsertRoleReque
 	tx, err := rs.pool.Begin(ctx)
 	if err != nil {
 		return &auth.UpsertRoleResponse{
-			Error:     utils.DatabaseError(&ctx, fmt.Errorf("failed to begin transaction: %w", err)),
+			Error:     utils.DatabaseError(ctx, fmt.Errorf("failed to begin transaction: %w", err)),
 			IsSuccess: false,
 			Message:   "Failed to begin transaction",
 		}, fmt.Errorf("failed to begin transaction: %w", err)
@@ -113,7 +113,7 @@ func (rs *roleService) UpsertRole(ctx context.Context, req *auth.UpsertRoleReque
 	if err != nil {
 		tx.Rollback(ctx)
 		return &auth.UpsertRoleResponse{
-			Error:     utils.DatabaseError(&ctx, fmt.Errorf("failed to upsert role: %w", err)),
+			Error:     utils.DatabaseError(ctx, fmt.Errorf("failed to upsert role: %w", err)),
 			IsSuccess: false,
 			Message:   "Failed to upsert role",
 		}, fmt.Errorf("failed to upsert role: %w", err)
@@ -125,7 +125,7 @@ func (rs *roleService) UpsertRole(ctx context.Context, req *auth.UpsertRoleReque
 		if err != nil {
 			tx.Rollback(ctx)
 			return &auth.UpsertRoleResponse{
-				Error:     utils.DatabaseError(&ctx, fmt.Errorf("failed to get existing permissions for the role: %w", err)),
+				Error:     utils.DatabaseError(ctx, fmt.Errorf("failed to get existing permissions for the role: %w", err)),
 				IsSuccess: false,
 				Message:   "Failed to get existing permissions for the role",
 			}, fmt.Errorf("failed to get existing permissions for the role: %w", err)
@@ -137,7 +137,7 @@ func (rs *roleService) UpsertRole(ctx context.Context, req *auth.UpsertRoleReque
 			if err != nil {
 				tx.Rollback(ctx)
 				return &auth.UpsertRoleResponse{
-					Error:     utils.InternalServerError(&ctx, fmt.Errorf("invalid permission ID format: %w", err)),
+					Error:     utils.InternalServerError(ctx, fmt.Errorf("invalid permission ID format: %w", err)),
 					IsSuccess: false,
 					Message:   "Invalid permission ID format",
 				}, fmt.Errorf("invalid permission ID format: %w", err)
@@ -153,7 +153,7 @@ func (rs *roleService) UpsertRole(ctx context.Context, req *auth.UpsertRoleReque
 			if err != nil {
 				tx.Rollback(ctx)
 				return &auth.UpsertRoleResponse{
-					Error:     utils.DatabaseError(&ctx, fmt.Errorf("failed to update permissions for the role: %w", err)),
+					Error:     utils.DatabaseError(ctx, fmt.Errorf("failed to update permissions for the role: %w", err)),
 					IsSuccess: false,
 					Message:   "Failed to update permissions for the role",
 				}, fmt.Errorf("failed to update permissions for the role: %w", err)
@@ -170,7 +170,7 @@ func (rs *roleService) UpsertRole(ctx context.Context, req *auth.UpsertRoleReque
 	}
 	if err := tx.Commit(ctx); err != nil {
 		return &auth.UpsertRoleResponse{
-			Error: utils.DatabaseError(&ctx, fmt.Errorf("failed to commit transaction: %w", err)),
+			Error: utils.DatabaseError(ctx, fmt.Errorf("failed to commit transaction: %w", err)),
 		}, err
 	}
 
@@ -185,7 +185,7 @@ func (rs *roleService) DeleteRole(ctx context.Context, req *auth.DeleteRoleReque
 	if err != nil {
 		msg := "failed to delete role from database"
 		return &auth.DeleteRoleResponse{
-			Error:   utils.DatabaseError(&ctx, fmt.Errorf("failed to delete role: %w", err)),
+			Error:   utils.DatabaseError(ctx, fmt.Errorf("failed to delete role: %w", err)),
 			Success: false,
 			Message: &msg,
 		}, fmt.Errorf("failed to delete role: %w", err)
@@ -210,7 +210,7 @@ func (rs *roleService) DisableOrEnableRole(ctx context.Context, req *auth.Disabl
 
 	if err != nil {
 		return &auth.DisableOrEnableRoleResponse{
-			Error:   utils.DatabaseError(&ctx, fmt.Errorf("failed to disable or enable role: %w", err)),
+			Error:   utils.DatabaseError(ctx, fmt.Errorf("failed to disable or enable role: %w", err)),
 			Success: false,
 			Message: nil,
 		}, fmt.Errorf("failed to disable or enable role: %w", err)

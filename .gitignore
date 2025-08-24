@@ -42,3 +42,6 @@ prod.yaml
 
 # Makefile
 Makefile
+
+# migrate
+migrate.sh

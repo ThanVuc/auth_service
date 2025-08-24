@@ -8,6 +8,7 @@ package wire
 
 import (
 	"auth_service/internal/grpc/controller"
+	"auth_service/internal/grpc/helper"
 	"auth_service/internal/grpc/mapper"
 	"auth_service/internal/grpc/repos"
 	"auth_service/internal/grpc/services"
@@ -17,8 +18,9 @@ import (
 
 func InjectAuthController() *controller.AuthController {
 	authRepo := repos.NewAuthRepo()
-	authService := services.NewAuthService(authRepo)
-	authController := controller.NewAuthController(authService)
+	jwtHelper := helper.NewJWTHelper()
+	authService := services.NewAuthService(authRepo, jwtHelper)
+	authController := controller.NewAuthController(authService, jwtHelper)
 	return authController
 }
 
@@ -43,4 +45,12 @@ func InjectTokenController() *controller.TokenController {
 	tokenService := services.NewTokenService(tokenRepo)
 	tokenController := controller.NewTokenController(tokenService)
 	return tokenController
+}
+
+func InjectUserController() *controller.UserController {
+	userRepo := repos.NewUserRepo()
+	userMapper := mapper.NewUserMapper()
+	userService := services.NewUserService(userRepo, userMapper)
+	userController := controller.NewUserController(userService)
+	return userController
 }

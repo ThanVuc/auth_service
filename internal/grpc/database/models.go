@@ -12,8 +12,30 @@ type Action struct {
 	ActionID   string
 	ResourceID string
 	Name       string
-	CreatedAt  pgtype.Timestamp
-	UpdatedAt  pgtype.Timestamp
+	CreatedAt  pgtype.Timestamptz
+	UpdatedAt  pgtype.Timestamptz
+}
+
+type ExternalProvider struct {
+	ID        pgtype.UUID
+	Sub       string
+	Provider  string
+	CreatedAt pgtype.Timestamp
+	UserID    pgtype.UUID
+}
+
+type Outbox struct {
+	ID            pgtype.UUID
+	AggregateType string
+	AggregateID   string
+	EventType     string
+	Payload       []byte
+	Status        int16
+	OccurredAt    pgtype.Timestamptz
+	ProcessedAt   pgtype.Timestamptz
+	ErrorMessage  pgtype.Text
+	RetryCount    int32
+	RequestID     string
 }
 
 type Permission struct {
@@ -21,8 +43,8 @@ type Permission struct {
 	ResourceID  string
 	Name        string
 	Description pgtype.Text
-	CreatedAt   pgtype.Timestamp
-	UpdatedAt   pgtype.Timestamp
+	CreatedAt   pgtype.Timestamptz
+	UpdatedAt   pgtype.Timestamptz
 	IsRoot      bool
 }
 
@@ -30,22 +52,22 @@ type PermissionAction struct {
 	PaID     pgtype.UUID
 	PermID   pgtype.UUID
 	ActionID string
-	AssignAt pgtype.Timestamp
+	AssignAt pgtype.Timestamptz
 }
 
 type Resource struct {
 	ResourceID string
 	Name       string
-	CreatedAt  pgtype.Timestamp
-	UpdatedAt  pgtype.Timestamp
+	CreatedAt  pgtype.Timestamptz
+	UpdatedAt  pgtype.Timestamptz
 }
 
 type Role struct {
 	RoleID      pgtype.UUID
 	Name        string
 	Description pgtype.Text
-	CreatedAt   pgtype.Timestamp
-	UpdatedAt   pgtype.Timestamp
+	CreatedAt   pgtype.Timestamptz
+	UpdatedAt   pgtype.Timestamptz
 	IsRoot      bool
 	IsActive    bool
 }
@@ -54,24 +76,24 @@ type RolePermission struct {
 	RpID     pgtype.UUID
 	RoleID   pgtype.UUID
 	PermID   pgtype.UUID
-	AssignAt pgtype.Timestamp
+	AssignAt pgtype.Timestamptz
 }
 
 type User struct {
 	UserID         pgtype.UUID
 	Email          string
 	PasswordHash   string
-	LockEnd        pgtype.Timestamp
+	LockEnd        pgtype.Timestamptz
 	LockReason     pgtype.Text
-	LastLoginAt    pgtype.Timestamp
+	LastLoginAt    pgtype.Timestamptz
 	FailedAttempts pgtype.Int4
-	CreatedAt      pgtype.Timestamp
-	UpdatedAt      pgtype.Timestamp
+	CreatedAt      pgtype.Timestamptz
+	UpdatedAt      pgtype.Timestamptz
 }
 
 type UserRole struct {
 	UrID     pgtype.UUID
 	UserID   pgtype.UUID
 	RoleID   pgtype.UUID
-	AssignAt pgtype.Timestamp
+	AssignAt pgtype.Timestamptz
 }

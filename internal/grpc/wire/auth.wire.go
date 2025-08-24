@@ -4,6 +4,7 @@ package wire
 
 import (
 	"auth_service/internal/grpc/controller"
+	"auth_service/internal/grpc/helper"
 	"auth_service/internal/grpc/mapper"
 	"auth_service/internal/grpc/repos"
 	"auth_service/internal/grpc/services"
@@ -14,6 +15,7 @@ import (
 func InjectAuthController() *controller.AuthController {
 	wire.Build(
 		repos.NewAuthRepo,
+		helper.NewJWTHelper,
 		services.NewAuthService,
 		controller.NewAuthController,
 	)
@@ -48,6 +50,17 @@ func InjectTokenController() *controller.TokenController {
 		repos.NewTokenRepo,
 		services.NewTokenService,
 		controller.NewTokenController,
+	)
+
+	return nil
+}
+
+func InjectUserController() *controller.UserController {
+	wire.Build(
+		repos.NewUserRepo,
+		mapper.NewUserMapper,
+		services.NewUserService,
+		controller.NewUserController,
 	)
 
 	return nil

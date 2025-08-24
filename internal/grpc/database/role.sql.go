@@ -171,8 +171,8 @@ type GetRoleByIdRow struct {
 	RoleName              string
 	Description           pgtype.Text
 	IsRoot                bool
-	CreatedAt             pgtype.Timestamp
-	UpdatedAt             pgtype.Timestamp
+	CreatedAt             pgtype.Timestamptz
+	UpdatedAt             pgtype.Timestamptz
 	IsActive              bool
 	PermissionID          pgtype.UUID
 	PermissionName        pgtype.Text
@@ -208,6 +208,33 @@ func (q *Queries) GetRoleById(ctx context.Context, roleID pgtype.UUID) ([]GetRol
 		return nil, err
 	}
 	return items, nil
+}
+
+const getRoleByName = `-- name: GetRoleByName :one
+select role_id, name, is_root, is_active, description
+from roles
+where name = $1
+`
+
+type GetRoleByNameRow struct {
+	RoleID      pgtype.UUID
+	Name        string
+	IsRoot      bool
+	IsActive    bool
+	Description pgtype.Text
+}
+
+func (q *Queries) GetRoleByName(ctx context.Context, name string) (GetRoleByNameRow, error) {
+	row := q.db.QueryRow(ctx, getRoleByName, name)
+	var i GetRoleByNameRow
+	err := row.Scan(
+		&i.RoleID,
+		&i.Name,
+		&i.IsRoot,
+		&i.IsActive,
+		&i.Description,
+	)
+	return i, err
 }
 
 const getRoles = `-- name: GetRoles :many

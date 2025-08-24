@@ -333,6 +333,114 @@ func (x *RoleItem) GetIsActive() bool {
 	return false
 }
 
+type UserItem struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	UserId         string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id"`
+	Email          string                 `protobuf:"bytes,2,opt,name=email,proto3" json:"email"`
+	PasswordHash   string                 `protobuf:"bytes,3,opt,name=password_hash,json=passwordHash,proto3" json:"password_hash"`
+	LockEnd        int64                  `protobuf:"varint,4,opt,name=lock_end,json=lockEnd,proto3" json:"lock_end"`
+	LockReason     string                 `protobuf:"bytes,5,opt,name=lock_reason,json=lockReason,proto3" json:"lock_reason"`
+	LastLoginAt    int64                  `protobuf:"varint,6,opt,name=last_login_at,json=lastLoginAt,proto3" json:"last_login_at"`
+	FailedAttempts int32                  `protobuf:"varint,7,opt,name=failed_attempts,json=failedAttempts,proto3" json:"failed_attempts"`
+	CreatedAt      int64                  `protobuf:"varint,8,opt,name=created_at,json=createdAt,proto3" json:"created_at"`
+	UpdatedAt      int64                  `protobuf:"varint,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *UserItem) Reset() {
+	*x = UserItem{}
+	mi := &file_auth_service_common_auth_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserItem) ProtoMessage() {}
+
+func (x *UserItem) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_service_common_auth_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserItem.ProtoReflect.Descriptor instead.
+func (*UserItem) Descriptor() ([]byte, []int) {
+	return file_auth_service_common_auth_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *UserItem) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *UserItem) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *UserItem) GetPasswordHash() string {
+	if x != nil {
+		return x.PasswordHash
+	}
+	return ""
+}
+
+func (x *UserItem) GetLockEnd() int64 {
+	if x != nil {
+		return x.LockEnd
+	}
+	return 0
+}
+
+func (x *UserItem) GetLockReason() string {
+	if x != nil {
+		return x.LockReason
+	}
+	return ""
+}
+
+func (x *UserItem) GetLastLoginAt() int64 {
+	if x != nil {
+		return x.LastLoginAt
+	}
+	return 0
+}
+
+func (x *UserItem) GetFailedAttempts() int32 {
+	if x != nil {
+		return x.FailedAttempts
+	}
+	return 0
+}
+
+func (x *UserItem) GetCreatedAt() int64 {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return 0
+}
+
+func (x *UserItem) GetUpdatedAt() int64 {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return 0
+}
+
 var File_auth_service_common_auth_proto protoreflect.FileDescriptor
 
 const file_auth_service_common_auth_proto_rawDesc = "" +
@@ -372,7 +480,20 @@ const file_auth_service_common_auth_proto_rawDesc = "" +
 	"totalUsers\x12\x1b\n" +
 	"\tis_active\x18\t \x01(\bR\bisActiveB\r\n" +
 	"\v_updated_atB\r\n" +
-	"\v_created_atB\fZ\n" +
+	"\v_created_at\"\xa5\x02\n" +
+	"\bUserItem\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x14\n" +
+	"\x05email\x18\x02 \x01(\tR\x05email\x12#\n" +
+	"\rpassword_hash\x18\x03 \x01(\tR\fpasswordHash\x12\x19\n" +
+	"\block_end\x18\x04 \x01(\x03R\alockEnd\x12\x1f\n" +
+	"\vlock_reason\x18\x05 \x01(\tR\n" +
+	"lockReason\x12\"\n" +
+	"\rlast_login_at\x18\x06 \x01(\x03R\vlastLoginAt\x12'\n" +
+	"\x0ffailed_attempts\x18\a \x01(\x05R\x0efailedAttempts\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\b \x01(\x03R\tcreatedAt\x12\x1d\n" +
+	"\n" +
+	"updated_at\x18\t \x01(\x03R\tupdatedAtB\fZ\n" +
 	"proto/authb\x06proto3"
 
 var (
@@ -387,12 +508,13 @@ func file_auth_service_common_auth_proto_rawDescGZIP() []byte {
 	return file_auth_service_common_auth_proto_rawDescData
 }
 
-var file_auth_service_common_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_auth_service_common_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_auth_service_common_auth_proto_goTypes = []any{
 	(*Resource)(nil),       // 0: auth.Resource
 	(*Action)(nil),         // 1: auth.Action
 	(*PermissionItem)(nil), // 2: auth.PermissionItem
 	(*RoleItem)(nil),       // 3: auth.RoleItem
+	(*UserItem)(nil),       // 4: auth.UserItem
 }
 var file_auth_service_common_auth_proto_depIdxs = []int32{
 	0, // 0: auth.PermissionItem.resource:type_name -> auth.Resource
@@ -418,7 +540,7 @@ func file_auth_service_common_auth_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_auth_service_common_auth_proto_rawDesc), len(file_auth_service_common_auth_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

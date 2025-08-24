@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"auth_service/internal/grpc/helper"
 	"auth_service/internal/grpc/services"
 	"auth_service/internal/grpc/utils"
 	"auth_service/proto/auth"
@@ -13,7 +14,7 @@ type AuthController struct {
 	authService services.AuthService
 }
 
-func NewAuthController(authService services.AuthService) *AuthController {
+func NewAuthController(authService services.AuthService, helper helper.JWTHelper) *AuthController {
 	return &AuthController{
 		authService: authService,
 	}

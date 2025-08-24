@@ -19,6 +19,10 @@ type (
 		ConvertDbRolesRowToGrpcRoles(roles []database.GetRolesRow, usersCount map[pgtype.UUID]int32) []*auth.RoleItem
 		ConvertDbRoleByIdRowToGrpcRole(role *[]database.GetRoleByIdRow) *auth.GetRoleResponse
 	}
+
+	UserMapper interface {
+		ConvertDbUsersRowToGrpcUsers(users []database.GetUsersRow) []*auth.UserItem
+	}
 )
 
 func NewPermissionMapper() PermissionMapper {
@@ -27,4 +31,8 @@ func NewPermissionMapper() PermissionMapper {
 
 func NewRoleMapper() RoleMapper {
 	return &roleMapper{}
+}
+
+func NewUserMapper() UserMapper {
+	return &userMapper{}
 }

@@ -24,6 +24,11 @@ left join role_permissions rp on r.role_id = rp.role_id
 left join permissions p on rp.perm_id = p.perm_id
 where r.role_id = $1;
 
+-- name: GetRoleByName :one
+select role_id, name, is_root, is_active, description
+from roles
+where name = $1;
+
 -- name: CountTotalRoles :one
 select count(role_id) as total
 from roles

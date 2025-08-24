@@ -3,10 +3,11 @@ module auth_service
 go 1.24.3
 
 require (
+	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/google/uuid v1.6.0
 	github.com/google/wire v0.6.0
 	github.com/jackc/pgx/v5 v5.7.5
-	github.com/thanvuc/go-core-lib v1.0.10
+	github.com/thanvuc/go-core-lib v1.0.16
 	go.uber.org/zap v1.27.0
 	google.golang.org/grpc v1.73.0
 )
