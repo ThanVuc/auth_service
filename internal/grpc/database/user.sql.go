@@ -11,6 +11,26 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const addNewRolesToUser = `-- name: AddNewRolesToUser :exec
+insert into user_roles (user_id, role_id)
+select $1, unnest($2::UUID[])
+where not exists (
+    select 1
+    from user_roles
+    where user_id = $1 and role_id = any($2::UUID[])
+)
+`
+
+type AddNewRolesToUserParams struct {
+	UserID  pgtype.UUID
+	Column2 []pgtype.UUID
+}
+
+func (q *Queries) AddNewRolesToUser(ctx context.Context, arg AddNewRolesToUserParams) error {
+	_, err := q.db.Exec(ctx, addNewRolesToUser, arg.UserID, arg.Column2)
+	return err
+}
+
 const countTotalUsers = `-- name: CountTotalUsers :one
 SELECT count(user_id) as total
 FROM users
@@ -22,6 +42,32 @@ func (q *Queries) CountTotalUsers(ctx context.Context, dollar_1 string) (int64, 
 	var total int64
 	err := row.Scan(&total)
 	return total, err
+}
+
+const getRoleIDsByUserID = `-- name: GetRoleIDsByUserID :many
+SELECT ur.role_id
+FROM user_roles ur
+WHERE ur.user_id = $1
+`
+
+func (q *Queries) GetRoleIDsByUserID(ctx context.Context, userID pgtype.UUID) ([]pgtype.UUID, error) {
+	rows, err := q.db.Query(ctx, getRoleIDsByUserID, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []pgtype.UUID
+	for rows.Next() {
+		var role_id pgtype.UUID
+		if err := rows.Scan(&role_id); err != nil {
+			return nil, err
+		}
+		items = append(items, role_id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getUsers = `-- name: GetUsers :many
@@ -69,4 +115,61 @@ func (q *Queries) GetUsers(ctx context.Context, arg GetUsersParams) ([]GetUsersR
 		return nil, err
 	}
 	return items, nil
+}
+
+const loginWithExternalProvider = `-- name: LoginWithExternalProvider :one
+select u.user_id, u.email, u.lock_end, u.lock_reason
+from users u
+join external_provider as ep on ep.user_id = u.user_id
+WHERE u.email = $1 AND ep.sub = $2
+`
+
+type LoginWithExternalProviderParams struct {
+	Email string
+	Sub   string
+}
+
+type LoginWithExternalProviderRow struct {
+	UserID     pgtype.UUID
+	Email      string
+	LockEnd    pgtype.Timestamptz
+	LockReason pgtype.Text
+}
+
+func (q *Queries) LoginWithExternalProvider(ctx context.Context, arg LoginWithExternalProviderParams) (LoginWithExternalProviderRow, error) {
+	row := q.db.QueryRow(ctx, loginWithExternalProvider, arg.Email, arg.Sub)
+	var i LoginWithExternalProviderRow
+	err := row.Scan(
+		&i.UserID,
+		&i.Email,
+		&i.LockEnd,
+		&i.LockReason,
+	)
+	return i, err
+}
+
+const removeRolesFromUser = `-- name: RemoveRolesFromUser :exec
+delete from user_roles
+where user_id = $1 and role_id = any($2::uuid[])
+`
+
+type RemoveRolesFromUserParams struct {
+	UserID  pgtype.UUID
+	Column2 []pgtype.UUID
+}
+
+func (q *Queries) RemoveRolesFromUser(ctx context.Context, arg RemoveRolesFromUserParams) error {
+	_, err := q.db.Exec(ctx, removeRolesFromUser, arg.UserID, arg.Column2)
+	return err
+}
+
+const updateUserLastLogin = `-- name: UpdateUserLastLogin :exec
+update users
+set last_login_at = now()
+where user_id = $1
+`
+
+func (q *Queries) UpdateUserLastLogin(ctx context.Context, userID pgtype.UUID) error {
+	_, err := q.db.Exec(ctx, updateUserLastLogin, userID)
+	return err
 }

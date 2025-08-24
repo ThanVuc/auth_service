@@ -184,8 +184,8 @@ type GetPermissionRow struct {
 	IsRoot         bool
 	ResourceName   string
 	Description    pgtype.Text
-	UpdatedAt      pgtype.Timestamp
-	CreatedAt      pgtype.Timestamp
+	UpdatedAt      pgtype.Timestamptz
+	CreatedAt      pgtype.Timestamptz
 	ActionID       pgtype.Text
 	ActionName     pgtype.Text
 }

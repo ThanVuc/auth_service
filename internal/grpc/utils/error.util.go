@@ -8,16 +8,15 @@ import (
 	"go.uber.org/zap"
 )
 
-var logger = global.Logger
-
 var ErrorMessage = map[string]string{
 	"DatabaseError": "Database operation failed",
 	"NotFoundError": "Resource not found",
 	"RuntimeError":  "An unexpected error occurred",
 }
 
-func DatabaseError(ctx *context.Context, err error) *common.Error {
-	requestId := GetRequestIDFromOutgoingContext(*ctx)
+func DatabaseError(ctx context.Context, err error) *common.Error {
+	logger := global.Logger
+	requestId := GetRequestIDFromOutgoingContext(ctx)
 	logger.Error("Database operation failed", requestId, zap.Error(err))
 	e := &common.Error{
 		Code:    common.ErrorCode_ERROR_CODE_DATABASE_ERROR,
@@ -26,8 +25,9 @@ func DatabaseError(ctx *context.Context, err error) *common.Error {
 	return e
 }
 
-func NotFoundError(ctx *context.Context, err error) *common.Error {
-	requestId := GetRequestIDFromOutgoingContext(*ctx)
+func NotFoundError(ctx context.Context, err error) *common.Error {
+	logger := global.Logger
+	requestId := GetRequestIDFromOutgoingContext(ctx)
 	logger.Error("Resource not found", requestId, zap.Error(err))
 	e := &common.Error{
 		Code:    common.ErrorCode_ERROR_CODE_NOT_FOUND,
@@ -36,8 +36,9 @@ func NotFoundError(ctx *context.Context, err error) *common.Error {
 	return e
 }
 
-func RuntimeError(ctx *context.Context, err error) *common.Error {
-	requestId := GetRequestIDFromOutgoingContext(*ctx)
+func RuntimeError(ctx context.Context, err error) *common.Error {
+	logger := global.Logger
+	requestId := GetRequestIDFromOutgoingContext(ctx)
 	logger.Error("An unexpected error occurred: runtime error", requestId, zap.Error(err))
 	e := &common.Error{
 		Code:    common.ErrorCode_ERROR_CODE_RUN_TIME_ERROR,
@@ -46,8 +47,9 @@ func RuntimeError(ctx *context.Context, err error) *common.Error {
 	return e
 }
 
-func UnauthorizedError(ctx *context.Context, err error) *common.Error {
-	requestId := GetRequestIDFromOutgoingContext(*ctx)
+func UnauthorizedError(ctx context.Context, err error) *common.Error {
+	logger := global.Logger
+	requestId := GetRequestIDFromOutgoingContext(ctx)
 	logger.Error("Unauthorized access", requestId, zap.Error(err))
 	e := &common.Error{
 		Code:    common.ErrorCode_ERROR_CODE_UNAUTHORIZED,
@@ -56,8 +58,9 @@ func UnauthorizedError(ctx *context.Context, err error) *common.Error {
 	return e
 }
 
-func PermissionDeniedError(ctx *context.Context, err error) *common.Error {
-	requestId := GetRequestIDFromOutgoingContext(*ctx)
+func PermissionDeniedError(ctx context.Context, err error) *common.Error {
+	logger := global.Logger
+	requestId := GetRequestIDFromOutgoingContext(ctx)
 	logger.Error("Permission denied", requestId, zap.Error(err))
 	e := &common.Error{
 		Code:    common.ErrorCode_ERROR_CODE_PERMISSION_DENIED,
@@ -66,8 +69,9 @@ func PermissionDeniedError(ctx *context.Context, err error) *common.Error {
 	return e
 }
 
-func InternalServerError(ctx *context.Context, err error) *common.Error {
-	requestId := GetRequestIDFromOutgoingContext(*ctx)
+func InternalServerError(ctx context.Context, err error) *common.Error {
+	logger := global.Logger
+	requestId := GetRequestIDFromOutgoingContext(ctx)
 	logger.Error("Internal server error", requestId, zap.Error(err))
 	e := &common.Error{
 		Code:    common.ErrorCode_ERROR_CODE_INTERNAL_ERROR,

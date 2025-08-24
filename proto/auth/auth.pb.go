@@ -23,10 +23,10 @@ const (
 )
 
 type LoginWithGoogleRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	JwtToken      string                 `protobuf:"bytes,1,opt,name=jwt_token,json=jwtToken,proto3" json:"jwt_token"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	GoogleAccessToken string                 `protobuf:"bytes,1,opt,name=google_access_token,json=googleAccessToken,proto3" json:"google_access_token"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *LoginWithGoogleRequest) Reset() {
@@ -59,17 +59,18 @@ func (*LoginWithGoogleRequest) Descriptor() ([]byte, []int) {
 	return file_auth_service_auth_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *LoginWithGoogleRequest) GetJwtToken() string {
+func (x *LoginWithGoogleRequest) GetGoogleAccessToken() string {
 	if x != nil {
-		return x.JwtToken
+		return x.GoogleAccessToken
 	}
 	return ""
 }
 
 type LoginWithGoogleResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	AccessToken   string                 `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token"`
-	RefreshToken  string                 `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token"`
+	Error         *common.Error          `protobuf:"bytes,1,opt,name=error,proto3" json:"error"`
+	AccessToken   string                 `protobuf:"bytes,2,opt,name=access_token,json=accessToken,proto3" json:"access_token"`
+	RefreshToken  string                 `protobuf:"bytes,3,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -102,6 +103,13 @@ func (x *LoginWithGoogleResponse) ProtoReflect() protoreflect.Message {
 // Deprecated: Use LoginWithGoogleResponse.ProtoReflect.Descriptor instead.
 func (*LoginWithGoogleResponse) Descriptor() ([]byte, []int) {
 	return file_auth_service_auth_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *LoginWithGoogleResponse) GetError() *common.Error {
+	if x != nil {
+		return x.Error
+	}
+	return nil
 }
 
 func (x *LoginWithGoogleResponse) GetAccessToken() string {
@@ -322,12 +330,13 @@ var File_auth_service_auth_proto protoreflect.FileDescriptor
 
 const file_auth_service_auth_proto_rawDesc = "" +
 	"\n" +
-	"\x17auth_service/auth.proto\x12\x04auth\x1a\x1eauth_service/common.auth.proto\x1a\x13common/common.proto\"5\n" +
-	"\x16LoginWithGoogleRequest\x12\x1b\n" +
-	"\tjwt_token\x18\x01 \x01(\tR\bjwtToken\"a\n" +
-	"\x17LoginWithGoogleResponse\x12!\n" +
-	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
-	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\"W\n" +
+	"\x17auth_service/auth.proto\x12\x04auth\x1a\x1eauth_service/common.auth.proto\x1a\x13common/common.proto\x1a\x12common/error.proto\"H\n" +
+	"\x16LoginWithGoogleRequest\x12.\n" +
+	"\x13google_access_token\x18\x01 \x01(\tR\x11googleAccessToken\"\x86\x01\n" +
+	"\x17LoginWithGoogleResponse\x12#\n" +
+	"\x05error\x18\x01 \x01(\v2\r.common.ErrorR\x05error\x12!\n" +
+	"\faccess_token\x18\x02 \x01(\tR\vaccessToken\x12#\n" +
+	"\rrefresh_token\x18\x03 \x01(\tR\frefreshToken\"W\n" +
 	"\rLogoutRequest\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
 	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\"b\n" +
@@ -365,25 +374,27 @@ var file_auth_service_auth_proto_goTypes = []any{
 	(*ResourceItem)(nil),              // 3: auth.ResourceItem
 	(*SaveRouteResourceRequest)(nil),  // 4: auth.SaveRouteResourceRequest
 	(*SaveRouteResourceResponse)(nil), // 5: auth.SaveRouteResourceResponse
-	(*Resource)(nil),                  // 6: auth.Resource
-	(*Action)(nil),                    // 7: auth.Action
-	(*common.EmptyResponse)(nil),      // 8: common.EmptyResponse
+	(*common.Error)(nil),              // 6: common.Error
+	(*Resource)(nil),                  // 7: auth.Resource
+	(*Action)(nil),                    // 8: auth.Action
+	(*common.EmptyResponse)(nil),      // 9: common.EmptyResponse
 }
 var file_auth_service_auth_proto_depIdxs = []int32{
-	6, // 0: auth.ResourceItem.resource:type_name -> auth.Resource
-	7, // 1: auth.ResourceItem.actions:type_name -> auth.Action
-	3, // 2: auth.SaveRouteResourceRequest.items:type_name -> auth.ResourceItem
-	0, // 3: auth.AuthService.LoginWithGoogle:input_type -> auth.LoginWithGoogleRequest
-	2, // 4: auth.AuthService.Logout:input_type -> auth.LogoutRequest
-	4, // 5: auth.AuthService.SaveRouteResource:input_type -> auth.SaveRouteResourceRequest
-	1, // 6: auth.AuthService.LoginWithGoogle:output_type -> auth.LoginWithGoogleResponse
-	8, // 7: auth.AuthService.Logout:output_type -> common.EmptyResponse
-	5, // 8: auth.AuthService.SaveRouteResource:output_type -> auth.SaveRouteResourceResponse
-	6, // [6:9] is the sub-list for method output_type
-	3, // [3:6] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	6, // 0: auth.LoginWithGoogleResponse.error:type_name -> common.Error
+	7, // 1: auth.ResourceItem.resource:type_name -> auth.Resource
+	8, // 2: auth.ResourceItem.actions:type_name -> auth.Action
+	3, // 3: auth.SaveRouteResourceRequest.items:type_name -> auth.ResourceItem
+	0, // 4: auth.AuthService.LoginWithGoogle:input_type -> auth.LoginWithGoogleRequest
+	2, // 5: auth.AuthService.Logout:input_type -> auth.LogoutRequest
+	4, // 6: auth.AuthService.SaveRouteResource:input_type -> auth.SaveRouteResourceRequest
+	1, // 7: auth.AuthService.LoginWithGoogle:output_type -> auth.LoginWithGoogleResponse
+	9, // 8: auth.AuthService.Logout:output_type -> common.EmptyResponse
+	5, // 9: auth.AuthService.SaveRouteResource:output_type -> auth.SaveRouteResourceResponse
+	7, // [7:10] is the sub-list for method output_type
+	4, // [4:7] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_auth_service_auth_proto_init() }

@@ -15,6 +15,7 @@ type Config struct {
 	Redis    Redis    `mapstructure:"redis" json:"redis" yaml:"redis"`
 	Log      Log      `mapstructure:"log" json:"log" yaml:"log"`
 	RabbitMQ RabbitMQ `mapstructure:"rabbitmq" json:"rabbitmq" yaml:"rabbitmq"`
+	JWT      JWT      `mapstructure:"jwt" json:"jwt" yaml:"jwt"`
 }
 
 type Progres struct {
@@ -59,4 +60,12 @@ type Server struct {
 	MaxSendMsgSize   int    `mapstructure:"max_send_msg_size" json:"max_send_msg_size" yaml:"max_send_msg_size"`
 	KeepaliveTime    int    `mapstructure:"keepalive_time" json:"keepalive_time" yaml:"keepalive_time"`          // in seconds
 	KeepaliveTimeout int    `mapstructure:"keepalive_timeout" json:"keepalive_timeout" yaml:"keepalive_timeout"` // in seconds
+}
+
+type JWT struct {
+	Secret     string   `mapstructure:"secret" json:"secret" yaml:"secret"`
+	Issuer     string   `mapstructure:"issuer" json:"issuer" yaml:"issuer"`
+	Audience   []string `mapstructure:"audience" json:"audience" yaml:"audience"`
+	Expiration int      `mapstructure:"expiration" json:"expiration" yaml:"expiration"`
+	RefreshExp int      `mapstructure:"refresh_expiration" json:"refresh_expiration" yaml:"refresh_expiration"`
 }

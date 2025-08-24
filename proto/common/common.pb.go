@@ -25,6 +25,7 @@ type EmptyResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Success       *bool                  `protobuf:"varint,1,opt,name=success,proto3,oneof" json:"success"`
 	Message       *string                `protobuf:"bytes,2,opt,name=message,proto3,oneof" json:"message"`
+	Error         *Error                 `protobuf:"bytes,3,opt,name=error,proto3,oneof" json:"error"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -73,18 +74,27 @@ func (x *EmptyResponse) GetMessage() string {
 	return ""
 }
 
+func (x *EmptyResponse) GetError() *Error {
+	if x != nil {
+		return x.Error
+	}
+	return nil
+}
+
 var File_common_common_proto protoreflect.FileDescriptor
 
 const file_common_common_proto_rawDesc = "" +
 	"\n" +
-	"\x13common/common.proto\x12\x06common\"e\n" +
+	"\x13common/common.proto\x12\x06common\x1a\x12common/error.proto\"\x99\x01\n" +
 	"\rEmptyResponse\x12\x1d\n" +
 	"\asuccess\x18\x01 \x01(\bH\x00R\asuccess\x88\x01\x01\x12\x1d\n" +
-	"\amessage\x18\x02 \x01(\tH\x01R\amessage\x88\x01\x01B\n" +
+	"\amessage\x18\x02 \x01(\tH\x01R\amessage\x88\x01\x01\x12(\n" +
+	"\x05error\x18\x03 \x01(\v2\r.common.ErrorH\x02R\x05error\x88\x01\x01B\n" +
 	"\n" +
 	"\b_successB\n" +
 	"\n" +
-	"\b_messageB\x0eZ\fproto/commonb\x06proto3"
+	"\b_messageB\b\n" +
+	"\x06_errorB\x0eZ\fproto/commonb\x06proto3"
 
 var (
 	file_common_common_proto_rawDescOnce sync.Once
@@ -101,13 +111,15 @@ func file_common_common_proto_rawDescGZIP() []byte {
 var file_common_common_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_common_common_proto_goTypes = []any{
 	(*EmptyResponse)(nil), // 0: common.EmptyResponse
+	(*Error)(nil),         // 1: common.Error
 }
 var file_common_common_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	1, // 0: common.EmptyResponse.error:type_name -> common.Error
+	1, // [1:1] is the sub-list for method output_type
+	1, // [1:1] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_common_common_proto_init() }
@@ -115,6 +127,7 @@ func file_common_common_proto_init() {
 	if File_common_common_proto != nil {
 		return
 	}
+	file_common_error_proto_init()
 	file_common_common_proto_msgTypes[0].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
