@@ -40,13 +40,6 @@ func InjectRoleController() *controller.RoleController {
 	return roleController
 }
 
-func InjectTokenController() *controller.TokenController {
-	tokenRepo := repos.NewTokenRepo()
-	tokenService := services.NewTokenService(tokenRepo)
-	tokenController := controller.NewTokenController(tokenService)
-	return tokenController
-}
-
 func InjectUserController() *controller.UserController {
 	userRepo := repos.NewUserRepo()
 	userMapper := mapper.NewUserMapper()

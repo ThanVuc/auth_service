@@ -42,11 +42,6 @@ type (
 		UpsertPermissionsForRole(ctx context.Context, tx pgx.Tx, roleId string, addPerms *[]pgtype.UUID, delPerms *[]pgtype.UUID) (bool, error)
 	}
 
-	TokenRepo interface {
-		RefreshToken(ctx context.Context, req *auth.RefreshTokenRequest) error
-		RevokeToken(ctx context.Context, req *auth.RevokeTokenRequest) error
-	}
-
 	UserRepo interface {
 		GetUsers(ctx context.Context, req *auth.GetUsersRequest) ([]database.GetUsersRow, int32, int32, error)
 		GetRoleIDsByUserID(ctx context.Context, userId pgtype.UUID) ([]pgtype.UUID, error)
@@ -74,12 +69,6 @@ func NewPermissionRepo() PermissionRepo {
 func NewRoleRepo() RoleRepo {
 	return &roleRepo{
 		sqlc:   database.New(global.PostgresPool),
-		logger: global.Logger,
-	}
-}
-
-func NewTokenRepo() TokenRepo {
-	return &tokenRepo{
 		logger: global.Logger,
 	}
 }

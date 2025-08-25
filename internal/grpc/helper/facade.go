@@ -6,14 +6,13 @@ import (
 )
 
 type JWTHelper interface {
-	GenerateAccessToken(userId, email string, roles []string) (string, error)
+	GenerateAccessToken(userId, email string, roles []string, jti *string) (string, error)
 	GenerateRefreshToken() string
 	DecodeToken(tokenString string) (*models.JWTClaim, error)
-	ValidateToken(claims models.JWTClaim) (bool, error)
-	RefreshToken(refreshToken, accessToken string) (string, string, error)
-	RevokeToken(accessToken, refreshToken string) error
+	ValidateToken(accessToken string) (*models.JWTClaim, error)
 	WriteRefreshTokenToRedis(refreshToken string) error
 	WriteAccessTokenToBlacklist(jti string) error
+	RemoveRefreshTokenFromRedis(refreshToken string) error
 }
 
 func NewJWTHelper() JWTHelper {

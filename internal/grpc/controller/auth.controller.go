@@ -31,3 +31,7 @@ func (ac *AuthController) Logout(ctx context.Context, req *auth.LogoutRequest) (
 func (ac *AuthController) SaveRouteResource(ctx context.Context, req *auth.SaveRouteResourceRequest) (*auth.SaveRouteResourceResponse, error) {
 	return utils.WithSafePanic(ctx, req, ac.authService.SaveRouteResource)
 }
+
+func (ac *AuthController) RefreshToken(ctx context.Context, req *auth.RefreshTokenRequest) (*auth.RefreshTokenResponse, error) {
+	return utils.WithSafePanic(ctx, req, ac.authService.RefreshToken)
+}

@@ -15,6 +15,7 @@ type (
 		SaveRouteResource(ctx context.Context, items *auth.SaveRouteResourceRequest) (*auth.SaveRouteResourceResponse, error)
 		LoginWithGoogle(ctx context.Context, req *auth.LoginWithGoogleRequest) (*auth.LoginWithGoogleResponse, error)
 		Logout(ctx context.Context, req *auth.LogoutRequest) (*common.EmptyResponse, error)
+		RefreshToken(ctx context.Context, req *auth.RefreshTokenRequest) (*auth.RefreshTokenResponse, error)
 	}
 
 	PermissionService interface {
@@ -32,11 +33,6 @@ type (
 		DeleteRole(ctx context.Context, req *auth.DeleteRoleRequest) (*auth.DeleteRoleResponse, error)
 		DisableOrEnableRole(ctx context.Context, req *auth.DisableOrEnableRoleRequest) (*auth.DisableOrEnableRoleResponse, error)
 		GetRoleById(ctx context.Context, req *auth.GetRoleRequest) (*auth.GetRoleResponse, error)
-	}
-
-	TokenService interface {
-		RefreshToken(ctx context.Context, req *auth.RefreshTokenRequest) (*auth.RefreshTokenResponse, error)
-		RevokeToken(ctx context.Context, req *auth.RevokeTokenRequest) (*auth.RevokeTokenResponse, error)
 	}
 
 	UserService interface {
@@ -76,12 +72,6 @@ func NewRoleService(
 		roleRepo:   roleRepo,
 		roleMapper: roleMapper,
 		pool:       global.PostgresPool,
-	}
-}
-
-func NewTokenService(tokenRepo repos.TokenRepo) TokenService {
-	return &tokenService{
-		tokenRepo: tokenRepo,
 	}
 }
 

@@ -144,7 +144,7 @@ func (as *authService) LoginWithGoogle(ctx context.Context, req *auth.LoginWithG
 	}
 
 	// generate jwt token
-	accessToken, err := as.jwtHelper.GenerateAccessToken(userID, userInfo.Email, roleIds)
+	accessToken, err := as.jwtHelper.GenerateAccessToken(userID, userInfo.Email, roleIds, nil)
 	if err != nil {
 		return &auth.LoginWithGoogleResponse{
 			Error:       utils.RuntimeError(ctx, err),
@@ -168,9 +168,52 @@ func (as *authService) LoginWithGoogle(ctx context.Context, req *auth.LoginWithG
 }
 
 func (as *authService) Logout(ctx context.Context, req *auth.LogoutRequest) (*common.EmptyResponse, error) {
-	// TODO: Implement logout logic
+	as.jwtHelper.RemoveRefreshTokenFromRedis(req.RefreshToken)
+
+	claims, err := as.jwtHelper.DecodeToken(req.AccessToken)
+	if err != nil {
+		return &common.EmptyResponse{
+			Success: utils.ToBoolPointer(false),
+			Message: utils.ToStringPointer("Invalid access token"),
+			Error:   utils.InternalServerError(ctx, err),
+		}, err
+	}
+
+	as.jwtHelper.WriteAccessTokenToBlacklist(claims.ID)
+
 	return &common.EmptyResponse{
 		Success: utils.ToBoolPointer(true),
 		Message: utils.ToStringPointer("Logout successful"),
+	}, nil
+}
+
+func (as *authService) RefreshToken(ctx context.Context, req *auth.RefreshTokenRequest) (*auth.RefreshTokenResponse, error) {
+	as.jwtHelper.RemoveRefreshTokenFromRedis(req.RefreshToken)
+
+	claims, err := as.jwtHelper.ValidateToken(req.AccessToken)
+	if err != nil {
+		return &auth.RefreshTokenResponse{
+			Error: utils.InternalServerError(ctx, err),
+		}, err
+	}
+
+	newAccessToken, err := as.jwtHelper.GenerateAccessToken(claims.Subject, claims.Email, claims.RoleIDs, &claims.ID)
+	if err != nil {
+		return &auth.RefreshTokenResponse{
+			Error: utils.InternalServerError(ctx, err),
+		}, err
+	}
+	newRefreshToken := as.jwtHelper.GenerateRefreshToken()
+	err = as.jwtHelper.WriteRefreshTokenToRedis(newRefreshToken)
+	if err != nil {
+		return &auth.RefreshTokenResponse{
+			Error: utils.InternalServerError(ctx, err),
+		}, err
+	}
+
+	return &auth.RefreshTokenResponse{
+		Error:        nil,
+		AccessToken:  newAccessToken,
+		RefreshToken: newRefreshToken,
 	}, nil
 }
