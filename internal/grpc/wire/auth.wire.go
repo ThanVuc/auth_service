@@ -45,16 +45,6 @@ func InjectRoleController() *controller.RoleController {
 	return nil
 }
 
-func InjectTokenController() *controller.TokenController {
-	wire.Build(
-		repos.NewTokenRepo,
-		services.NewTokenService,
-		controller.NewTokenController,
-	)
-
-	return nil
-}
-
 func InjectUserController() *controller.UserController {
 	wire.Build(
 		repos.NewUserRepo,
