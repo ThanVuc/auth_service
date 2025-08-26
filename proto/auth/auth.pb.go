@@ -7,13 +7,12 @@
 package auth
 
 import (
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	common "auth_service/proto/common"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
-
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -439,6 +438,118 @@ func (x *LogoutRequest) GetRefreshToken() string {
 	return ""
 }
 
+type CheckPermissionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ResourceName  string                 `protobuf:"bytes,1,opt,name=resource_name,json=resourceName,proto3" json:"resource_name"`
+	ActionName    string                 `protobuf:"bytes,2,opt,name=action_name,json=actionName,proto3" json:"action_name"`
+	AccessToken   string                 `protobuf:"bytes,3,opt,name=access_token,json=accessToken,proto3" json:"access_token"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CheckPermissionRequest) Reset() {
+	*x = CheckPermissionRequest{}
+	mi := &file_auth_service_auth_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CheckPermissionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CheckPermissionRequest) ProtoMessage() {}
+
+func (x *CheckPermissionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_service_auth_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CheckPermissionRequest.ProtoReflect.Descriptor instead.
+func (*CheckPermissionRequest) Descriptor() ([]byte, []int) {
+	return file_auth_service_auth_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *CheckPermissionRequest) GetResourceName() string {
+	if x != nil {
+		return x.ResourceName
+	}
+	return ""
+}
+
+func (x *CheckPermissionRequest) GetActionName() string {
+	if x != nil {
+		return x.ActionName
+	}
+	return ""
+}
+
+func (x *CheckPermissionRequest) GetAccessToken() string {
+	if x != nil {
+		return x.AccessToken
+	}
+	return ""
+}
+
+type CheckPermissionResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Error         *common.Error          `protobuf:"bytes,1,opt,name=error,proto3" json:"error"`
+	Status        PERMISSION_STATUS      `protobuf:"varint,2,opt,name=status,proto3,enum=auth.PERMISSION_STATUS" json:"status"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CheckPermissionResponse) Reset() {
+	*x = CheckPermissionResponse{}
+	mi := &file_auth_service_auth_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CheckPermissionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CheckPermissionResponse) ProtoMessage() {}
+
+func (x *CheckPermissionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_service_auth_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CheckPermissionResponse.ProtoReflect.Descriptor instead.
+func (*CheckPermissionResponse) Descriptor() ([]byte, []int) {
+	return file_auth_service_auth_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *CheckPermissionResponse) GetError() *common.Error {
+	if x != nil {
+		return x.Error
+	}
+	return nil
+}
+
+func (x *CheckPermissionResponse) GetStatus() PERMISSION_STATUS {
+	if x != nil {
+		return x.Status
+	}
+	return PERMISSION_STATUS_PERMISSION_UNSPECIFIED
+}
+
 var File_auth_service_auth_proto protoreflect.FileDescriptor
 
 const file_auth_service_auth_proto_rawDesc = "" +
@@ -467,12 +578,21 @@ const file_auth_service_auth_proto_rawDesc = "" +
 	"\rrefresh_token\x18\x03 \x01(\tR\frefreshToken\"W\n" +
 	"\rLogoutRequest\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
-	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken2\xb0\x02\n" +
+	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\"\x81\x01\n" +
+	"\x16CheckPermissionRequest\x12#\n" +
+	"\rresource_name\x18\x01 \x01(\tR\fresourceName\x12\x1f\n" +
+	"\vaction_name\x18\x02 \x01(\tR\n" +
+	"actionName\x12!\n" +
+	"\faccess_token\x18\x03 \x01(\tR\vaccessToken\"o\n" +
+	"\x17CheckPermissionResponse\x12#\n" +
+	"\x05error\x18\x01 \x01(\v2\r.common.ErrorR\x05error\x12/\n" +
+	"\x06status\x18\x02 \x01(\x0e2\x17.auth.PERMISSION_STATUSR\x06status2\x80\x03\n" +
 	"\vAuthService\x12N\n" +
 	"\x0fLoginWithGoogle\x12\x1c.auth.LoginWithGoogleRequest\x1a\x1d.auth.LoginWithGoogleResponse\x12E\n" +
 	"\fRefreshToken\x12\x19.auth.RefreshTokenRequest\x1a\x1a.auth.RefreshTokenResponse\x124\n" +
 	"\x06Logout\x12\x13.auth.LogoutRequest\x1a\x15.common.EmptyResponse\x12T\n" +
-	"\x11SaveRouteResource\x12\x1e.auth.SaveRouteResourceRequest\x1a\x1f.auth.SaveRouteResourceResponseB\fZ\n" +
+	"\x11SaveRouteResource\x12\x1e.auth.SaveRouteResourceRequest\x1a\x1f.auth.SaveRouteResourceResponse\x12N\n" +
+	"\x0fCheckPermission\x12\x1c.auth.CheckPermissionRequest\x1a\x1d.auth.CheckPermissionResponseB\fZ\n" +
 	"proto/authb\x06proto3"
 
 var (
@@ -487,7 +607,7 @@ func file_auth_service_auth_proto_rawDescGZIP() []byte {
 	return file_auth_service_auth_proto_rawDescData
 }
 
-var file_auth_service_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_auth_service_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_auth_service_auth_proto_goTypes = []any{
 	(*LoginWithGoogleRequest)(nil),    // 0: auth.LoginWithGoogleRequest
 	(*LoginWithGoogleResponse)(nil),   // 1: auth.LoginWithGoogleResponse
@@ -497,30 +617,37 @@ var file_auth_service_auth_proto_goTypes = []any{
 	(*RefreshTokenRequest)(nil),       // 5: auth.RefreshTokenRequest
 	(*RefreshTokenResponse)(nil),      // 6: auth.RefreshTokenResponse
 	(*LogoutRequest)(nil),             // 7: auth.LogoutRequest
-	(*common.Error)(nil),              // 8: common.Error
-	(*Resource)(nil),                  // 9: auth.Resource
-	(*Action)(nil),                    // 10: auth.Action
-	(*common.EmptyResponse)(nil),      // 11: common.EmptyResponse
+	(*CheckPermissionRequest)(nil),    // 8: auth.CheckPermissionRequest
+	(*CheckPermissionResponse)(nil),   // 9: auth.CheckPermissionResponse
+	(*common.Error)(nil),              // 10: common.Error
+	(*Resource)(nil),                  // 11: auth.Resource
+	(*Action)(nil),                    // 12: auth.Action
+	(PERMISSION_STATUS)(0),            // 13: auth.PERMISSION_STATUS
+	(*common.EmptyResponse)(nil),      // 14: common.EmptyResponse
 }
 var file_auth_service_auth_proto_depIdxs = []int32{
-	8,  // 0: auth.LoginWithGoogleResponse.error:type_name -> common.Error
-	9,  // 1: auth.ResourceItem.resource:type_name -> auth.Resource
-	10, // 2: auth.ResourceItem.actions:type_name -> auth.Action
+	10, // 0: auth.LoginWithGoogleResponse.error:type_name -> common.Error
+	11, // 1: auth.ResourceItem.resource:type_name -> auth.Resource
+	12, // 2: auth.ResourceItem.actions:type_name -> auth.Action
 	2,  // 3: auth.SaveRouteResourceRequest.items:type_name -> auth.ResourceItem
-	8,  // 4: auth.RefreshTokenResponse.error:type_name -> common.Error
-	0,  // 5: auth.AuthService.LoginWithGoogle:input_type -> auth.LoginWithGoogleRequest
-	5,  // 6: auth.AuthService.RefreshToken:input_type -> auth.RefreshTokenRequest
-	7,  // 7: auth.AuthService.Logout:input_type -> auth.LogoutRequest
-	3,  // 8: auth.AuthService.SaveRouteResource:input_type -> auth.SaveRouteResourceRequest
-	1,  // 9: auth.AuthService.LoginWithGoogle:output_type -> auth.LoginWithGoogleResponse
-	6,  // 10: auth.AuthService.RefreshToken:output_type -> auth.RefreshTokenResponse
-	11, // 11: auth.AuthService.Logout:output_type -> common.EmptyResponse
-	4,  // 12: auth.AuthService.SaveRouteResource:output_type -> auth.SaveRouteResourceResponse
-	9,  // [9:13] is the sub-list for method output_type
-	5,  // [5:9] is the sub-list for method input_type
-	5,  // [5:5] is the sub-list for extension type_name
-	5,  // [5:5] is the sub-list for extension extendee
-	0,  // [0:5] is the sub-list for field type_name
+	10, // 4: auth.RefreshTokenResponse.error:type_name -> common.Error
+	10, // 5: auth.CheckPermissionResponse.error:type_name -> common.Error
+	13, // 6: auth.CheckPermissionResponse.status:type_name -> auth.PERMISSION_STATUS
+	0,  // 7: auth.AuthService.LoginWithGoogle:input_type -> auth.LoginWithGoogleRequest
+	5,  // 8: auth.AuthService.RefreshToken:input_type -> auth.RefreshTokenRequest
+	7,  // 9: auth.AuthService.Logout:input_type -> auth.LogoutRequest
+	3,  // 10: auth.AuthService.SaveRouteResource:input_type -> auth.SaveRouteResourceRequest
+	8,  // 11: auth.AuthService.CheckPermission:input_type -> auth.CheckPermissionRequest
+	1,  // 12: auth.AuthService.LoginWithGoogle:output_type -> auth.LoginWithGoogleResponse
+	6,  // 13: auth.AuthService.RefreshToken:output_type -> auth.RefreshTokenResponse
+	14, // 14: auth.AuthService.Logout:output_type -> common.EmptyResponse
+	4,  // 15: auth.AuthService.SaveRouteResource:output_type -> auth.SaveRouteResourceResponse
+	9,  // 16: auth.AuthService.CheckPermission:output_type -> auth.CheckPermissionResponse
+	12, // [12:17] is the sub-list for method output_type
+	7,  // [7:12] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_auth_service_auth_proto_init() }
@@ -535,7 +662,7 @@ func file_auth_service_auth_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_auth_service_auth_proto_rawDesc), len(file_auth_service_auth_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

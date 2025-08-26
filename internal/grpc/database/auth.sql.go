@@ -11,6 +11,33 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const hasPermission = `-- name: HasPermission :one
+SELECT EXISTS (
+    SELECT 1
+    FROM role_permissions rp
+    JOIN permissions p ON p.perm_id = rp.perm_id
+    JOIN resources rc ON rc.resource_id = p.resource_id
+    JOIN permission_actions pa ON pa.perm_id = p.perm_id
+    JOIN actions at ON at.action_id = pa.action_id
+    WHERE rp.role_id = ANY($1::uuid[])
+      AND rc.name = $2
+      AND at.name = $3
+) AS has_permission
+`
+
+type HasPermissionParams struct {
+	Column1 []pgtype.UUID
+	Name    string
+	Name_2  string
+}
+
+func (q *Queries) HasPermission(ctx context.Context, arg HasPermissionParams) (bool, error) {
+	row := q.db.QueryRow(ctx, hasPermission, arg.Column1, arg.Name, arg.Name_2)
+	var has_permission bool
+	err := row.Scan(&has_permission)
+	return has_permission, err
+}
+
 const insertExternalProvider = `-- name: InsertExternalProvider :one
 INSERT INTO external_provider (sub, provider, user_id)
 VALUES ($1, $2, $3)

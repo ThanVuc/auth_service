@@ -35,3 +35,7 @@ func (ac *AuthController) SaveRouteResource(ctx context.Context, req *auth.SaveR
 func (ac *AuthController) RefreshToken(ctx context.Context, req *auth.RefreshTokenRequest) (*auth.RefreshTokenResponse, error) {
 	return utils.WithSafePanic(ctx, req, ac.authService.RefreshToken)
 }
+
+func (ac *AuthController) CheckPermission(ctx context.Context, req *auth.CheckPermissionRequest) (*auth.CheckPermissionResponse, error) {
+	return utils.WithSafePanic(ctx, req, ac.authService.CheckPermission)
+}
