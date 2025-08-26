@@ -88,7 +88,7 @@ func (q *Queries) DeleteActionToPermission(ctx context.Context, arg DeleteAction
 
 const deletePermission = `-- name: DeletePermission :exec
 delete from permissions
-where perm_id = $1
+where perm_id = $1 and is_root = false
 `
 
 func (q *Queries) DeletePermission(ctx context.Context, permID pgtype.UUID) error {
