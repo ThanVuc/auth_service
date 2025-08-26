@@ -82,4 +82,4 @@ WHERE p.perm_id = $1;
 
 -- name: DeletePermission :exec
 delete from permissions
-where perm_id = $1;
+where perm_id = $1 and is_root = false;
