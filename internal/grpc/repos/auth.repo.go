@@ -179,3 +179,27 @@ func (ar *authRepo) LoginWithExternalProvider(ctx context.Context, sub string, e
 
 	return &userAccount, userRoleIDs, nil
 }
+
+func (ar *authRepo) CheckPermission(ctx context.Context, roleIDs []string, resource string, action string) (bool, error) {
+	// Convert roleIDs from []string to []pgtype.UUID
+	pgRoleIDs := make([]pgtype.UUID, len(roleIDs))
+	for i, id := range roleIDs {
+		var err error
+		pgRoleIDs[i], err = utils.ToUUID(id)
+		if err != nil {
+			return false, fmt.Errorf("invalid role ID: %s", id)
+		}
+	}
+
+	hasPermission, err := ar.sqlc.HasPermission(ctx, database.HasPermissionParams{
+		Column1: pgRoleIDs,
+		Name:    resource,
+		Name_2:  action,
+	})
+
+	if err != nil {
+		return false, err
+	}
+
+	return hasPermission, nil
+}

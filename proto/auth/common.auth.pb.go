@@ -21,6 +21,58 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type PERMISSION_STATUS int32
+
+const (
+	PERMISSION_STATUS_PERMISSION_UNSPECIFIED PERMISSION_STATUS = 0
+	PERMISSION_STATUS_UNAUTHORIZED           PERMISSION_STATUS = 1
+	PERMISSION_STATUS_FORBIDDEN              PERMISSION_STATUS = 2
+	PERMISSION_STATUS_ALLOWED                PERMISSION_STATUS = 3
+)
+
+// Enum value maps for PERMISSION_STATUS.
+var (
+	PERMISSION_STATUS_name = map[int32]string{
+		0: "PERMISSION_UNSPECIFIED",
+		1: "UNAUTHORIZED",
+		2: "FORBIDDEN",
+		3: "ALLOWED",
+	}
+	PERMISSION_STATUS_value = map[string]int32{
+		"PERMISSION_UNSPECIFIED": 0,
+		"UNAUTHORIZED":           1,
+		"FORBIDDEN":              2,
+		"ALLOWED":                3,
+	}
+)
+
+func (x PERMISSION_STATUS) Enum() *PERMISSION_STATUS {
+	p := new(PERMISSION_STATUS)
+	*p = x
+	return p
+}
+
+func (x PERMISSION_STATUS) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (PERMISSION_STATUS) Descriptor() protoreflect.EnumDescriptor {
+	return file_auth_service_common_auth_proto_enumTypes[0].Descriptor()
+}
+
+func (PERMISSION_STATUS) Type() protoreflect.EnumType {
+	return &file_auth_service_common_auth_proto_enumTypes[0]
+}
+
+func (x PERMISSION_STATUS) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use PERMISSION_STATUS.Descriptor instead.
+func (PERMISSION_STATUS) EnumDescriptor() ([]byte, []int) {
+	return file_auth_service_common_auth_proto_rawDescGZIP(), []int{0}
+}
+
 type Resource struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id"`
@@ -493,7 +545,12 @@ const file_auth_service_common_auth_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\b \x01(\x03R\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\t \x01(\x03R\tupdatedAtB\fZ\n" +
+	"updated_at\x18\t \x01(\x03R\tupdatedAt*]\n" +
+	"\x11PERMISSION_STATUS\x12\x1a\n" +
+	"\x16PERMISSION_UNSPECIFIED\x10\x00\x12\x10\n" +
+	"\fUNAUTHORIZED\x10\x01\x12\r\n" +
+	"\tFORBIDDEN\x10\x02\x12\v\n" +
+	"\aALLOWED\x10\x03B\fZ\n" +
 	"proto/authb\x06proto3"
 
 var (
@@ -508,18 +565,20 @@ func file_auth_service_common_auth_proto_rawDescGZIP() []byte {
 	return file_auth_service_common_auth_proto_rawDescData
 }
 
+var file_auth_service_common_auth_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_auth_service_common_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_auth_service_common_auth_proto_goTypes = []any{
-	(*Resource)(nil),       // 0: auth.Resource
-	(*Action)(nil),         // 1: auth.Action
-	(*PermissionItem)(nil), // 2: auth.PermissionItem
-	(*RoleItem)(nil),       // 3: auth.RoleItem
-	(*UserItem)(nil),       // 4: auth.UserItem
+	(PERMISSION_STATUS)(0), // 0: auth.PERMISSION_STATUS
+	(*Resource)(nil),       // 1: auth.Resource
+	(*Action)(nil),         // 2: auth.Action
+	(*PermissionItem)(nil), // 3: auth.PermissionItem
+	(*RoleItem)(nil),       // 4: auth.RoleItem
+	(*UserItem)(nil),       // 5: auth.UserItem
 }
 var file_auth_service_common_auth_proto_depIdxs = []int32{
-	0, // 0: auth.PermissionItem.resource:type_name -> auth.Resource
-	1, // 1: auth.PermissionItem.actions:type_name -> auth.Action
-	2, // 2: auth.RoleItem.permissions:type_name -> auth.PermissionItem
+	1, // 0: auth.PermissionItem.resource:type_name -> auth.Resource
+	2, // 1: auth.PermissionItem.actions:type_name -> auth.Action
+	3, // 2: auth.RoleItem.permissions:type_name -> auth.PermissionItem
 	3, // [3:3] is the sub-list for method output_type
 	3, // [3:3] is the sub-list for method input_type
 	3, // [3:3] is the sub-list for extension type_name
@@ -539,13 +598,14 @@ func file_auth_service_common_auth_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_auth_service_common_auth_proto_rawDesc), len(file_auth_service_common_auth_proto_rawDesc)),
-			NumEnums:      0,
+			NumEnums:      1,
 			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_auth_service_common_auth_proto_goTypes,
 		DependencyIndexes: file_auth_service_common_auth_proto_depIdxs,
+		EnumInfos:         file_auth_service_common_auth_proto_enumTypes,
 		MessageInfos:      file_auth_service_common_auth_proto_msgTypes,
 	}.Build()
 	File_auth_service_common_auth_proto = out.File

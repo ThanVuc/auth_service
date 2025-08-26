@@ -18,6 +18,7 @@ type (
 		SyncActions(ctx context.Context, ids, resourceIds, names []string) error
 		RegisterUserWithExternalProvider(ctx context.Context, userInfo models.GoogleUserInfo, provider constant.Provider) (string, string, error)
 		LoginWithExternalProvider(ctx context.Context, sub string, email string) (*database.LoginWithExternalProviderRow, []pgtype.UUID, error)
+		CheckPermission(ctx context.Context, roleIDs []string, resource string, action string) (bool, error)
 	}
 
 	PermissionRepo interface {

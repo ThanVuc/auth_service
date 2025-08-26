@@ -24,6 +24,7 @@ const (
 	AuthService_RefreshToken_FullMethodName      = "/auth.AuthService/RefreshToken"
 	AuthService_Logout_FullMethodName            = "/auth.AuthService/Logout"
 	AuthService_SaveRouteResource_FullMethodName = "/auth.AuthService/SaveRouteResource"
+	AuthService_CheckPermission_FullMethodName   = "/auth.AuthService/CheckPermission"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -34,6 +35,7 @@ type AuthServiceClient interface {
 	RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
 	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*common.EmptyResponse, error)
 	SaveRouteResource(ctx context.Context, in *SaveRouteResourceRequest, opts ...grpc.CallOption) (*SaveRouteResourceResponse, error)
+	CheckPermission(ctx context.Context, in *CheckPermissionRequest, opts ...grpc.CallOption) (*CheckPermissionResponse, error)
 }
 
 type authServiceClient struct {
@@ -84,6 +86,16 @@ func (c *authServiceClient) SaveRouteResource(ctx context.Context, in *SaveRoute
 	return out, nil
 }
 
+func (c *authServiceClient) CheckPermission(ctx context.Context, in *CheckPermissionRequest, opts ...grpc.CallOption) (*CheckPermissionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CheckPermissionResponse)
+	err := c.cc.Invoke(ctx, AuthService_CheckPermission_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility.
@@ -92,6 +104,7 @@ type AuthServiceServer interface {
 	RefreshToken(context.Context, *RefreshTokenRequest) (*RefreshTokenResponse, error)
 	Logout(context.Context, *LogoutRequest) (*common.EmptyResponse, error)
 	SaveRouteResource(context.Context, *SaveRouteResourceRequest) (*SaveRouteResourceResponse, error)
+	CheckPermission(context.Context, *CheckPermissionRequest) (*CheckPermissionResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -113,6 +126,9 @@ func (UnimplementedAuthServiceServer) Logout(context.Context, *LogoutRequest) (*
 }
 func (UnimplementedAuthServiceServer) SaveRouteResource(context.Context, *SaveRouteResourceRequest) (*SaveRouteResourceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SaveRouteResource not implemented")
+}
+func (UnimplementedAuthServiceServer) CheckPermission(context.Context, *CheckPermissionRequest) (*CheckPermissionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckPermission not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 func (UnimplementedAuthServiceServer) testEmbeddedByValue()                     {}
@@ -207,6 +223,24 @@ func _AuthService_SaveRouteResource_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_CheckPermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckPermissionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).CheckPermission(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_CheckPermission_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).CheckPermission(ctx, req.(*CheckPermissionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -229,6 +263,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SaveRouteResource",
 			Handler:    _AuthService_SaveRouteResource_Handler,
+		},
+		{
+			MethodName: "CheckPermission",
+			Handler:    _AuthService_CheckPermission_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
