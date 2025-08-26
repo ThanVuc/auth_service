@@ -16,6 +16,7 @@ type (
 		LoginWithGoogle(ctx context.Context, req *auth.LoginWithGoogleRequest) (*auth.LoginWithGoogleResponse, error)
 		Logout(ctx context.Context, req *auth.LogoutRequest) (*common.EmptyResponse, error)
 		RefreshToken(ctx context.Context, req *auth.RefreshTokenRequest) (*auth.RefreshTokenResponse, error)
+		CheckPermission(ctx context.Context, req *auth.CheckPermissionRequest) (*auth.CheckPermissionResponse, error)
 	}
 
 	PermissionService interface {

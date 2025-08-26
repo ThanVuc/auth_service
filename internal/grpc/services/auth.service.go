@@ -217,3 +217,37 @@ func (as *authService) RefreshToken(ctx context.Context, req *auth.RefreshTokenR
 		RefreshToken: newRefreshToken,
 	}, nil
 }
+
+func (as *authService) CheckPermission(ctx context.Context, req *auth.CheckPermissionRequest) (*auth.CheckPermissionResponse, error) {
+	claims, err := as.jwtHelper.ValidateToken(req.AccessToken)
+	if err != nil {
+		return &auth.CheckPermissionResponse{
+			Error:  utils.InternalServerError(ctx, err),
+			Status: auth.PERMISSION_STATUS_UNAUTHORIZED,
+		}, err
+	}
+
+	hasPermission, err := as.authRepo.CheckPermission(ctx, claims.RoleIDs, req.ResourceName, req.ActionName)
+	if err != nil {
+		return &auth.CheckPermissionResponse{
+			Error:  utils.InternalServerError(ctx, err),
+			Status: auth.PERMISSION_STATUS_PERMISSION_UNSPECIFIED,
+		}, err
+	}
+
+	var resp *auth.CheckPermissionResponse
+
+	if hasPermission {
+		resp = &auth.CheckPermissionResponse{
+			Error:  nil,
+			Status: auth.PERMISSION_STATUS_ALLOWED,
+		}
+	} else {
+		resp = &auth.CheckPermissionResponse{
+			Error:  nil,
+			Status: auth.PERMISSION_STATUS_FORBIDDEN,
+		}
+	}
+
+	return resp, nil
+}
