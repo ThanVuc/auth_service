@@ -17,6 +17,7 @@ type (
 		Logout(ctx context.Context, req *auth.LogoutRequest) (*common.EmptyResponse, error)
 		RefreshToken(ctx context.Context, req *auth.RefreshTokenRequest) (*auth.RefreshTokenResponse, error)
 		CheckPermission(ctx context.Context, req *auth.CheckPermissionRequest) (*auth.CheckPermissionResponse, error)
+		GetUserActionsAndResources(ctx context.Context, req *auth.GetUserActionsAndResourcesRequest) (*auth.GetUserActionsAndResourcesResponse, error)
 	}
 
 	PermissionService interface {
@@ -45,11 +46,13 @@ type (
 func NewAuthService(
 	authRepo repos.AuthRepo,
 	jwtHelper helper.JWTHelper,
+	authMapper mapper.AuthMapper,
 ) AuthService {
 	return &authService{
-		authRepo:  authRepo,
-		logger:    global.Logger,
-		jwtHelper: jwtHelper,
+		authRepo:   authRepo,
+		logger:     global.Logger,
+		jwtHelper:  jwtHelper,
+		authMapper: authMapper,
 	}
 }
 

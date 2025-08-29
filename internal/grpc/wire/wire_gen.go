@@ -19,7 +19,8 @@ import (
 func InjectAuthController() *controller.AuthController {
 	authRepo := repos.NewAuthRepo()
 	jwtHelper := helper.NewJWTHelper()
-	authService := services.NewAuthService(authRepo, jwtHelper)
+	authMapper := mapper.NewAuthMapper()
+	authService := services.NewAuthService(authRepo, jwtHelper, authMapper)
 	authController := controller.NewAuthController(authService, jwtHelper)
 	return authController
 }

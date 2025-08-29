@@ -81,6 +81,138 @@ func (x *EmptyResponse) GetError() *Error {
 	return nil
 }
 
+type EmptyRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EmptyRequest) Reset() {
+	*x = EmptyRequest{}
+	mi := &file_common_common_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EmptyRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EmptyRequest) ProtoMessage() {}
+
+func (x *EmptyRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_common_common_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EmptyRequest.ProtoReflect.Descriptor instead.
+func (*EmptyRequest) Descriptor() ([]byte, []int) {
+	return file_common_common_proto_rawDescGZIP(), []int{1}
+}
+
+type IDRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *IDRequest) Reset() {
+	*x = IDRequest{}
+	mi := &file_common_common_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *IDRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IDRequest) ProtoMessage() {}
+
+func (x *IDRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_common_common_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IDRequest.ProtoReflect.Descriptor instead.
+func (*IDRequest) Descriptor() ([]byte, []int) {
+	return file_common_common_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *IDRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type IDResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id"`
+	Error         *Error                 `protobuf:"bytes,2,opt,name=error,proto3,oneof" json:"error"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *IDResponse) Reset() {
+	*x = IDResponse{}
+	mi := &file_common_common_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *IDResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IDResponse) ProtoMessage() {}
+
+func (x *IDResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_common_common_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IDResponse.ProtoReflect.Descriptor instead.
+func (*IDResponse) Descriptor() ([]byte, []int) {
+	return file_common_common_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *IDResponse) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *IDResponse) GetError() *Error {
+	if x != nil {
+		return x.Error
+	}
+	return nil
+}
+
 var File_common_common_proto protoreflect.FileDescriptor
 
 const file_common_common_proto_rawDesc = "" +
@@ -94,6 +226,14 @@ const file_common_common_proto_rawDesc = "" +
 	"\b_successB\n" +
 	"\n" +
 	"\b_messageB\b\n" +
+	"\x06_error\"\x0e\n" +
+	"\fEmptyRequest\"\x1b\n" +
+	"\tIDRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"P\n" +
+	"\n" +
+	"IDResponse\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12(\n" +
+	"\x05error\x18\x02 \x01(\v2\r.common.ErrorH\x00R\x05error\x88\x01\x01B\b\n" +
 	"\x06_errorB\x0eZ\fproto/commonb\x06proto3"
 
 var (
@@ -108,18 +248,22 @@ func file_common_common_proto_rawDescGZIP() []byte {
 	return file_common_common_proto_rawDescData
 }
 
-var file_common_common_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_common_common_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_common_common_proto_goTypes = []any{
 	(*EmptyResponse)(nil), // 0: common.EmptyResponse
-	(*Error)(nil),         // 1: common.Error
+	(*EmptyRequest)(nil),  // 1: common.EmptyRequest
+	(*IDRequest)(nil),     // 2: common.IDRequest
+	(*IDResponse)(nil),    // 3: common.IDResponse
+	(*Error)(nil),         // 4: common.Error
 }
 var file_common_common_proto_depIdxs = []int32{
-	1, // 0: common.EmptyResponse.error:type_name -> common.Error
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	4, // 0: common.EmptyResponse.error:type_name -> common.Error
+	4, // 1: common.IDResponse.error:type_name -> common.Error
+	2, // [2:2] is the sub-list for method output_type
+	2, // [2:2] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_common_common_proto_init() }
@@ -129,13 +273,14 @@ func file_common_common_proto_init() {
 	}
 	file_common_error_proto_init()
 	file_common_common_proto_msgTypes[0].OneofWrappers = []any{}
+	file_common_common_proto_msgTypes[3].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_common_common_proto_rawDesc), len(file_common_common_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   1,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
