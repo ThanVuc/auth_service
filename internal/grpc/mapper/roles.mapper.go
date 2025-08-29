@@ -32,10 +32,14 @@ func (r *roleMapper) ConvertDbRoleByIdRowToGrpcRole(role *[]database.GetRoleById
 
 	perms := make([]*auth.PermissionItem, 0, len((*role)))
 	for _, r := range *role {
+		if !r.PermissionID.Valid || !r.PermissionName.Valid {
+			continue
+		}
+
 		perms = append(perms, &auth.PermissionItem{
 			PermId:      r.PermissionID.String(),
-			PermName:    r.RoleName,
-			Description: r.Description.String,
+			PermName:    r.PermissionName.String,
+			Description: r.PermissionDescription.String,
 		})
 	}
 
