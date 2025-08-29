@@ -385,6 +385,66 @@ func (x *RoleItem) GetIsActive() bool {
 	return false
 }
 
+type PermissionAuthItem struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Permission    string                 `protobuf:"bytes,1,opt,name=permission,proto3" json:"permission"`
+	Resource      string                 `protobuf:"bytes,2,opt,name=resource,proto3" json:"resource"`
+	Actions       []string               `protobuf:"bytes,3,rep,name=actions,proto3" json:"actions"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PermissionAuthItem) Reset() {
+	*x = PermissionAuthItem{}
+	mi := &file_auth_service_common_auth_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PermissionAuthItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PermissionAuthItem) ProtoMessage() {}
+
+func (x *PermissionAuthItem) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_service_common_auth_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PermissionAuthItem.ProtoReflect.Descriptor instead.
+func (*PermissionAuthItem) Descriptor() ([]byte, []int) {
+	return file_auth_service_common_auth_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *PermissionAuthItem) GetPermission() string {
+	if x != nil {
+		return x.Permission
+	}
+	return ""
+}
+
+func (x *PermissionAuthItem) GetResource() string {
+	if x != nil {
+		return x.Resource
+	}
+	return ""
+}
+
+func (x *PermissionAuthItem) GetActions() []string {
+	if x != nil {
+		return x.Actions
+	}
+	return nil
+}
+
 type UserItem struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	UserId         string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id"`
@@ -402,7 +462,7 @@ type UserItem struct {
 
 func (x *UserItem) Reset() {
 	*x = UserItem{}
-	mi := &file_auth_service_common_auth_proto_msgTypes[4]
+	mi := &file_auth_service_common_auth_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -414,7 +474,7 @@ func (x *UserItem) String() string {
 func (*UserItem) ProtoMessage() {}
 
 func (x *UserItem) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_service_common_auth_proto_msgTypes[4]
+	mi := &file_auth_service_common_auth_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -427,7 +487,7 @@ func (x *UserItem) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserItem.ProtoReflect.Descriptor instead.
 func (*UserItem) Descriptor() ([]byte, []int) {
-	return file_auth_service_common_auth_proto_rawDescGZIP(), []int{4}
+	return file_auth_service_common_auth_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *UserItem) GetUserId() string {
@@ -532,7 +592,13 @@ const file_auth_service_common_auth_proto_rawDesc = "" +
 	"totalUsers\x12\x1b\n" +
 	"\tis_active\x18\t \x01(\bR\bisActiveB\r\n" +
 	"\v_updated_atB\r\n" +
-	"\v_created_at\"\xa5\x02\n" +
+	"\v_created_at\"j\n" +
+	"\x12PermissionAuthItem\x12\x1e\n" +
+	"\n" +
+	"permission\x18\x01 \x01(\tR\n" +
+	"permission\x12\x1a\n" +
+	"\bresource\x18\x02 \x01(\tR\bresource\x12\x18\n" +
+	"\aactions\x18\x03 \x03(\tR\aactions\"\xa5\x02\n" +
 	"\bUserItem\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x14\n" +
 	"\x05email\x18\x02 \x01(\tR\x05email\x12#\n" +
@@ -566,14 +632,15 @@ func file_auth_service_common_auth_proto_rawDescGZIP() []byte {
 }
 
 var file_auth_service_common_auth_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_auth_service_common_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_auth_service_common_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_auth_service_common_auth_proto_goTypes = []any{
-	(PERMISSION_STATUS)(0), // 0: auth.PERMISSION_STATUS
-	(*Resource)(nil),       // 1: auth.Resource
-	(*Action)(nil),         // 2: auth.Action
-	(*PermissionItem)(nil), // 3: auth.PermissionItem
-	(*RoleItem)(nil),       // 4: auth.RoleItem
-	(*UserItem)(nil),       // 5: auth.UserItem
+	(PERMISSION_STATUS)(0),     // 0: auth.PERMISSION_STATUS
+	(*Resource)(nil),           // 1: auth.Resource
+	(*Action)(nil),             // 2: auth.Action
+	(*PermissionItem)(nil),     // 3: auth.PermissionItem
+	(*RoleItem)(nil),           // 4: auth.RoleItem
+	(*PermissionAuthItem)(nil), // 5: auth.PermissionAuthItem
+	(*UserItem)(nil),           // 6: auth.UserItem
 }
 var file_auth_service_common_auth_proto_depIdxs = []int32{
 	1, // 0: auth.PermissionItem.resource:type_name -> auth.Resource
@@ -599,7 +666,7 @@ func file_auth_service_common_auth_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_auth_service_common_auth_proto_rawDesc), len(file_auth_service_common_auth_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   5,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

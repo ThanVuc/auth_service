@@ -8,6 +8,10 @@ import (
 )
 
 type (
+	AuthMapper interface {
+		ConvertFromUserAuthRowToProto(from []database.GetUserAuthInfoRow) []*auth.PermissionAuthItem
+	}
+
 	PermissionMapper interface {
 		ConvertDbResourcesRowToGrpcResources(resources []database.GetResourcesRow) []*auth.Resource
 		ConvertDbActionsRowToGrpcActions(resources []database.GetActionsRow) []*auth.Action
@@ -35,4 +39,8 @@ func NewRoleMapper() RoleMapper {
 
 func NewUserMapper() UserMapper {
 	return &userMapper{}
+}
+
+func NewAuthMapper() AuthMapper {
+	return &authMapper{}
 }

@@ -3,6 +3,7 @@ package services
 import (
 	"auth_service/internal/constant"
 	"auth_service/internal/grpc/helper"
+	"auth_service/internal/grpc/mapper"
 	"auth_service/internal/grpc/models"
 	"auth_service/internal/grpc/repos"
 	"auth_service/internal/grpc/utils"
@@ -18,9 +19,10 @@ import (
 )
 
 type authService struct {
-	authRepo  repos.AuthRepo
-	logger    log.Logger
-	jwtHelper helper.JWTHelper
+	authRepo   repos.AuthRepo
+	logger     log.Logger
+	jwtHelper  helper.JWTHelper
+	authMapper mapper.AuthMapper
 }
 
 func (as *authService) SaveRouteResource(ctx context.Context, req *auth.SaveRouteResourceRequest) (*auth.SaveRouteResourceResponse, error) {
@@ -250,4 +252,29 @@ func (as *authService) CheckPermission(ctx context.Context, req *auth.CheckPermi
 	}
 
 	return resp, nil
+}
+
+func (as *authService) GetUserActionsAndResources(ctx context.Context, req *auth.GetUserActionsAndResourcesRequest) (*auth.GetUserActionsAndResourcesResponse, error) {
+	claims, err := as.jwtHelper.ValidateToken(req.AccessToken)
+	if err != nil {
+		return &auth.GetUserActionsAndResourcesResponse{
+			Error: utils.InternalServerError(ctx, err),
+		}, err
+	}
+
+	roleRows, err := as.authRepo.GetUserActionsAndResources(ctx, claims.RoleIDs)
+	if err != nil {
+		return &auth.GetUserActionsAndResourcesResponse{
+			Error: utils.InternalServerError(ctx, err),
+		}, err
+	}
+
+	rolePerms := as.authMapper.ConvertFromUserAuthRowToProto(roleRows)
+
+	return &auth.GetUserActionsAndResourcesResponse{
+		UserId:      claims.Subject,
+		Email:       claims.Email,
+		Permissions: rolePerms,
+		Error:       nil,
+	}, nil
 }

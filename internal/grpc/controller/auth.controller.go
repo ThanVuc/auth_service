@@ -39,3 +39,7 @@ func (ac *AuthController) RefreshToken(ctx context.Context, req *auth.RefreshTok
 func (ac *AuthController) CheckPermission(ctx context.Context, req *auth.CheckPermissionRequest) (*auth.CheckPermissionResponse, error) {
 	return utils.WithSafePanic(ctx, req, ac.authService.CheckPermission)
 }
+
+func (ac *AuthController) GetUserActionsAndResources(ctx context.Context, req *auth.GetUserActionsAndResourcesRequest) (*auth.GetUserActionsAndResourcesResponse, error) {
+	return utils.WithSafePanic(ctx, req, ac.authService.GetUserActionsAndResources)
+}
