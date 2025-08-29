@@ -20,11 +20,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AuthService_LoginWithGoogle_FullMethodName   = "/auth.AuthService/LoginWithGoogle"
-	AuthService_RefreshToken_FullMethodName      = "/auth.AuthService/RefreshToken"
-	AuthService_Logout_FullMethodName            = "/auth.AuthService/Logout"
-	AuthService_SaveRouteResource_FullMethodName = "/auth.AuthService/SaveRouteResource"
-	AuthService_CheckPermission_FullMethodName   = "/auth.AuthService/CheckPermission"
+	AuthService_LoginWithGoogle_FullMethodName            = "/auth.AuthService/LoginWithGoogle"
+	AuthService_RefreshToken_FullMethodName               = "/auth.AuthService/RefreshToken"
+	AuthService_Logout_FullMethodName                     = "/auth.AuthService/Logout"
+	AuthService_SaveRouteResource_FullMethodName          = "/auth.AuthService/SaveRouteResource"
+	AuthService_CheckPermission_FullMethodName            = "/auth.AuthService/CheckPermission"
+	AuthService_GetUserActionsAndResources_FullMethodName = "/auth.AuthService/GetUserActionsAndResources"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -36,6 +37,7 @@ type AuthServiceClient interface {
 	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*common.EmptyResponse, error)
 	SaveRouteResource(ctx context.Context, in *SaveRouteResourceRequest, opts ...grpc.CallOption) (*SaveRouteResourceResponse, error)
 	CheckPermission(ctx context.Context, in *CheckPermissionRequest, opts ...grpc.CallOption) (*CheckPermissionResponse, error)
+	GetUserActionsAndResources(ctx context.Context, in *GetUserActionsAndResourcesRequest, opts ...grpc.CallOption) (*GetUserActionsAndResourcesResponse, error)
 }
 
 type authServiceClient struct {
@@ -96,6 +98,16 @@ func (c *authServiceClient) CheckPermission(ctx context.Context, in *CheckPermis
 	return out, nil
 }
 
+func (c *authServiceClient) GetUserActionsAndResources(ctx context.Context, in *GetUserActionsAndResourcesRequest, opts ...grpc.CallOption) (*GetUserActionsAndResourcesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetUserActionsAndResourcesResponse)
+	err := c.cc.Invoke(ctx, AuthService_GetUserActionsAndResources_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility.
@@ -105,6 +117,7 @@ type AuthServiceServer interface {
 	Logout(context.Context, *LogoutRequest) (*common.EmptyResponse, error)
 	SaveRouteResource(context.Context, *SaveRouteResourceRequest) (*SaveRouteResourceResponse, error)
 	CheckPermission(context.Context, *CheckPermissionRequest) (*CheckPermissionResponse, error)
+	GetUserActionsAndResources(context.Context, *GetUserActionsAndResourcesRequest) (*GetUserActionsAndResourcesResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -129,6 +142,9 @@ func (UnimplementedAuthServiceServer) SaveRouteResource(context.Context, *SaveRo
 }
 func (UnimplementedAuthServiceServer) CheckPermission(context.Context, *CheckPermissionRequest) (*CheckPermissionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckPermission not implemented")
+}
+func (UnimplementedAuthServiceServer) GetUserActionsAndResources(context.Context, *GetUserActionsAndResourcesRequest) (*GetUserActionsAndResourcesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserActionsAndResources not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 func (UnimplementedAuthServiceServer) testEmbeddedByValue()                     {}
@@ -241,6 +257,24 @@ func _AuthService_CheckPermission_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthService_GetUserActionsAndResources_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserActionsAndResourcesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).GetUserActionsAndResources(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthService_GetUserActionsAndResources_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).GetUserActionsAndResources(ctx, req.(*GetUserActionsAndResourcesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthService_ServiceDesc is the grpc.ServiceDesc for AuthService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -267,6 +301,10 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CheckPermission",
 			Handler:    _AuthService_CheckPermission_Handler,
+		},
+		{
+			MethodName: "GetUserActionsAndResources",
+			Handler:    _AuthService_GetUserActionsAndResources_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

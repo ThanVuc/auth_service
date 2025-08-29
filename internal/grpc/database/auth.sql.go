@@ -11,6 +11,65 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const getUserAuthInfo = `-- name: GetUserAuthInfo :many
+SELECT
+    rp.role_id,
+    r.name          AS role_name,
+    p.perm_id,
+    p.name          AS perm_name,
+    rc.resource_id,
+    rc.name         AS resource_name,
+    at.action_id,
+    at.name         AS action_name
+FROM role_permissions rp
+JOIN roles r ON r.role_id = rp.role_id
+JOIN permissions p ON p.perm_id = rp.perm_id
+JOIN resources rc ON rc.resource_id = p.resource_id
+JOIN permission_actions pa ON pa.perm_id = p.perm_id
+JOIN actions at ON at.action_id = pa.action_id
+WHERE rp.role_id = ANY($1::uuid[])
+`
+
+type GetUserAuthInfoRow struct {
+	RoleID       pgtype.UUID
+	RoleName     string
+	PermID       pgtype.UUID
+	PermName     string
+	ResourceID   string
+	ResourceName string
+	ActionID     string
+	ActionName   string
+}
+
+func (q *Queries) GetUserAuthInfo(ctx context.Context, dollar_1 []pgtype.UUID) ([]GetUserAuthInfoRow, error) {
+	rows, err := q.db.Query(ctx, getUserAuthInfo, dollar_1)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetUserAuthInfoRow
+	for rows.Next() {
+		var i GetUserAuthInfoRow
+		if err := rows.Scan(
+			&i.RoleID,
+			&i.RoleName,
+			&i.PermID,
+			&i.PermName,
+			&i.ResourceID,
+			&i.ResourceName,
+			&i.ActionID,
+			&i.ActionName,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const hasPermission = `-- name: HasPermission :one
 SELECT EXISTS (
     SELECT 1

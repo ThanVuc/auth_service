@@ -203,3 +203,22 @@ func (ar *authRepo) CheckPermission(ctx context.Context, roleIDs []string, resou
 
 	return hasPermission, nil
 }
+
+func (ar *authRepo) GetUserActionsAndResources(ctx context.Context, roleIDs []string) ([]database.GetUserAuthInfoRow, error) {
+	// Convert roleIDs from []string to []pgtype.UUID
+	pgRoleIDs := make([]pgtype.UUID, len(roleIDs))
+	for i, id := range roleIDs {
+		var err error
+		pgRoleIDs[i], err = utils.ToUUID(id)
+		if err != nil {
+			return nil, fmt.Errorf("invalid role ID: %s", id)
+		}
+	}
+
+	rows, err := ar.sqlc.GetUserAuthInfo(ctx, pgRoleIDs)
+	if err != nil {
+		return nil, err
+	}
+
+	return rows, nil
+}

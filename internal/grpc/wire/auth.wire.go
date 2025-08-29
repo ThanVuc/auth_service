@@ -16,6 +16,7 @@ func InjectAuthController() *controller.AuthController {
 	wire.Build(
 		repos.NewAuthRepo,
 		helper.NewJWTHelper,
+		mapper.NewAuthMapper,
 		services.NewAuthService,
 		controller.NewAuthController,
 	)
