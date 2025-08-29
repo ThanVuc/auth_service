@@ -119,53 +119,50 @@ func (rs *roleService) UpsertRole(ctx context.Context, req *auth.UpsertRoleReque
 		}, fmt.Errorf("failed to upsert role: %w", err)
 	}
 
-	if req.PermissionIds != nil {
-		// Get existing permissions for the role
-		existingPerms, err := rs.roleRepo.GetPermissionIdsByRole(ctx, tx, roleId)
+	// Get existing permissions for the role
+	existingPerms, err := rs.roleRepo.GetPermissionIdsByRole(ctx, tx, roleId)
+	if err != nil {
+		tx.Rollback(ctx)
+		return &auth.UpsertRoleResponse{
+			Error:     utils.DatabaseError(ctx, fmt.Errorf("failed to get existing permissions for the role: %w", err)),
+			IsSuccess: false,
+			Message:   "Failed to get existing permissions for the role",
+		}, fmt.Errorf("failed to get existing permissions for the role: %w", err)
+	}
+
+	reqPermUUIDs := make([]pgtype.UUID, 0, len(req.PermissionIds))
+	for _, permId := range req.PermissionIds {
+		permUUID, err := utils.ToUUID(permId)
 		if err != nil {
 			tx.Rollback(ctx)
 			return &auth.UpsertRoleResponse{
-				Error:     utils.DatabaseError(ctx, fmt.Errorf("failed to get existing permissions for the role: %w", err)),
+				Error:     utils.InternalServerError(ctx, fmt.Errorf("invalid permission ID format: %w", err)),
 				IsSuccess: false,
-				Message:   "Failed to get existing permissions for the role",
-			}, fmt.Errorf("failed to get existing permissions for the role: %w", err)
+				Message:   "Invalid permission ID format",
+			}, fmt.Errorf("invalid permission ID format: %w", err)
 		}
+		reqPermUUIDs = append(reqPermUUIDs, permUUID)
+	}
 
-		reqPermUUIDs := make([]pgtype.UUID, 0, len(req.PermissionIds))
-		for _, permId := range req.PermissionIds {
-			permUUID, err := utils.ToUUID(permId)
-			if err != nil {
-				tx.Rollback(ctx)
-				return &auth.UpsertRoleResponse{
-					Error:     utils.InternalServerError(ctx, fmt.Errorf("invalid permission ID format: %w", err)),
-					IsSuccess: false,
-					Message:   "Invalid permission ID format",
-				}, fmt.Errorf("invalid permission ID format: %w", err)
-			}
-			reqPermUUIDs = append(reqPermUUIDs, permUUID)
+	addPerms := utils.Difference(reqPermUUIDs, existingPerms)
+	delPerms := utils.Difference(existingPerms, reqPermUUIDs)
+	if len(addPerms) > 0 || len(delPerms) > 0 {
+		isSuccess, err := rs.roleRepo.UpsertPermissionsForRole(ctx, tx, roleId, &addPerms, &delPerms)
+		if err != nil {
+			tx.Rollback(ctx)
+			return &auth.UpsertRoleResponse{
+				Error:     utils.DatabaseError(ctx, fmt.Errorf("failed to update permissions for the role: %w", err)),
+				IsSuccess: false,
+				Message:   "Failed to update permissions for the role",
+			}, fmt.Errorf("failed to update permissions for the role: %w", err)
 		}
-
-		addPerms := utils.Difference(reqPermUUIDs, existingPerms)
-		delPerms := utils.Difference(existingPerms, reqPermUUIDs)
-
-		if len(addPerms) > 0 || len(delPerms) > 0 {
-			isSuccess, err := rs.roleRepo.UpsertPermissionsForRole(ctx, tx, roleId, &addPerms, &delPerms)
-			if err != nil {
-				tx.Rollback(ctx)
-				return &auth.UpsertRoleResponse{
-					Error:     utils.DatabaseError(ctx, fmt.Errorf("failed to update permissions for the role: %w", err)),
-					IsSuccess: false,
-					Message:   "Failed to update permissions for the role",
-				}, fmt.Errorf("failed to update permissions for the role: %w", err)
-			}
-			if !isSuccess {
-				tx.Rollback(ctx)
-				msg := "Failed to update permissions for the role"
-				return &auth.UpsertRoleResponse{
-					IsSuccess: false,
-					Message:   msg,
-				}, nil
-			}
+		if !isSuccess {
+			tx.Rollback(ctx)
+			msg := "Failed to update permissions for the role"
+			return &auth.UpsertRoleResponse{
+				IsSuccess: false,
+				Message:   msg,
+			}, nil
 		}
 	}
 	if err := tx.Commit(ctx); err != nil {
