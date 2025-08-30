@@ -51,7 +51,7 @@ type (
 		RemoveRolesFromUser(ctx context.Context, tx pgx.Tx, userId pgtype.UUID, ids []pgtype.UUID) error
 		AssignRoleToUser(ctx context.Context, req *auth.AssignRoleToUserRequest) error
 		GetUser(ctx context.Context, req *auth.GetUserRequest) (*[]database.GetUserRow, error)
-		LockOrUnLockUser(ctx context.Context, req *auth.LockUserRequest) (bool, error)
+		LockOrUnLockUser(ctx context.Context, req *auth.LockUserRequest) (bool , error)
 	}
 )
 

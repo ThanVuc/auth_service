@@ -84,16 +84,16 @@ func (us *userService) LockOrUnLockUser(ctx context.Context, req *auth.LockUserR
     if err != nil {
         return &common.EmptyResponse{
             Success: utils.ToBoolPointer(false),
-            Message: utils.ToStringPointer("Failed to lock/unlock user"),
+            Message: utils.ToStringPointer("Failed to lock/unlock user!"),
             Error:   utils.DatabaseError(ctx, err),
         }, err
     }
 
     var msg string
     if locked {
-        msg = "User locked successfully"
+        msg = "User locked successfully!"
     } else {
-        msg = "User unlocked successfully"
+        msg = "User unlocked successfully!"
     }
 
     return &common.EmptyResponse{

@@ -184,7 +184,7 @@ func (ur *userRepo) LockOrUnLockUser(ctx context.Context, req *auth.LockUserRequ
 
 	err = ur.sqlc.LockUser(ctx, database.LockUserParams{
 		UserID:     userID,
-		LockReason: pgtype.Text{String: *req.LockReason, Valid: true},
+		LockReason: pgtype.Text{ String: *req.LockReason, Valid: true },
 	})
 	if err != nil {
 		return false, err
