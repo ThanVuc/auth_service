@@ -150,6 +150,102 @@ func (x *GetUsersResponse) GetError() *common.Error {
 	return nil
 }
 
+type GetUserRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetUserRequest) Reset() {
+	*x = GetUserRequest{}
+	mi := &file_auth_service_user_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetUserRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetUserRequest) ProtoMessage() {}
+
+func (x *GetUserRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_service_user_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetUserRequest.ProtoReflect.Descriptor instead.
+func (*GetUserRequest) Descriptor() ([]byte, []int) {
+	return file_auth_service_user_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *GetUserRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+type GetUserResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	User          *UserItem              `protobuf:"bytes,1,opt,name=user,proto3" json:"user"`
+	Error         *common.Error          `protobuf:"bytes,2,opt,name=error,proto3,oneof" json:"error"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetUserResponse) Reset() {
+	*x = GetUserResponse{}
+	mi := &file_auth_service_user_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetUserResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetUserResponse) ProtoMessage() {}
+
+func (x *GetUserResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_service_user_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetUserResponse.ProtoReflect.Descriptor instead.
+func (*GetUserResponse) Descriptor() ([]byte, []int) {
+	return file_auth_service_user_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *GetUserResponse) GetUser() *UserItem {
+	if x != nil {
+		return x.User
+	}
+	return nil
+}
+
+func (x *GetUserResponse) GetError() *common.Error {
+	if x != nil {
+		return x.Error
+	}
+	return nil
+}
+
 type AssignRoleToUserRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id"`
@@ -161,7 +257,7 @@ type AssignRoleToUserRequest struct {
 
 func (x *AssignRoleToUserRequest) Reset() {
 	*x = AssignRoleToUserRequest{}
-	mi := &file_auth_service_user_proto_msgTypes[2]
+	mi := &file_auth_service_user_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -173,7 +269,7 @@ func (x *AssignRoleToUserRequest) String() string {
 func (*AssignRoleToUserRequest) ProtoMessage() {}
 
 func (x *AssignRoleToUserRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_service_user_proto_msgTypes[2]
+	mi := &file_auth_service_user_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -186,7 +282,7 @@ func (x *AssignRoleToUserRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AssignRoleToUserRequest.ProtoReflect.Descriptor instead.
 func (*AssignRoleToUserRequest) Descriptor() ([]byte, []int) {
-	return file_auth_service_user_proto_rawDescGZIP(), []int{2}
+	return file_auth_service_user_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *AssignRoleToUserRequest) GetUserId() string {
@@ -210,6 +306,58 @@ func (x *AssignRoleToUserRequest) GetError() *common.Error {
 	return nil
 }
 
+type LockUserRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id"`
+	LockReason    *string                `protobuf:"bytes,3,opt,name=lock_reason,json=lockReason,proto3,oneof" json:"lock_reason"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LockUserRequest) Reset() {
+	*x = LockUserRequest{}
+	mi := &file_auth_service_user_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LockUserRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LockUserRequest) ProtoMessage() {}
+
+func (x *LockUserRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_service_user_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LockUserRequest.ProtoReflect.Descriptor instead.
+func (*LockUserRequest) Descriptor() ([]byte, []int) {
+	return file_auth_service_user_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *LockUserRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
+func (x *LockUserRequest) GetLockReason() string {
+	if x != nil && x.LockReason != nil {
+		return *x.LockReason
+	}
+	return ""
+}
+
 var File_auth_service_user_proto protoreflect.FileDescriptor
 
 const file_auth_service_user_proto_rawDesc = "" +
@@ -226,14 +374,27 @@ const file_auth_service_user_proto_rawDesc = "" +
 	"\vtotal_users\x18\x03 \x01(\x05R\n" +
 	"totalUsers\x12(\n" +
 	"\x05error\x18\x04 \x01(\v2\r.common.ErrorH\x00R\x05error\x88\x01\x01B\b\n" +
+	"\x06_error\")\n" +
+	"\x0eGetUserRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\"i\n" +
+	"\x0fGetUserResponse\x12\"\n" +
+	"\x04user\x18\x01 \x01(\v2\x0e.auth.UserItemR\x04user\x12(\n" +
+	"\x05error\x18\x02 \x01(\v2\r.common.ErrorH\x00R\x05error\x88\x01\x01B\b\n" +
 	"\x06_error\"r\n" +
 	"\x17AssignRoleToUserRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x19\n" +
 	"\brole_ids\x18\x02 \x03(\tR\aroleIds\x12#\n" +
-	"\x05error\x18\x03 \x01(\v2\r.common.ErrorR\x05error2\x92\x01\n" +
+	"\x05error\x18\x03 \x01(\v2\r.common.ErrorR\x05error\"`\n" +
+	"\x0fLockUserRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\tR\x06userId\x12$\n" +
+	"\vlock_reason\x18\x03 \x01(\tH\x00R\n" +
+	"lockReason\x88\x01\x01B\x0e\n" +
+	"\f_lock_reason2\x8c\x02\n" +
 	"\vUserService\x129\n" +
-	"\bGetUsers\x12\x15.auth.GetUsersRequest\x1a\x16.auth.GetUsersResponse\x12H\n" +
-	"\x10AssignRoleToUser\x12\x1d.auth.AssignRoleToUserRequest\x1a\x15.common.EmptyResponseB\fZ\n" +
+	"\bGetUsers\x12\x15.auth.GetUsersRequest\x1a\x16.auth.GetUsersResponse\x126\n" +
+	"\aGetUser\x12\x14.auth.GetUserRequest\x1a\x15.auth.GetUserResponse\x12H\n" +
+	"\x10AssignRoleToUser\x12\x1d.auth.AssignRoleToUserRequest\x1a\x15.common.EmptyResponse\x12@\n" +
+	"\x10LockOrUnLockUser\x12\x15.auth.LockUserRequest\x1a\x15.common.EmptyResponseB\fZ\n" +
 	"proto/authb\x06proto3"
 
 var (
@@ -248,32 +409,41 @@ func file_auth_service_user_proto_rawDescGZIP() []byte {
 	return file_auth_service_user_proto_rawDescData
 }
 
-var file_auth_service_user_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_auth_service_user_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_auth_service_user_proto_goTypes = []any{
 	(*GetUsersRequest)(nil),         // 0: auth.GetUsersRequest
 	(*GetUsersResponse)(nil),        // 1: auth.GetUsersResponse
-	(*AssignRoleToUserRequest)(nil), // 2: auth.AssignRoleToUserRequest
-	(*common.PageQuery)(nil),        // 3: common.PageQuery
-	(*UserItem)(nil),                // 4: auth.UserItem
-	(*common.PageInfo)(nil),         // 5: common.PageInfo
-	(*common.Error)(nil),            // 6: common.Error
-	(*common.EmptyResponse)(nil),    // 7: common.EmptyResponse
+	(*GetUserRequest)(nil),          // 2: auth.GetUserRequest
+	(*GetUserResponse)(nil),         // 3: auth.GetUserResponse
+	(*AssignRoleToUserRequest)(nil), // 4: auth.AssignRoleToUserRequest
+	(*LockUserRequest)(nil),         // 5: auth.LockUserRequest
+	(*common.PageQuery)(nil),        // 6: common.PageQuery
+	(*UserItem)(nil),                // 7: auth.UserItem
+	(*common.PageInfo)(nil),         // 8: common.PageInfo
+	(*common.Error)(nil),            // 9: common.Error
+	(*common.EmptyResponse)(nil),    // 10: common.EmptyResponse
 }
 var file_auth_service_user_proto_depIdxs = []int32{
-	3, // 0: auth.GetUsersRequest.page_query:type_name -> common.PageQuery
-	4, // 1: auth.GetUsersResponse.users:type_name -> auth.UserItem
-	5, // 2: auth.GetUsersResponse.page_info:type_name -> common.PageInfo
-	6, // 3: auth.GetUsersResponse.error:type_name -> common.Error
-	6, // 4: auth.AssignRoleToUserRequest.error:type_name -> common.Error
-	0, // 5: auth.UserService.GetUsers:input_type -> auth.GetUsersRequest
-	2, // 6: auth.UserService.AssignRoleToUser:input_type -> auth.AssignRoleToUserRequest
-	1, // 7: auth.UserService.GetUsers:output_type -> auth.GetUsersResponse
-	7, // 8: auth.UserService.AssignRoleToUser:output_type -> common.EmptyResponse
-	7, // [7:9] is the sub-list for method output_type
-	5, // [5:7] is the sub-list for method input_type
-	5, // [5:5] is the sub-list for extension type_name
-	5, // [5:5] is the sub-list for extension extendee
-	0, // [0:5] is the sub-list for field type_name
+	6,  // 0: auth.GetUsersRequest.page_query:type_name -> common.PageQuery
+	7,  // 1: auth.GetUsersResponse.users:type_name -> auth.UserItem
+	8,  // 2: auth.GetUsersResponse.page_info:type_name -> common.PageInfo
+	9,  // 3: auth.GetUsersResponse.error:type_name -> common.Error
+	7,  // 4: auth.GetUserResponse.user:type_name -> auth.UserItem
+	9,  // 5: auth.GetUserResponse.error:type_name -> common.Error
+	9,  // 6: auth.AssignRoleToUserRequest.error:type_name -> common.Error
+	0,  // 7: auth.UserService.GetUsers:input_type -> auth.GetUsersRequest
+	2,  // 8: auth.UserService.GetUser:input_type -> auth.GetUserRequest
+	4,  // 9: auth.UserService.AssignRoleToUser:input_type -> auth.AssignRoleToUserRequest
+	5,  // 10: auth.UserService.LockOrUnLockUser:input_type -> auth.LockUserRequest
+	1,  // 11: auth.UserService.GetUsers:output_type -> auth.GetUsersResponse
+	3,  // 12: auth.UserService.GetUser:output_type -> auth.GetUserResponse
+	10, // 13: auth.UserService.AssignRoleToUser:output_type -> common.EmptyResponse
+	10, // 14: auth.UserService.LockOrUnLockUser:output_type -> common.EmptyResponse
+	11, // [11:15] is the sub-list for method output_type
+	7,  // [7:11] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_auth_service_user_proto_init() }
@@ -283,13 +453,15 @@ func file_auth_service_user_proto_init() {
 	}
 	file_auth_service_common_auth_proto_init()
 	file_auth_service_user_proto_msgTypes[1].OneofWrappers = []any{}
+	file_auth_service_user_proto_msgTypes[3].OneofWrappers = []any{}
+	file_auth_service_user_proto_msgTypes[5].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_auth_service_user_proto_rawDesc), len(file_auth_service_user_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

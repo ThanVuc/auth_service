@@ -26,6 +26,7 @@ type (
 
 	UserMapper interface {
 		ConvertDbUsersRowToGrpcUsers(users []database.GetUsersRow) []*auth.UserItem
+		ConvertDbUserRowToGrpcUser(user *[]database.GetUserRow) *auth.UserItem
 	}
 )
 
