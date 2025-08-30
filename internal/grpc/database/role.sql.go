@@ -242,7 +242,7 @@ select role_id, name, is_root, is_active, description
 from roles
 Where
 ($1::TEXT IS NULL OR $1::TEXT = '' OR name ILIKE '%' || $1::TEXT || '%')
-Order by created_at desc
+Order by updated_at desc
 LIMIT NULLIF($2, 0)
 OFFSET CASE WHEN $3::INT IS NULL OR $3::INT < 0 THEN 0 ELSE $3::INT END
 `
