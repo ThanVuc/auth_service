@@ -161,25 +161,21 @@ func (ur *userRepo) GetUser(ctx context.Context, req *auth.GetUserRequest) (*[]d
 
 }
 
-func (ur *userRepo) LockOrUnLockUser(ctx context.Context, req *auth.LockUserRequest) (bool, error) {
+func (ur *userRepo) LockOrUnLockUser(ctx context.Context, req *auth.LockUserRequest) error {
 	userID, err := utils.ToUUID(req.UserId)
 	if err != nil {
-		return false, err
+		return err
 	}
 
 	var lockEnd pgtype.Timestamptz
 	lockEnd, err = ur.sqlc.GetLockEndByUserID(ctx, userID)
 	if err != nil {
-		return false, err
+		return err
 	}
-
+	
 	now := time.Now()
 	if lockEnd.Valid && lockEnd.Time.After(now) {
-		err := ur.sqlc.UnlockUser(ctx, userID)
-		if err != nil {
-			return false, err
-		}
-		return false, nil
+		return ur.sqlc.UnlockUser(ctx, userID)
 	}
 
 	err = ur.sqlc.LockUser(ctx, database.LockUserParams{
@@ -187,7 +183,10 @@ func (ur *userRepo) LockOrUnLockUser(ctx context.Context, req *auth.LockUserRequ
 		LockReason: pgtype.Text{String: *req.LockReason, Valid: true},
 	})
 	if err != nil {
-		return false, err
+		return err
+
 	}
-	return true, nil
+
+	return nil
+
 }
