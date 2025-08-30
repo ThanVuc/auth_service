@@ -454,8 +454,9 @@ type UserItem struct {
 	LockReason     string                 `protobuf:"bytes,5,opt,name=lock_reason,json=lockReason,proto3" json:"lock_reason"`
 	LastLoginAt    int64                  `protobuf:"varint,6,opt,name=last_login_at,json=lastLoginAt,proto3" json:"last_login_at"`
 	FailedAttempts int32                  `protobuf:"varint,7,opt,name=failed_attempts,json=failedAttempts,proto3" json:"failed_attempts"`
-	CreatedAt      int64                  `protobuf:"varint,8,opt,name=created_at,json=createdAt,proto3" json:"created_at"`
-	UpdatedAt      int64                  `protobuf:"varint,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at"`
+	Roles          []*RoleItem            `protobuf:"bytes,8,rep,name=roles,proto3" json:"roles"`
+	CreatedAt      int64                  `protobuf:"varint,9,opt,name=created_at,json=createdAt,proto3" json:"created_at"`
+	UpdatedAt      int64                  `protobuf:"varint,10,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -539,6 +540,13 @@ func (x *UserItem) GetFailedAttempts() int32 {
 	return 0
 }
 
+func (x *UserItem) GetRoles() []*RoleItem {
+	if x != nil {
+		return x.Roles
+	}
+	return nil
+}
+
 func (x *UserItem) GetCreatedAt() int64 {
 	if x != nil {
 		return x.CreatedAt
@@ -598,7 +606,7 @@ const file_auth_service_common_auth_proto_rawDesc = "" +
 	"permission\x18\x01 \x01(\tR\n" +
 	"permission\x12\x1a\n" +
 	"\bresource\x18\x02 \x01(\tR\bresource\x12\x18\n" +
-	"\aactions\x18\x03 \x03(\tR\aactions\"\xa5\x02\n" +
+	"\aactions\x18\x03 \x03(\tR\aactions\"\xcb\x02\n" +
 	"\bUserItem\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x14\n" +
 	"\x05email\x18\x02 \x01(\tR\x05email\x12#\n" +
@@ -607,11 +615,13 @@ const file_auth_service_common_auth_proto_rawDesc = "" +
 	"\vlock_reason\x18\x05 \x01(\tR\n" +
 	"lockReason\x12\"\n" +
 	"\rlast_login_at\x18\x06 \x01(\x03R\vlastLoginAt\x12'\n" +
-	"\x0ffailed_attempts\x18\a \x01(\x05R\x0efailedAttempts\x12\x1d\n" +
+	"\x0ffailed_attempts\x18\a \x01(\x05R\x0efailedAttempts\x12$\n" +
+	"\x05roles\x18\b \x03(\v2\x0e.auth.RoleItemR\x05roles\x12\x1d\n" +
 	"\n" +
-	"created_at\x18\b \x01(\x03R\tcreatedAt\x12\x1d\n" +
+	"created_at\x18\t \x01(\x03R\tcreatedAt\x12\x1d\n" +
 	"\n" +
-	"updated_at\x18\t \x01(\x03R\tupdatedAt*]\n" +
+	"updated_at\x18\n" +
+	" \x01(\x03R\tupdatedAt*]\n" +
 	"\x11PERMISSION_STATUS\x12\x1a\n" +
 	"\x16PERMISSION_UNSPECIFIED\x10\x00\x12\x10\n" +
 	"\fUNAUTHORIZED\x10\x01\x12\r\n" +
@@ -646,11 +656,12 @@ var file_auth_service_common_auth_proto_depIdxs = []int32{
 	1, // 0: auth.PermissionItem.resource:type_name -> auth.Resource
 	2, // 1: auth.PermissionItem.actions:type_name -> auth.Action
 	3, // 2: auth.RoleItem.permissions:type_name -> auth.PermissionItem
-	3, // [3:3] is the sub-list for method output_type
-	3, // [3:3] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	4, // 3: auth.UserItem.roles:type_name -> auth.RoleItem
+	4, // [4:4] is the sub-list for method output_type
+	4, // [4:4] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_auth_service_common_auth_proto_init() }
