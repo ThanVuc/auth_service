@@ -339,7 +339,7 @@ func (q *Queries) RemovePermissionsFromRole(ctx context.Context, arg RemovePermi
 const updateRole = `-- name: UpdateRole :execrows
 update roles
 set name = $1, description = $2
-where role_id = $3 and is_root = false
+where role_id = $3
 `
 
 type UpdateRoleParams struct {

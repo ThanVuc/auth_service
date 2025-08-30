@@ -1,5 +1,5 @@
 -- name: GetUsers :many
-SELECT user_id, email, lock_end, lock_reason
+SELECT user_id, email, lock_end, lock_reason, last_login_at
 FROM users
 WHERE ($1::TEXT IS NULL OR $1::TEXT = '' OR email ILIKE '%' || $1::TEXT || '%')
 ORDER BY created_at DESC
@@ -40,3 +40,36 @@ update users
 set last_login_at = now()
 where user_id = $1;
 
+-- name: GetUser :many
+SELECT
+    u.user_id,
+    u.email,
+    u.lock_end,
+    u.lock_reason,
+    u.created_at,
+    u.updated_at,
+    u.last_login_at,
+    r.role_id,
+    r.name AS role_name,
+    r.description AS role_description
+FROM users u
+LEFT JOIN user_roles ur ON ur.user_id = u.user_id
+LEFT JOIN roles r ON r.role_id = ur.role_id
+WHERE u.user_id = $1;
+
+
+-- name: LockUser :exec
+UPDATE users 
+SET lock_end = '9999-12-31', lock_reason = $2, updated_at = NOW()
+WHERE user_id = $1;
+
+
+-- name: UnlockUser :exec
+UPDATE users
+SET lock_end = NOW(), updated_at = NOW()
+WHERE user_id = $1;
+
+-- name: GetLockEndByUserID :one
+SELECT lock_end
+FROM users
+WHERE user_id = $1;

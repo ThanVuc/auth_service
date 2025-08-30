@@ -70,7 +70,7 @@ returning role_id;
 -- name: UpdateRole :execrows
 update roles
 set name = $1, description = $2
-where role_id = $3 and is_root = false;
+where role_id = $3;
 
 -- name: AddPermissionsToRole :execrows
 insert into role_permissions (role_id, perm_id)

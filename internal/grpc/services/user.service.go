@@ -63,3 +63,41 @@ func (us *userService) AssignRoleToUser(ctx context.Context, req *auth.AssignRol
 		Message: utils.ToStringPointer("Role assigned successfully"),
 	}, nil
 }
+
+func (ps *userService) GetUser(ctx context.Context, req *auth.GetUserRequest) (*auth.GetUserResponse, error) {
+	user, err := ps.userRepo.GetUser(ctx, req)
+	if err != nil {
+		return &auth.GetUserResponse{
+			Error: utils.DatabaseError(ctx, err),
+			User:  nil,
+		}, err
+	}
+
+	resp := &auth.GetUserResponse{
+		User: ps.userMapper.ConvertDbUserRowToGrpcUser(user),
+	}
+	return resp, nil
+}
+
+func (us *userService) LockOrUnLockUser(ctx context.Context, req *auth.LockUserRequest) (*common.EmptyResponse, error) {
+    err := us.userRepo.LockOrUnLockUser(ctx, req)
+    if err != nil {
+        return &common.EmptyResponse{
+            Success: utils.ToBoolPointer(false),
+            Message: utils.ToStringPointer("Failed to lock/unlock user"),
+            Error:   utils.DatabaseError(ctx, err),
+        }, err
+    }
+
+    var msg string
+    if req.LockReason != nil && *req.LockReason == "__UNLOCK__" {
+        msg = "User unlocked successfully"
+    } else {
+        msg = "User locked successfully"
+    }
+
+    return &common.EmptyResponse{
+        Success: utils.ToBoolPointer(true),
+        Message: utils.ToStringPointer(msg),
+    }, nil
+}

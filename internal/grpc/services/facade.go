@@ -40,6 +40,8 @@ type (
 	UserService interface {
 		GetUsers(ctx context.Context, req *auth.GetUsersRequest) (*auth.GetUsersResponse, error)
 		AssignRoleToUser(ctx context.Context, req *auth.AssignRoleToUserRequest) (*common.EmptyResponse, error)
+		GetUser(ctx context.Context, req *auth.GetUserRequest) (*auth.GetUserResponse, error)
+		LockOrUnLockUser(ctx context.Context, req *auth.LockUserRequest) (*common.EmptyResponse, error)
 	}
 )
 
