@@ -227,7 +227,7 @@ from permissions
 Where
 ($1::TEXT IS NULL OR $1::TEXT = '' OR name ILIKE '%' || $1::TEXT || '%') AND
 ($2::TEXT IS NULL OR $2::TEXT = '' OR resource_id = $2::TEXT)
-Order by created_at desc
+Order by updated_at desc
 LIMIT NULLIF($3, 0)
 OFFSET CASE WHEN $4::INT IS NULL OR $4::INT < 0 THEN 0 ELSE $4::INT END
 `
