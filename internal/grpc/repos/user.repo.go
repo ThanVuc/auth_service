@@ -5,6 +5,7 @@ import (
 	"auth_service/internal/grpc/utils"
 	"auth_service/proto/auth"
 	"context"
+	"time"
 
 	"database/sql"
 
@@ -140,4 +141,52 @@ func (r *userRepo) RemoveRolesFromUser(ctx context.Context, tx pgx.Tx, userId pg
 	}
 
 	return nil
+}
+func (ur *userRepo) GetUser(ctx context.Context, req *auth.GetUserRequest) (*[]database.GetUserRow, error) {
+	userIdUUID, err := utils.ToUUID(req.UserId)
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := ur.sqlc.GetUser(ctx, userIdUUID)
+	if err != nil {
+		return nil, err
+	}
+
+	if user == nil {
+		return nil, nil
+	}
+
+	return &user, nil
+
+}
+
+func (ur *userRepo) LockOrUnLockUser(ctx context.Context, req *auth.LockUserRequest) error {
+	userID, err := utils.ToUUID(req.UserId)
+	if err != nil {
+		return err
+	}
+
+	var lockEnd pgtype.Timestamptz
+	lockEnd, err = ur.sqlc.GetLockEndByUserID(ctx, userID)
+	if err != nil {
+		return err
+	}
+	
+	now := time.Now()
+	if lockEnd.Valid && lockEnd.Time.After(now) {
+		return ur.sqlc.UnlockUser(ctx, userID)
+	}
+
+	err = ur.sqlc.LockUser(ctx, database.LockUserParams{
+		UserID:     userID,
+		LockReason: pgtype.Text{String: *req.LockReason, Valid: true},
+	})
+	if err != nil {
+		return err
+
+	}
+
+	return nil
+
 }

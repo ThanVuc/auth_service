@@ -23,6 +23,16 @@ func (pc *UserController) GetUsers(ctx context.Context, req *auth.GetUsersReques
 	return utils.WithSafePanic(ctx, req, pc.userService.GetUsers)
 }
 
+
 func (uc *UserController) AssignRoleToUser(ctx context.Context, req *auth.AssignRoleToUserRequest) (*common.EmptyResponse, error) {
 	return utils.WithSafePanic(ctx, req, uc.userService.AssignRoleToUser)
 }
+
+func (pc *UserController) GetUser(ctx context.Context, req *auth.GetUserRequest) (*auth.GetUserResponse, error) {
+	return utils.WithSafePanic(ctx, req, pc.userService.GetUser)
+}
+
+func (pc *UserController) LockOrUnLockUser(ctx context.Context, req *auth.LockUserRequest) (*common.EmptyResponse, error) {
+	return utils.WithSafePanic(ctx, req, pc.userService.LockOrUnLockUser)
+}
+

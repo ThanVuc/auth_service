@@ -44,6 +44,19 @@ func (q *Queries) CountTotalUsers(ctx context.Context, dollar_1 string) (int64, 
 	return total, err
 }
 
+const getLockEndByUserID = `-- name: GetLockEndByUserID :one
+SELECT lock_end
+FROM users
+WHERE user_id = $1
+`
+
+func (q *Queries) GetLockEndByUserID(ctx context.Context, userID pgtype.UUID) (pgtype.Timestamptz, error) {
+	row := q.db.QueryRow(ctx, getLockEndByUserID, userID)
+	var lock_end pgtype.Timestamptz
+	err := row.Scan(&lock_end)
+	return lock_end, err
+}
+
 const getRoleIDsByUserID = `-- name: GetRoleIDsByUserID :many
 SELECT ur.role_id
 FROM user_roles ur
@@ -70,8 +83,70 @@ func (q *Queries) GetRoleIDsByUserID(ctx context.Context, userID pgtype.UUID) ([
 	return items, nil
 }
 
+const getUser = `-- name: GetUser :many
+SELECT
+    u.user_id,
+    u.email,
+    u.lock_end,
+    u.lock_reason,
+    u.created_at,
+    u.updated_at,
+    u.last_login_at,
+    r.role_id,
+    r.name AS role_name,
+    r.description AS role_description
+FROM users u
+LEFT JOIN user_roles ur ON ur.user_id = u.user_id
+LEFT JOIN roles r ON r.role_id = ur.role_id
+WHERE u.user_id = $1
+`
+
+type GetUserRow struct {
+	UserID          pgtype.UUID
+	Email           string
+	LockEnd         pgtype.Timestamptz
+	LockReason      pgtype.Text
+	CreatedAt       pgtype.Timestamptz
+	UpdatedAt       pgtype.Timestamptz
+	LastLoginAt     pgtype.Timestamptz
+	RoleID          pgtype.UUID
+	RoleName        pgtype.Text
+	RoleDescription pgtype.Text
+}
+
+func (q *Queries) GetUser(ctx context.Context, userID pgtype.UUID) ([]GetUserRow, error) {
+	rows, err := q.db.Query(ctx, getUser, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetUserRow
+	for rows.Next() {
+		var i GetUserRow
+		if err := rows.Scan(
+			&i.UserID,
+			&i.Email,
+			&i.LockEnd,
+			&i.LockReason,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.LastLoginAt,
+			&i.RoleID,
+			&i.RoleName,
+			&i.RoleDescription,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getUsers = `-- name: GetUsers :many
-SELECT user_id, email, lock_end, lock_reason
+SELECT user_id, email, lock_end, lock_reason, last_login_at
 FROM users
 WHERE ($1::TEXT IS NULL OR $1::TEXT = '' OR email ILIKE '%' || $1::TEXT || '%')
 ORDER BY created_at DESC
@@ -86,10 +161,11 @@ type GetUsersParams struct {
 }
 
 type GetUsersRow struct {
-	UserID     pgtype.UUID
-	Email      string
-	LockEnd    pgtype.Timestamptz
-	LockReason pgtype.Text
+	UserID      pgtype.UUID
+	Email       string
+	LockEnd     pgtype.Timestamptz
+	LockReason  pgtype.Text
+	LastLoginAt pgtype.Timestamptz
 }
 
 func (q *Queries) GetUsers(ctx context.Context, arg GetUsersParams) ([]GetUsersRow, error) {
@@ -106,6 +182,7 @@ func (q *Queries) GetUsers(ctx context.Context, arg GetUsersParams) ([]GetUsersR
 			&i.Email,
 			&i.LockEnd,
 			&i.LockReason,
+			&i.LastLoginAt,
 		); err != nil {
 			return nil, err
 		}
@@ -115,6 +192,22 @@ func (q *Queries) GetUsers(ctx context.Context, arg GetUsersParams) ([]GetUsersR
 		return nil, err
 	}
 	return items, nil
+}
+
+const lockUser = `-- name: LockUser :exec
+UPDATE users 
+SET lock_end = '9999-12-31', lock_reason = $2, updated_at = NOW()
+WHERE user_id = $1
+`
+
+type LockUserParams struct {
+	UserID     pgtype.UUID
+	LockReason pgtype.Text
+}
+
+func (q *Queries) LockUser(ctx context.Context, arg LockUserParams) error {
+	_, err := q.db.Exec(ctx, lockUser, arg.UserID, arg.LockReason)
+	return err
 }
 
 const loginWithExternalProvider = `-- name: LoginWithExternalProvider :one
@@ -160,6 +253,17 @@ type RemoveRolesFromUserParams struct {
 
 func (q *Queries) RemoveRolesFromUser(ctx context.Context, arg RemoveRolesFromUserParams) error {
 	_, err := q.db.Exec(ctx, removeRolesFromUser, arg.UserID, arg.Column2)
+	return err
+}
+
+const unlockUser = `-- name: UnlockUser :exec
+UPDATE users
+SET lock_end = NOW(), updated_at = NOW()
+WHERE user_id = $1
+`
+
+func (q *Queries) UnlockUser(ctx context.Context, userID pgtype.UUID) error {
+	_, err := q.db.Exec(ctx, unlockUser, userID)
 	return err
 }
 
