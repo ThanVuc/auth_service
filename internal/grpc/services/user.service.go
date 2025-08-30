@@ -80,7 +80,7 @@ func (ps *userService) GetUser(ctx context.Context, req *auth.GetUserRequest) (*
 }
 
 func (us *userService) LockOrUnLockUser(ctx context.Context, req *auth.LockUserRequest) (*common.EmptyResponse, error) {
-    err := us.userRepo.LockOrUnLockUser(ctx, req)
+    locked, err := us.userRepo.LockOrUnLockUser(ctx, req)
     if err != nil {
         return &common.EmptyResponse{
             Success: utils.ToBoolPointer(false),
@@ -90,10 +90,10 @@ func (us *userService) LockOrUnLockUser(ctx context.Context, req *auth.LockUserR
     }
 
     var msg string
-    if req.LockReason != nil && *req.LockReason == "__UNLOCK__" {
-        msg = "User unlocked successfully"
-    } else {
+    if locked {
         msg = "User locked successfully"
+    } else {
+        msg = "User unlocked successfully"
     }
 
     return &common.EmptyResponse{
