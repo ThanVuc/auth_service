@@ -12,7 +12,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/thanvuc/go-core-lib/log"
+		"github.com/thanvuc/go-core-lib/log"
 )
 
 type userRepo struct {
