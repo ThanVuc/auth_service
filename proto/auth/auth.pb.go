@@ -502,6 +502,7 @@ type CheckPermissionResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Error         *common.Error          `protobuf:"bytes,1,opt,name=error,proto3" json:"error"`
 	Status        PERMISSION_STATUS      `protobuf:"varint,2,opt,name=status,proto3,enum=auth.PERMISSION_STATUS" json:"status"`
+	UserId        string                 `protobuf:"bytes,3,opt,name=user_id,json=userId,proto3" json:"user_id"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -548,6 +549,13 @@ func (x *CheckPermissionResponse) GetStatus() PERMISSION_STATUS {
 		return x.Status
 	}
 	return PERMISSION_STATUS_PERMISSION_UNSPECIFIED
+}
+
+func (x *CheckPermissionResponse) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
 }
 
 type GetUserActionsAndResourcesRequest struct {
@@ -695,10 +703,11 @@ const file_auth_service_auth_proto_rawDesc = "" +
 	"\rresource_name\x18\x01 \x01(\tR\fresourceName\x12\x1f\n" +
 	"\vaction_name\x18\x02 \x01(\tR\n" +
 	"actionName\x12!\n" +
-	"\faccess_token\x18\x03 \x01(\tR\vaccessToken\"o\n" +
+	"\faccess_token\x18\x03 \x01(\tR\vaccessToken\"\x88\x01\n" +
 	"\x17CheckPermissionResponse\x12#\n" +
 	"\x05error\x18\x01 \x01(\v2\r.common.ErrorR\x05error\x12/\n" +
-	"\x06status\x18\x02 \x01(\x0e2\x17.auth.PERMISSION_STATUSR\x06status\"F\n" +
+	"\x06status\x18\x02 \x01(\x0e2\x17.auth.PERMISSION_STATUSR\x06status\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\tR\x06userId\"F\n" +
 	"!GetUserActionsAndResourcesRequest\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\"\xb4\x01\n" +
 	"\"GetUserActionsAndResourcesResponse\x12#\n" +

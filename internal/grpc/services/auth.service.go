@@ -243,6 +243,7 @@ func (as *authService) CheckPermission(ctx context.Context, req *auth.CheckPermi
 		resp = &auth.CheckPermissionResponse{
 			Error:  nil,
 			Status: auth.PERMISSION_STATUS_ALLOWED,
+			UserId: claims.Subject,
 		}
 	} else {
 		resp = &auth.CheckPermissionResponse{
