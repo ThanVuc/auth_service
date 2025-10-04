@@ -222,3 +222,49 @@ func (ar *authRepo) GetUserActionsAndResources(ctx context.Context, roleIDs []st
 
 	return rows, nil
 }
+
+func (ar *authRepo) SyncDatabase(ctx context.Context) error {
+	users, err := ar.sqlc.GetUsers(ctx, database.GetUsersParams{})
+	if err != nil {
+		return err
+	}
+
+	requestIds := make([]string, 0)
+	payloads := make([][]byte, 0)
+	aggregate_types := make([]string, 0)
+	aggregate_ids := make([]string, 0)
+	event_types := make([]string, 0)
+	requestId := utils.GetRequestIDFromOutgoingContext(ctx)
+
+	for _, user := range users {
+		var outboxPayload = map[string]interface{}{
+			"user_id":    user.UserID.String(),
+			"email":      user.Email,
+			"created_at": time.Now().Unix(),
+		}
+
+		payloadBytes, marshalErr := json.Marshal(outboxPayload)
+		if marshalErr != nil {
+			return marshalErr
+		}
+		requestIds = append(requestIds, requestId)
+		payloads = append(payloads, payloadBytes)
+		aggregate_types = append(aggregate_types, constant.AggregateTypeUser)
+		aggregate_ids = append(aggregate_ids, user.UserID.String())
+		event_types = append(event_types, constant.EventTypeCreate)
+	}
+
+	err = ar.sqlc.InsertOutboxBulk(ctx, database.InsertOutboxBulkParams{
+		Column1: aggregate_types,
+		Column2: aggregate_ids,
+		Column3: event_types,
+		Column4: payloads,
+		Column5: requestIds,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -12,6 +12,7 @@ import (
 type AuthController struct {
 	auth.UnimplementedAuthServiceServer
 	authService services.AuthService
+	common.UnimplementedSyncDatabaseServiceServer
 }
 
 func NewAuthController(authService services.AuthService, helper helper.JWTHelper) *AuthController {
@@ -42,4 +43,8 @@ func (ac *AuthController) CheckPermission(ctx context.Context, req *auth.CheckPe
 
 func (ac *AuthController) GetUserActionsAndResources(ctx context.Context, req *auth.GetUserActionsAndResourcesRequest) (*auth.GetUserActionsAndResourcesResponse, error) {
 	return utils.WithSafePanic(ctx, req, ac.authService.GetUserActionsAndResources)
+}
+
+func (ac *AuthController) SyncDatabase(ctx context.Context, req *common.SyncDatabaseRequest) (*common.EmptyResponse, error) {
+	return utils.WithSafePanic(ctx, req, ac.authService.SyncDatabase)
 }
