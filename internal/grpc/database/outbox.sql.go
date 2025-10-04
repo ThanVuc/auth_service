@@ -48,3 +48,38 @@ func (q *Queries) InsertOutbox(ctx context.Context, arg InsertOutboxParams) (Ins
 	err := row.Scan(&i.ID, &i.OccurredAt)
 	return i, err
 }
+
+const insertOutboxBulk = `-- name: InsertOutboxBulk :exec
+INSERT INTO outbox (
+    aggregate_type,
+    aggregate_id,
+    event_type,
+    payload,
+    request_id
+)
+SELECT 
+    unnest($1::text[])   AS aggregate_type,
+    unnest($2::text[])   AS aggregate_id,
+    unnest($3::text[])   AS event_type,
+    unnest($4::jsonb[])  AS payload,
+    unnest($5::text[])   AS request_id
+`
+
+type InsertOutboxBulkParams struct {
+	Column1 []string
+	Column2 []string
+	Column3 []string
+	Column4 [][]byte
+	Column5 []string
+}
+
+func (q *Queries) InsertOutboxBulk(ctx context.Context, arg InsertOutboxBulkParams) error {
+	_, err := q.db.Exec(ctx, insertOutboxBulk,
+		arg.Column1,
+		arg.Column2,
+		arg.Column3,
+		arg.Column4,
+		arg.Column5,
+	)
+	return err
+}

@@ -279,3 +279,14 @@ func (as *authService) GetUserActionsAndResources(ctx context.Context, req *auth
 		Error:       nil,
 	}, nil
 }
+
+func (as *authService) SyncDatabase(ctx context.Context, req *common.SyncDatabaseRequest) (*common.EmptyResponse, error) {
+	err := as.authRepo.SyncDatabase(ctx)
+	if err != nil {
+	}
+
+	return &common.EmptyResponse{
+		Success: utils.ToBoolPointer(true),
+		Message: utils.ToStringPointer("Sync database successfully"),
+	}, nil
+}

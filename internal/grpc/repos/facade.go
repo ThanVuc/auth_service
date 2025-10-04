@@ -20,6 +20,7 @@ type (
 		LoginWithExternalProvider(ctx context.Context, sub string, email string) (*database.LoginWithExternalProviderRow, []pgtype.UUID, error)
 		CheckPermission(ctx context.Context, roleIDs []string, resource string, action string) (bool, error)
 		GetUserActionsAndResources(ctx context.Context, roleIDs []string) ([]database.GetUserAuthInfoRow, error)
+		SyncDatabase(ctx context.Context) error
 	}
 
 	PermissionRepo interface {

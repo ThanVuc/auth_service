@@ -6,6 +6,7 @@ import (
 	"auth_service/internal/grpc/wire"
 	"auth_service/pkg/settings"
 	"auth_service/proto/auth"
+	"auth_service/proto/common"
 	"context"
 	"fmt"
 	"net"
@@ -49,6 +50,7 @@ func (as *AuthServer) createServer() *grpc.Server {
 	auth.RegisterPermissionServiceServer(server, as.permissionServiceServer)
 	auth.RegisterRoleServiceServer(server, as.roleServiceServer)
 	auth.RegisterUserServiceServer(server, as.userServiceServer)
+	common.RegisterSyncDatabaseServiceServer(server, as.authServiceServer)
 
 	return server
 }
