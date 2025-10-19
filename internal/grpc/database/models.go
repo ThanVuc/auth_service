@@ -89,6 +89,7 @@ type User struct {
 	FailedAttempts pgtype.Int4
 	CreatedAt      pgtype.Timestamptz
 	UpdatedAt      pgtype.Timestamptz
+	AvatarUrl      pgtype.Text
 }
 
 type UserRole struct {

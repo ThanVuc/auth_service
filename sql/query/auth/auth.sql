@@ -1,7 +1,8 @@
 -- name: InsertUser :one
-INSERT INTO users (email, password_hash, last_login_at)
-VALUES ($1, $2, $3)
-RETURNING user_id, email, created_at, updated_at;
+INSERT INTO users (email, password_hash, last_login_at, avatar_url)
+VALUES ($1, $2, $3, $4)
+RETURNING user_id, email, created_at, updated_at, avatar_url;
+
 
 -- name: InsertExternalProvider :one
 INSERT INTO external_provider (sub, provider, user_id)

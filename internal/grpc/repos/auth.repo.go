@@ -74,6 +74,7 @@ func (ar *authRepo) RegisterUserWithExternalProvider(ctx context.Context, userIn
 		Email:        userInfo.Email,
 		PasswordHash: "",
 		LastLoginAt:  pgtype.Timestamptz{Time: time.Now(), Valid: true},
+		AvatarUrl:    pgtype.Text{String: userInfo.Picture, Valid: userInfo.Picture != ""},
 	})
 
 	if err != nil || !rowResp.UserID.Valid {
@@ -120,6 +121,8 @@ func (ar *authRepo) RegisterUserWithExternalProvider(ctx context.Context, userIn
 		"user_id":    rowResp.UserID.String(),
 		"email":      rowResp.Email,
 		"created_at": rowResp.CreatedAt.Time.Unix(),
+		"avatar_url": rowResp.AvatarUrl.String,
+		"name":       userInfo.Name,
 	}
 
 	requestId := utils.GetRequestIDFromOutgoingContext(ctx)
