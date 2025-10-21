@@ -14,6 +14,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/thanvuc/go-core-lib/log"
 	"go.uber.org/zap"
 )
@@ -223,6 +224,13 @@ func (as *authService) RefreshToken(ctx context.Context, req *auth.RefreshTokenR
 func (as *authService) CheckPermission(ctx context.Context, req *auth.CheckPermissionRequest) (*auth.CheckPermissionResponse, error) {
 	claims, err := as.jwtHelper.ValidateToken(req.AccessToken)
 	if err != nil {
+		if err == jwt.ErrTokenExpired {
+			return &auth.CheckPermissionResponse{
+				Error:  utils.UnauthorizedError(ctx, fmt.Errorf("access token expired")),
+				Status: auth.PERMISSION_STATUS_UNAUTHORIZED,
+			}, nil
+		}
+
 		return &auth.CheckPermissionResponse{
 			Error:  utils.InternalServerError(ctx, err),
 			Status: auth.PERMISSION_STATUS_UNAUTHORIZED,
