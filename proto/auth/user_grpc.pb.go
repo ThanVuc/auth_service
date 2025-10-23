@@ -20,10 +20,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	UserService_GetUsers_FullMethodName         = "/auth.UserService/GetUsers"
-	UserService_GetUser_FullMethodName          = "/auth.UserService/GetUser"
-	UserService_AssignRoleToUser_FullMethodName = "/auth.UserService/AssignRoleToUser"
-	UserService_LockOrUnLockUser_FullMethodName = "/auth.UserService/LockOrUnLockUser"
+	UserService_GetUsers_FullMethodName                  = "/auth.UserService/GetUsers"
+	UserService_GetUser_FullMethodName                   = "/auth.UserService/GetUser"
+	UserService_AssignRoleToUser_FullMethodName          = "/auth.UserService/AssignRoleToUser"
+	UserService_LockOrUnLockUser_FullMethodName          = "/auth.UserService/LockOrUnLockUser"
+	UserService_PresignUrlForAvatarUpsert_FullMethodName = "/auth.UserService/PresignUrlForAvatarUpsert"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -34,6 +35,7 @@ type UserServiceClient interface {
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
 	AssignRoleToUser(ctx context.Context, in *AssignRoleToUserRequest, opts ...grpc.CallOption) (*common.EmptyResponse, error)
 	LockOrUnLockUser(ctx context.Context, in *LockUserRequest, opts ...grpc.CallOption) (*common.EmptyResponse, error)
+	PresignUrlForAvatarUpsert(ctx context.Context, in *PresignUrlRequest, opts ...grpc.CallOption) (*PresignRequestUrlForAvatarUpsertResponse, error)
 }
 
 type userServiceClient struct {
@@ -84,6 +86,16 @@ func (c *userServiceClient) LockOrUnLockUser(ctx context.Context, in *LockUserRe
 	return out, nil
 }
 
+func (c *userServiceClient) PresignUrlForAvatarUpsert(ctx context.Context, in *PresignUrlRequest, opts ...grpc.CallOption) (*PresignRequestUrlForAvatarUpsertResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PresignRequestUrlForAvatarUpsertResponse)
+	err := c.cc.Invoke(ctx, UserService_PresignUrlForAvatarUpsert_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility.
@@ -92,6 +104,7 @@ type UserServiceServer interface {
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
 	AssignRoleToUser(context.Context, *AssignRoleToUserRequest) (*common.EmptyResponse, error)
 	LockOrUnLockUser(context.Context, *LockUserRequest) (*common.EmptyResponse, error)
+	PresignUrlForAvatarUpsert(context.Context, *PresignUrlRequest) (*PresignRequestUrlForAvatarUpsertResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -113,6 +126,9 @@ func (UnimplementedUserServiceServer) AssignRoleToUser(context.Context, *AssignR
 }
 func (UnimplementedUserServiceServer) LockOrUnLockUser(context.Context, *LockUserRequest) (*common.EmptyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LockOrUnLockUser not implemented")
+}
+func (UnimplementedUserServiceServer) PresignUrlForAvatarUpsert(context.Context, *PresignUrlRequest) (*PresignRequestUrlForAvatarUpsertResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PresignUrlForAvatarUpsert not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 func (UnimplementedUserServiceServer) testEmbeddedByValue()                     {}
@@ -207,6 +223,24 @@ func _UserService_LockOrUnLockUser_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_PresignUrlForAvatarUpsert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PresignUrlRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).PresignUrlForAvatarUpsert(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_PresignUrlForAvatarUpsert_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).PresignUrlForAvatarUpsert(ctx, req.(*PresignUrlRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -229,6 +263,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "LockOrUnLockUser",
 			Handler:    _UserService_LockOrUnLockUser_Handler,
+		},
+		{
+			MethodName: "PresignUrlForAvatarUpsert",
+			Handler:    _UserService_PresignUrlForAvatarUpsert_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

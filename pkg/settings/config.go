@@ -16,6 +16,7 @@ type Config struct {
 	Log      Log      `mapstructure:"log" json:"log" yaml:"log"`
 	RabbitMQ RabbitMQ `mapstructure:"rabbitmq" json:"rabbitmq" yaml:"rabbitmq"`
 	JWT      JWT      `mapstructure:"jwt" json:"jwt" yaml:"jwt"`
+	R2       R2       `mapstructure:"r2" json:"r2" yaml:"r2"`
 }
 
 type Progres struct {
@@ -68,4 +69,14 @@ type JWT struct {
 	Audience   []string `mapstructure:"audience" json:"audience" yaml:"audience"`
 	Expiration int      `mapstructure:"expiration" json:"expiration" yaml:"expiration"`
 	RefreshExp int      `mapstructure:"refresh_expiration" json:"refresh_expiration" yaml:"refresh_expiration"`
+}
+
+type R2 struct {
+	AccountID       string `mapstructure:"account_id" json:"account_id" yaml:"account_id"`
+	Endpoint        string `mapstructure:"endpoint" json:"endpoint" yaml:"endpoint"`
+	AccessKeyID     string `mapstructure:"access_key_id" json:"access_key_id" yaml:"access_key_id"`
+	SecrecAccessKey string `mapstructure:"secret_access_key" json:"secret_access_key" yaml:"secret_access_key"`
+	BucketName      string `mapstructure:"bucket" json:"bucket" yaml:"bucket"`
+	UseSSL          bool   `mapstructure:"use_ssl" json:"use_ssl" yaml:"use_ssl"`
+	PublicURL       string `mapstructure:"public_url" json:"public_url" yaml:"public_url"`
 }

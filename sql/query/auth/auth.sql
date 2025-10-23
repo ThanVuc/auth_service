@@ -40,3 +40,9 @@ JOIN permission_actions pa ON pa.perm_id = p.perm_id
 JOIN actions at ON at.action_id = pa.action_id
 WHERE rp.role_id = ANY($1::uuid[]);
 
+-- name: UpdateUserAvatar :one
+UPDATE users
+SET avatar_url = $2, updated_at = NOW()
+WHERE user_id = $1
+RETURNING user_id, updated_at, avatar_url;
+

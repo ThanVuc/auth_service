@@ -23,7 +23,6 @@ func (pc *UserController) GetUsers(ctx context.Context, req *auth.GetUsersReques
 	return utils.WithSafePanic(ctx, req, pc.userService.GetUsers)
 }
 
-
 func (uc *UserController) AssignRoleToUser(ctx context.Context, req *auth.AssignRoleToUserRequest) (*common.EmptyResponse, error) {
 	return utils.WithSafePanic(ctx, req, uc.userService.AssignRoleToUser)
 }
@@ -36,3 +35,6 @@ func (pc *UserController) LockOrUnLockUser(ctx context.Context, req *auth.LockUs
 	return utils.WithSafePanic(ctx, req, pc.userService.LockOrUnLockUser)
 }
 
+func (pc *UserController) PresignUrlForAvatarUpsert(ctx context.Context, req *auth.PresignUrlRequest) (*auth.PresignRequestUrlForAvatarUpsertResponse, error) {
+	return utils.WithSafePanic(ctx, req, pc.userService.PresignUrlForAvatarUpsert)
+}

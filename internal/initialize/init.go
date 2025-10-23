@@ -16,6 +16,7 @@ func initConfigAndResources() error {
 	initRedis()
 	initEventBus()
 	runMigrations(global.PostgresPool)
+	initR2()
 
 	return nil
 }

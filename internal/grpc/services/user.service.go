@@ -1,6 +1,7 @@
 package services
 
 import (
+	"auth_service/internal/constant"
 	"auth_service/internal/grpc/mapper"
 	"auth_service/internal/grpc/repos"
 	"auth_service/internal/grpc/utils"
@@ -10,12 +11,14 @@ import (
 	"fmt"
 
 	"github.com/thanvuc/go-core-lib/log"
+	"github.com/thanvuc/go-core-lib/storage"
 )
 
 type userService struct {
 	userRepo   repos.UserRepo
 	userMapper mapper.UserMapper
 	logger     log.Logger
+	r2         *storage.R2Client
 }
 
 func (ps *userService) GetUsers(ctx context.Context, req *auth.GetUsersRequest) (*auth.GetUsersResponse, error) {
@@ -80,24 +83,60 @@ func (ps *userService) GetUser(ctx context.Context, req *auth.GetUserRequest) (*
 }
 
 func (us *userService) LockOrUnLockUser(ctx context.Context, req *auth.LockUserRequest) (*common.EmptyResponse, error) {
-    locked, err := us.userRepo.LockOrUnLockUser(ctx, req)
-    if err != nil {
-        return &common.EmptyResponse{
-            Success: utils.ToBoolPointer(false),
-            Message: utils.ToStringPointer("Failed to lock/unlock user!"),
-            Error:   utils.DatabaseError(ctx, err),
-        }, err
-    }
+	locked, err := us.userRepo.LockOrUnLockUser(ctx, req)
+	if err != nil {
+		return &common.EmptyResponse{
+			Success: utils.ToBoolPointer(false),
+			Message: utils.ToStringPointer("Failed to lock/unlock user!"),
+			Error:   utils.DatabaseError(ctx, err),
+		}, err
+	}
 
-    var msg string
-    if locked {
-        msg = "User locked successfully!"
-    } else {
-        msg = "User unlocked successfully!"
-    }
+	var msg string
+	if locked {
+		msg = "User locked successfully!"
+	} else {
+		msg = "User unlocked successfully!"
+	}
 
-    return &common.EmptyResponse{
-        Success: utils.ToBoolPointer(true),
-        Message: utils.ToStringPointer(msg),
-    }, nil
+	return &common.EmptyResponse{
+		Success: utils.ToBoolPointer(true),
+		Message: utils.ToStringPointer(msg),
+	}, nil
+}
+
+func (us *userService) PresignUrlForAvatarUpsert(ctx context.Context, req *auth.PresignUrlRequest) (*auth.PresignRequestUrlForAvatarUpsertResponse, error) {
+	if req.IsDelete != nil && *req.IsDelete {
+		err := us.r2.Delete(ctx, *req.ObjectKey)
+		if err != nil {
+			return nil, err
+		}
+		_, err = us.userRepo.UpSertAvatar(ctx, req, "")
+		if err != nil {
+			return nil, err
+		}
+		return &auth.PresignRequestUrlForAvatarUpsertResponse{}, nil
+	}
+
+	var otps storage.PresignOptions
+
+	if req.ObjectKey == nil {
+		otps = constant.UserAvatar()
+	} else {
+		otps = constant.UpdateUserAvatar(req.ObjectKey)
+	}
+
+	res, err := us.r2.GeneratePresignedURL(ctx, otps)
+	if err != nil {
+		return nil, err
+	}
+	_, err = us.userRepo.UpSertAvatar(ctx, req, res.PublicURL)
+	if err != nil {
+		return nil, err
+	}
+	return &auth.PresignRequestUrlForAvatarUpsertResponse{
+		PreUrl:    res.PresignedURL,
+		PubUrl:    res.PublicURL,
+		ObjectKey: res.ObjectKey,
+	}, nil
 }
