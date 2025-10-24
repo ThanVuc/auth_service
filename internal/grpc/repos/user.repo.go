@@ -1,18 +1,19 @@
 package repos
 
 import (
+	"auth_service/internal/constant"
 	"auth_service/internal/grpc/database"
 	"auth_service/internal/grpc/utils"
 	"auth_service/proto/auth"
 	"context"
-	"time"
-
 	"database/sql"
+	"encoding/json"
+	"time"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
-		"github.com/thanvuc/go-core-lib/log"
+	"github.com/thanvuc/go-core-lib/log"
 )
 
 type userRepo struct {
@@ -184,10 +185,83 @@ func (ur *userRepo) LockOrUnLockUser(ctx context.Context, req *auth.LockUserRequ
 
 	err = ur.sqlc.LockUser(ctx, database.LockUserParams{
 		UserID:     userID,
-		LockReason: pgtype.Text{ String: *req.LockReason, Valid: true },
+		LockReason: pgtype.Text{String: *req.LockReason, Valid: true},
 	})
 	if err != nil {
 		return false, err
 	}
 	return true, nil
+}
+
+func (ur *userRepo) UpSertAvatar(ctx context.Context, req *auth.PresignUrlRequest, publicUrl string) (*pgtype.UUID, error) {
+	userId, err := utils.ToUUID(req.Id)
+	if err != nil {
+		return nil, err
+	}
+	// Begin transaction for atomic operation (update user + insert outbox)
+	tx, err := ur.pool.Begin(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer tx.Rollback(ctx)
+	qtx := ur.sqlc.WithTx(tx)
+
+	var outboxPayload map[string]interface{}
+	if publicUrl == "" {
+		// Update user avatar
+		_, err = qtx.UpdateUserAvatar(ctx, database.UpdateUserAvatarParams{
+			UserID:    userId,
+			AvatarUrl: pgtype.Text{Valid: false},
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		// Insert to outbox to sync with other services
+		outboxPayload = map[string]interface{}{
+			"user_id":    userId.String(),
+			"avatar_url": nil,
+			"updated_at": time.Now().Unix(),
+		}
+
+	} else {
+		_, err = qtx.UpdateUserAvatar(ctx, database.UpdateUserAvatarParams{
+			UserID:    userId,
+			AvatarUrl: pgtype.Text{String: publicUrl, Valid: true},
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		outboxPayload = map[string]interface{}{
+			"user_id":    userId.String(),
+			"avatar_url": pgtype.Text{String: publicUrl, Valid: true},
+			"updated_at": time.Now().Unix(),
+		}
+	}
+
+	requestId := utils.GetRequestIDFromOutgoingContext(ctx)
+	payloadBytes, marshalErr := json.Marshal(outboxPayload)
+	if marshalErr != nil {
+		return nil, marshalErr
+	}
+
+	_, err = qtx.InsertOutbox(ctx, database.InsertOutboxParams{
+		AggregateType: constant.AggregateTypeUser,
+		AggregateID:   userId.String(),
+		EventType:     constant.EventTypeUpsert,
+		Payload:       payloadBytes,
+		RequestID:     requestId,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	// Commit transaction
+	if err = tx.Commit(ctx); err != nil {
+		ur.logger.Error("Failed to commit avatar update transaction", "")
+		return nil, err
+	}
+
+	return &userId, nil
 }

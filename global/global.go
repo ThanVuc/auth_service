@@ -7,6 +7,7 @@ import (
 	"github.com/thanvuc/go-core-lib/cache"
 	"github.com/thanvuc/go-core-lib/eventbus"
 	"github.com/thanvuc/go-core-lib/log"
+	"github.com/thanvuc/go-core-lib/storage"
 )
 
 /*
@@ -20,4 +21,5 @@ var (
 	PostgresPool      *pgxpool.Pool
 	RedisDb           *cache.RedisCache
 	EventBusConnector *eventbus.RabbitMQConnector
+	R2Client          *storage.R2Client
 )

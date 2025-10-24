@@ -358,6 +358,126 @@ func (x *LockUserRequest) GetLockReason() string {
 	return ""
 }
 
+type PresignUrlRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id"`
+	ObjectKey     *string                `protobuf:"bytes,2,opt,name=object_key,json=objectKey,proto3,oneof" json:"object_key"`
+	IsDelete      *bool                  `protobuf:"varint,3,opt,name=is_delete,json=isDelete,proto3,oneof" json:"is_delete"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PresignUrlRequest) Reset() {
+	*x = PresignUrlRequest{}
+	mi := &file_auth_service_user_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PresignUrlRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PresignUrlRequest) ProtoMessage() {}
+
+func (x *PresignUrlRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_service_user_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PresignUrlRequest.ProtoReflect.Descriptor instead.
+func (*PresignUrlRequest) Descriptor() ([]byte, []int) {
+	return file_auth_service_user_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *PresignUrlRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *PresignUrlRequest) GetObjectKey() string {
+	if x != nil && x.ObjectKey != nil {
+		return *x.ObjectKey
+	}
+	return ""
+}
+
+func (x *PresignUrlRequest) GetIsDelete() bool {
+	if x != nil && x.IsDelete != nil {
+		return *x.IsDelete
+	}
+	return false
+}
+
+type PresignRequestUrlForAvatarUpsertResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	PreUrl        string                 `protobuf:"bytes,1,opt,name=pre_url,json=preUrl,proto3" json:"pre_url"`
+	PubUrl        string                 `protobuf:"bytes,2,opt,name=pub_url,json=pubUrl,proto3" json:"pub_url"`
+	ObjectKey     string                 `protobuf:"bytes,3,opt,name=object_key,json=objectKey,proto3" json:"object_key"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PresignRequestUrlForAvatarUpsertResponse) Reset() {
+	*x = PresignRequestUrlForAvatarUpsertResponse{}
+	mi := &file_auth_service_user_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PresignRequestUrlForAvatarUpsertResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PresignRequestUrlForAvatarUpsertResponse) ProtoMessage() {}
+
+func (x *PresignRequestUrlForAvatarUpsertResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_service_user_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PresignRequestUrlForAvatarUpsertResponse.ProtoReflect.Descriptor instead.
+func (*PresignRequestUrlForAvatarUpsertResponse) Descriptor() ([]byte, []int) {
+	return file_auth_service_user_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *PresignRequestUrlForAvatarUpsertResponse) GetPreUrl() string {
+	if x != nil {
+		return x.PreUrl
+	}
+	return ""
+}
+
+func (x *PresignRequestUrlForAvatarUpsertResponse) GetPubUrl() string {
+	if x != nil {
+		return x.PubUrl
+	}
+	return ""
+}
+
+func (x *PresignRequestUrlForAvatarUpsertResponse) GetObjectKey() string {
+	if x != nil {
+		return x.ObjectKey
+	}
+	return ""
+}
+
 var File_auth_service_user_proto protoreflect.FileDescriptor
 
 const file_auth_service_user_proto_rawDesc = "" +
@@ -389,12 +509,26 @@ const file_auth_service_user_proto_rawDesc = "" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12$\n" +
 	"\vlock_reason\x18\x03 \x01(\tH\x00R\n" +
 	"lockReason\x88\x01\x01B\x0e\n" +
-	"\f_lock_reason2\x8c\x02\n" +
+	"\f_lock_reason\"\x86\x01\n" +
+	"\x11PresignUrlRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\"\n" +
+	"\n" +
+	"object_key\x18\x02 \x01(\tH\x00R\tobjectKey\x88\x01\x01\x12 \n" +
+	"\tis_delete\x18\x03 \x01(\bH\x01R\bisDelete\x88\x01\x01B\r\n" +
+	"\v_object_keyB\f\n" +
+	"\n" +
+	"_is_delete\"{\n" +
+	"(PresignRequestUrlForAvatarUpsertResponse\x12\x17\n" +
+	"\apre_url\x18\x01 \x01(\tR\x06preUrl\x12\x17\n" +
+	"\apub_url\x18\x02 \x01(\tR\x06pubUrl\x12\x1d\n" +
+	"\n" +
+	"object_key\x18\x03 \x01(\tR\tobjectKey2\xf2\x02\n" +
 	"\vUserService\x129\n" +
 	"\bGetUsers\x12\x15.auth.GetUsersRequest\x1a\x16.auth.GetUsersResponse\x126\n" +
 	"\aGetUser\x12\x14.auth.GetUserRequest\x1a\x15.auth.GetUserResponse\x12H\n" +
 	"\x10AssignRoleToUser\x12\x1d.auth.AssignRoleToUserRequest\x1a\x15.common.EmptyResponse\x12@\n" +
-	"\x10LockOrUnLockUser\x12\x15.auth.LockUserRequest\x1a\x15.common.EmptyResponseB\fZ\n" +
+	"\x10LockOrUnLockUser\x12\x15.auth.LockUserRequest\x1a\x15.common.EmptyResponse\x12d\n" +
+	"\x19PresignUrlForAvatarUpsert\x12\x17.auth.PresignUrlRequest\x1a..auth.PresignRequestUrlForAvatarUpsertResponseB\fZ\n" +
 	"proto/authb\x06proto3"
 
 var (
@@ -409,38 +543,42 @@ func file_auth_service_user_proto_rawDescGZIP() []byte {
 	return file_auth_service_user_proto_rawDescData
 }
 
-var file_auth_service_user_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_auth_service_user_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_auth_service_user_proto_goTypes = []any{
-	(*GetUsersRequest)(nil),         // 0: auth.GetUsersRequest
-	(*GetUsersResponse)(nil),        // 1: auth.GetUsersResponse
-	(*GetUserRequest)(nil),          // 2: auth.GetUserRequest
-	(*GetUserResponse)(nil),         // 3: auth.GetUserResponse
-	(*AssignRoleToUserRequest)(nil), // 4: auth.AssignRoleToUserRequest
-	(*LockUserRequest)(nil),         // 5: auth.LockUserRequest
-	(*common.PageQuery)(nil),        // 6: common.PageQuery
-	(*UserItem)(nil),                // 7: auth.UserItem
-	(*common.PageInfo)(nil),         // 8: common.PageInfo
-	(*common.Error)(nil),            // 9: common.Error
-	(*common.EmptyResponse)(nil),    // 10: common.EmptyResponse
+	(*GetUsersRequest)(nil),                          // 0: auth.GetUsersRequest
+	(*GetUsersResponse)(nil),                         // 1: auth.GetUsersResponse
+	(*GetUserRequest)(nil),                           // 2: auth.GetUserRequest
+	(*GetUserResponse)(nil),                          // 3: auth.GetUserResponse
+	(*AssignRoleToUserRequest)(nil),                  // 4: auth.AssignRoleToUserRequest
+	(*LockUserRequest)(nil),                          // 5: auth.LockUserRequest
+	(*PresignUrlRequest)(nil),                        // 6: auth.PresignUrlRequest
+	(*PresignRequestUrlForAvatarUpsertResponse)(nil), // 7: auth.PresignRequestUrlForAvatarUpsertResponse
+	(*common.PageQuery)(nil),                         // 8: common.PageQuery
+	(*UserItem)(nil),                                 // 9: auth.UserItem
+	(*common.PageInfo)(nil),                          // 10: common.PageInfo
+	(*common.Error)(nil),                             // 11: common.Error
+	(*common.EmptyResponse)(nil),                     // 12: common.EmptyResponse
 }
 var file_auth_service_user_proto_depIdxs = []int32{
-	6,  // 0: auth.GetUsersRequest.page_query:type_name -> common.PageQuery
-	7,  // 1: auth.GetUsersResponse.users:type_name -> auth.UserItem
-	8,  // 2: auth.GetUsersResponse.page_info:type_name -> common.PageInfo
-	9,  // 3: auth.GetUsersResponse.error:type_name -> common.Error
-	7,  // 4: auth.GetUserResponse.user:type_name -> auth.UserItem
-	9,  // 5: auth.GetUserResponse.error:type_name -> common.Error
-	9,  // 6: auth.AssignRoleToUserRequest.error:type_name -> common.Error
+	8,  // 0: auth.GetUsersRequest.page_query:type_name -> common.PageQuery
+	9,  // 1: auth.GetUsersResponse.users:type_name -> auth.UserItem
+	10, // 2: auth.GetUsersResponse.page_info:type_name -> common.PageInfo
+	11, // 3: auth.GetUsersResponse.error:type_name -> common.Error
+	9,  // 4: auth.GetUserResponse.user:type_name -> auth.UserItem
+	11, // 5: auth.GetUserResponse.error:type_name -> common.Error
+	11, // 6: auth.AssignRoleToUserRequest.error:type_name -> common.Error
 	0,  // 7: auth.UserService.GetUsers:input_type -> auth.GetUsersRequest
 	2,  // 8: auth.UserService.GetUser:input_type -> auth.GetUserRequest
 	4,  // 9: auth.UserService.AssignRoleToUser:input_type -> auth.AssignRoleToUserRequest
 	5,  // 10: auth.UserService.LockOrUnLockUser:input_type -> auth.LockUserRequest
-	1,  // 11: auth.UserService.GetUsers:output_type -> auth.GetUsersResponse
-	3,  // 12: auth.UserService.GetUser:output_type -> auth.GetUserResponse
-	10, // 13: auth.UserService.AssignRoleToUser:output_type -> common.EmptyResponse
-	10, // 14: auth.UserService.LockOrUnLockUser:output_type -> common.EmptyResponse
-	11, // [11:15] is the sub-list for method output_type
-	7,  // [7:11] is the sub-list for method input_type
+	6,  // 11: auth.UserService.PresignUrlForAvatarUpsert:input_type -> auth.PresignUrlRequest
+	1,  // 12: auth.UserService.GetUsers:output_type -> auth.GetUsersResponse
+	3,  // 13: auth.UserService.GetUser:output_type -> auth.GetUserResponse
+	12, // 14: auth.UserService.AssignRoleToUser:output_type -> common.EmptyResponse
+	12, // 15: auth.UserService.LockOrUnLockUser:output_type -> common.EmptyResponse
+	7,  // 16: auth.UserService.PresignUrlForAvatarUpsert:output_type -> auth.PresignRequestUrlForAvatarUpsertResponse
+	12, // [12:17] is the sub-list for method output_type
+	7,  // [7:12] is the sub-list for method input_type
 	7,  // [7:7] is the sub-list for extension type_name
 	7,  // [7:7] is the sub-list for extension extendee
 	0,  // [0:7] is the sub-list for field type_name
@@ -455,13 +593,14 @@ func file_auth_service_user_proto_init() {
 	file_auth_service_user_proto_msgTypes[1].OneofWrappers = []any{}
 	file_auth_service_user_proto_msgTypes[3].OneofWrappers = []any{}
 	file_auth_service_user_proto_msgTypes[5].OneofWrappers = []any{}
+	file_auth_service_user_proto_msgTypes[6].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_auth_service_user_proto_rawDesc), len(file_auth_service_user_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -154,3 +154,28 @@ func (q *Queries) InsertUser(ctx context.Context, arg InsertUserParams) (InsertU
 	)
 	return i, err
 }
+
+const updateUserAvatar = `-- name: UpdateUserAvatar :one
+UPDATE users
+SET avatar_url = $2, updated_at = NOW()
+WHERE user_id = $1
+RETURNING user_id, updated_at, avatar_url
+`
+
+type UpdateUserAvatarParams struct {
+	UserID    pgtype.UUID
+	AvatarUrl pgtype.Text
+}
+
+type UpdateUserAvatarRow struct {
+	UserID    pgtype.UUID
+	UpdatedAt pgtype.Timestamptz
+	AvatarUrl pgtype.Text
+}
+
+func (q *Queries) UpdateUserAvatar(ctx context.Context, arg UpdateUserAvatarParams) (UpdateUserAvatarRow, error) {
+	row := q.db.QueryRow(ctx, updateUserAvatar, arg.UserID, arg.AvatarUrl)
+	var i UpdateUserAvatarRow
+	err := row.Scan(&i.UserID, &i.UpdatedAt, &i.AvatarUrl)
+	return i, err
+}

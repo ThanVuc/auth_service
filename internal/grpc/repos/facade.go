@@ -53,6 +53,7 @@ type (
 		AssignRoleToUser(ctx context.Context, req *auth.AssignRoleToUserRequest) error
 		GetUser(ctx context.Context, req *auth.GetUserRequest) (*[]database.GetUserRow, error)
 		LockOrUnLockUser(ctx context.Context, req *auth.LockUserRequest) (bool , error)
+		UpSertAvatar(ctx context.Context, req *auth.PresignUrlRequest, publicUrl string) (*pgtype.UUID, error)
 	}
 )
 
