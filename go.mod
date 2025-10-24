@@ -13,6 +13,11 @@ require (
 )
 
 require (
+	github.com/HugoSmits86/nativewebp v1.2.0 //  indirect
+	github.com/dustin/go-humanize v1.0.1 // indirect
+	github.com/json-iterator/go v1.1.10 // indirect
+	github.com/klauspost/compress v1.18.0 // indirect
+	github.com/klauspost/cpuid v1.3.1 // indirect
 	github.com/mfridman/interpolate v0.0.2 // indirect
 	github.com/rabbitmq/amqp091-go v1.10.0 // indirect
 	github.com/redis/go-redis/v9 v9.11.0 // indirect
