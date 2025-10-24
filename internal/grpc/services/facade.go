@@ -43,6 +43,7 @@ type (
 		AssignRoleToUser(ctx context.Context, req *auth.AssignRoleToUserRequest) (*common.EmptyResponse, error)
 		GetUser(ctx context.Context, req *auth.GetUserRequest) (*auth.GetUserResponse, error)
 		LockOrUnLockUser(ctx context.Context, req *auth.LockUserRequest) (*common.EmptyResponse, error)
+		PresignUrlForAvatarUpsert(ctx context.Context, req *auth.PresignUrlRequest) (*auth.PresignRequestUrlForAvatarUpsertResponse, error)
 	}
 )
 
@@ -90,5 +91,6 @@ func NewUserService(
 		userRepo:   userRepo,
 		userMapper: userMapper,
 		logger:     global.Logger,
+		r2:         global.R2Client,
 	}
 }
