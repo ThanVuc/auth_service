@@ -11,6 +11,7 @@ import (
 	"auth_service/proto/common"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -224,7 +225,7 @@ func (as *authService) RefreshToken(ctx context.Context, req *auth.RefreshTokenR
 func (as *authService) CheckPermission(ctx context.Context, req *auth.CheckPermissionRequest) (*auth.CheckPermissionResponse, error) {
 	claims, err := as.jwtHelper.ValidateToken(req.AccessToken)
 	if err != nil {
-		if err == jwt.ErrTokenExpired {
+		if errors.Is(err, jwt.ErrTokenExpired) {
 			return &auth.CheckPermissionResponse{
 				Error:  utils.UnauthorizedError(ctx, fmt.Errorf("access token expired")),
 				Status: auth.PERMISSION_STATUS_UNAUTHORIZED,
