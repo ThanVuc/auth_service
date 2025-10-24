@@ -194,8 +194,8 @@ func (as *authService) Logout(ctx context.Context, req *auth.LogoutRequest) (*co
 func (as *authService) RefreshToken(ctx context.Context, req *auth.RefreshTokenRequest) (*auth.RefreshTokenResponse, error) {
 	as.jwtHelper.RemoveRefreshTokenFromRedis(req.RefreshToken)
 
-	claims, err := as.jwtHelper.ValidateToken(req.AccessToken)
-	if err != nil && !errors.Is(err, jwt.ErrTokenExpired) {
+	claims, err := as.jwtHelper.DecodeToken(req.AccessToken)
+	if err != nil {
 		return &auth.RefreshTokenResponse{
 			Error: utils.InternalServerError(ctx, err),
 		}, err
