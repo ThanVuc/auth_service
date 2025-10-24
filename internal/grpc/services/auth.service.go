@@ -195,7 +195,7 @@ func (as *authService) RefreshToken(ctx context.Context, req *auth.RefreshTokenR
 	as.jwtHelper.RemoveRefreshTokenFromRedis(req.RefreshToken)
 
 	claims, err := as.jwtHelper.ValidateToken(req.AccessToken)
-	if err != nil {
+	if err != nil && !errors.Is(err, jwt.ErrTokenExpired) {
 		return &auth.RefreshTokenResponse{
 			Error: utils.InternalServerError(ctx, err),
 		}, err
