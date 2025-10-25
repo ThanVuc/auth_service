@@ -107,7 +107,15 @@ func (us *userService) LockOrUnLockUser(ctx context.Context, req *auth.LockUserR
 
 func (us *userService) PresignUrlForAvatarUpsert(ctx context.Context, req *auth.PresignUrlRequest) (*auth.PresignRequestUrlForAvatarUpsertResponse, error) {
 	if req.IsDelete != nil && *req.IsDelete {
-		err := us.r2.Delete(ctx, *req.ObjectKey)
+		if req.PublicUrl == nil || *req.PublicUrl == "" {
+			return nil, fmt.Errorf("PublicUrl is required to delete")
+		}
+
+		objectKey, err := us.r2.ParseURLToKey(*req.PublicUrl)
+		if err != nil {
+			return nil, fmt.Errorf("invalid PublicUrl to delete")
+		}
+		err = us.r2.Delete(ctx, objectKey)
 		if err != nil {
 			return nil, err
 		}
@@ -119,24 +127,45 @@ func (us *userService) PresignUrlForAvatarUpsert(ctx context.Context, req *auth.
 	}
 
 	var otps storage.PresignOptions
-
-	if req.ObjectKey == nil {
+	if req.PublicUrl == nil || *req.PublicUrl == "" {
 		otps = constant.UserAvatar()
-	} else {
-		otps = constant.UpdateUserAvatar(req.ObjectKey)
+		res, err := us.r2.GeneratePresignedURL(ctx, otps)
+		if err != nil {
+			return nil, err
+		}
+		_, err = us.userRepo.UpSertAvatar(ctx, req, res.PublicURL)
+		if err != nil {
+			return nil, err
+		}
+
+		return &auth.PresignRequestUrlForAvatarUpsertResponse{
+			PresignUrl: res.PresignedURL,
+			PublicUrl:  res.PublicURL,
+			ObjectKey:  res.ObjectKey,
+		}, nil
 	}
+
+	objectKey, err := us.r2.ParseURLToKey(*req.PublicUrl)
+	if err != nil {
+		return nil, fmt.Errorf("invalid PublicUrl to update")
+	}
+
+	otps = constant.UpdateUserAvatar(&objectKey)
+	fmt.Println("objectKey:", objectKey)
 
 	res, err := us.r2.GeneratePresignedURL(ctx, otps)
 	if err != nil {
 		return nil, err
 	}
+
 	_, err = us.userRepo.UpSertAvatar(ctx, req, res.PublicURL)
 	if err != nil {
 		return nil, err
 	}
+
 	return &auth.PresignRequestUrlForAvatarUpsertResponse{
-		PreUrl:    res.PresignedURL,
-		PubUrl:    res.PublicURL,
-		ObjectKey: res.ObjectKey,
+		PresignUrl: res.PresignedURL,
+		PublicUrl:  res.PublicURL,
+		ObjectKey:  res.ObjectKey,
 	}, nil
 }

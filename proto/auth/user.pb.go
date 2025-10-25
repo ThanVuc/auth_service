@@ -361,7 +361,7 @@ func (x *LockUserRequest) GetLockReason() string {
 type PresignUrlRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id"`
-	ObjectKey     *string                `protobuf:"bytes,2,opt,name=object_key,json=objectKey,proto3,oneof" json:"object_key"`
+	PublicUrl     *string                `protobuf:"bytes,2,opt,name=public_url,json=publicUrl,proto3,oneof" json:"public_url"`
 	IsDelete      *bool                  `protobuf:"varint,3,opt,name=is_delete,json=isDelete,proto3,oneof" json:"is_delete"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -404,9 +404,9 @@ func (x *PresignUrlRequest) GetId() string {
 	return ""
 }
 
-func (x *PresignUrlRequest) GetObjectKey() string {
-	if x != nil && x.ObjectKey != nil {
-		return *x.ObjectKey
+func (x *PresignUrlRequest) GetPublicUrl() string {
+	if x != nil && x.PublicUrl != nil {
+		return *x.PublicUrl
 	}
 	return ""
 }
@@ -420,8 +420,8 @@ func (x *PresignUrlRequest) GetIsDelete() bool {
 
 type PresignRequestUrlForAvatarUpsertResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	PreUrl        string                 `protobuf:"bytes,1,opt,name=pre_url,json=preUrl,proto3" json:"pre_url"`
-	PubUrl        string                 `protobuf:"bytes,2,opt,name=pub_url,json=pubUrl,proto3" json:"pub_url"`
+	PresignUrl    string                 `protobuf:"bytes,1,opt,name=presign_url,json=presignUrl,proto3" json:"presign_url"`
+	PublicUrl     string                 `protobuf:"bytes,2,opt,name=public_url,json=publicUrl,proto3" json:"public_url"`
 	ObjectKey     string                 `protobuf:"bytes,3,opt,name=object_key,json=objectKey,proto3" json:"object_key"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -457,16 +457,16 @@ func (*PresignRequestUrlForAvatarUpsertResponse) Descriptor() ([]byte, []int) {
 	return file_auth_service_user_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *PresignRequestUrlForAvatarUpsertResponse) GetPreUrl() string {
+func (x *PresignRequestUrlForAvatarUpsertResponse) GetPresignUrl() string {
 	if x != nil {
-		return x.PreUrl
+		return x.PresignUrl
 	}
 	return ""
 }
 
-func (x *PresignRequestUrlForAvatarUpsertResponse) GetPubUrl() string {
+func (x *PresignRequestUrlForAvatarUpsertResponse) GetPublicUrl() string {
 	if x != nil {
-		return x.PubUrl
+		return x.PublicUrl
 	}
 	return ""
 }
@@ -513,14 +513,16 @@ const file_auth_service_user_proto_rawDesc = "" +
 	"\x11PresignUrlRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\"\n" +
 	"\n" +
-	"object_key\x18\x02 \x01(\tH\x00R\tobjectKey\x88\x01\x01\x12 \n" +
+	"public_url\x18\x02 \x01(\tH\x00R\tpublicUrl\x88\x01\x01\x12 \n" +
 	"\tis_delete\x18\x03 \x01(\bH\x01R\bisDelete\x88\x01\x01B\r\n" +
-	"\v_object_keyB\f\n" +
+	"\v_public_urlB\f\n" +
 	"\n" +
-	"_is_delete\"{\n" +
-	"(PresignRequestUrlForAvatarUpsertResponse\x12\x17\n" +
-	"\apre_url\x18\x01 \x01(\tR\x06preUrl\x12\x17\n" +
-	"\apub_url\x18\x02 \x01(\tR\x06pubUrl\x12\x1d\n" +
+	"_is_delete\"\x89\x01\n" +
+	"(PresignRequestUrlForAvatarUpsertResponse\x12\x1f\n" +
+	"\vpresign_url\x18\x01 \x01(\tR\n" +
+	"presignUrl\x12\x1d\n" +
+	"\n" +
+	"public_url\x18\x02 \x01(\tR\tpublicUrl\x12\x1d\n" +
 	"\n" +
 	"object_key\x18\x03 \x01(\tR\tobjectKey2\xf2\x02\n" +
 	"\vUserService\x129\n" +
