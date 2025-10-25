@@ -50,9 +50,8 @@ func (h *jWTHelper) DecodeToken(accessToken string) (*models.JWTClaim, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, jwt.ErrSignatureInvalid
 		}
-
 		return []byte(h.jwtConfig.Secret), nil
-	})
+	}, jwt.WithoutClaimsValidation())
 
 	if err != nil {
 		return nil, err
