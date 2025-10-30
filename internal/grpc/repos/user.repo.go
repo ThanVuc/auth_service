@@ -235,7 +235,7 @@ func (ur *userRepo) UpSertAvatar(ctx context.Context, req *auth.PresignUrlReques
 
 		outboxPayload = map[string]interface{}{
 			"user_id":    userId.String(),
-			"avatar_url": pgtype.Text{String: publicUrl, Valid: true},
+			"avatar_url": publicUrl,
 			"updated_at": time.Now().Unix(),
 		}
 	}
