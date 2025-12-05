@@ -14,6 +14,7 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/thanvuc/go-core-lib/log"
+	"go.uber.org/zap"
 )
 
 type userRepo struct {
@@ -196,11 +197,13 @@ func (ur *userRepo) LockOrUnLockUser(ctx context.Context, req *auth.LockUserRequ
 func (ur *userRepo) UpSertAvatar(ctx context.Context, req *auth.PresignUrlRequest, publicUrl string) (*pgtype.UUID, error) {
 	userId, err := utils.ToUUID(req.Id)
 	if err != nil {
+		ur.logger.Error("Failed to convert user ID to UUID", "", zap.Error(err))
 		return nil, err
 	}
 	// Begin transaction for atomic operation (update user + insert outbox)
 	tx, err := ur.pool.Begin(ctx)
 	if err != nil {
+		ur.logger.Error("Failed to begin transaction for avatar upsert", "", zap.Error(err))
 		return nil, err
 	}
 	defer tx.Rollback(ctx)
@@ -214,6 +217,7 @@ func (ur *userRepo) UpSertAvatar(ctx context.Context, req *auth.PresignUrlReques
 			AvatarUrl: pgtype.Text{Valid: false},
 		})
 		if err != nil {
+			ur.logger.Error("Failed to update user avatar to null", "", zap.Error(err))
 			return nil, err
 		}
 
@@ -230,6 +234,7 @@ func (ur *userRepo) UpSertAvatar(ctx context.Context, req *auth.PresignUrlReques
 			AvatarUrl: pgtype.Text{String: publicUrl, Valid: true},
 		})
 		if err != nil {
+			ur.logger.Error("Failed to update user avatar", "", zap.Error(err))
 			return nil, err
 		}
 
@@ -243,6 +248,7 @@ func (ur *userRepo) UpSertAvatar(ctx context.Context, req *auth.PresignUrlReques
 	requestId := utils.GetRequestIDFromOutgoingContext(ctx)
 	payloadBytes, marshalErr := json.Marshal(outboxPayload)
 	if marshalErr != nil {
+		ur.logger.Error("Failed to marshal outbox payload for avatar upsert", "", zap.Error(marshalErr))
 		return nil, marshalErr
 	}
 
@@ -254,6 +260,7 @@ func (ur *userRepo) UpSertAvatar(ctx context.Context, req *auth.PresignUrlReques
 		RequestID:     requestId,
 	})
 	if err != nil {
+		ur.logger.Error("Failed to insert outbox for avatar upsert", "", zap.Error(err))
 		return nil, err
 	}
 
