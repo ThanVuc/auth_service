@@ -62,8 +62,10 @@ func (ar *authRepo) SyncActions(ctx context.Context, ids, resourceIds, names []s
 }
 
 func (ar *authRepo) RegisterUserWithExternalProvider(ctx context.Context, userInfo models.GoogleUserInfo, provider constant.Provider) (string, string, error) {
+	requestID := utils.GetRequestIDFromOutgoingContext(ctx)
 	tx, err := ar.pool.Begin(ctx)
 	if err != nil {
+		ar.logger.Error("Failed to begin transaction", requestID, zap.Error(err))
 		return "", "", err
 	}
 	defer tx.Rollback(ctx)
@@ -74,10 +76,10 @@ func (ar *authRepo) RegisterUserWithExternalProvider(ctx context.Context, userIn
 		Email:        userInfo.Email,
 		PasswordHash: "",
 		LastLoginAt:  pgtype.Timestamptz{Time: time.Now(), Valid: true},
-		AvatarUrl:    pgtype.Text{String: userInfo.Picture, Valid: userInfo.Picture != ""},
 	})
 
 	if err != nil || !rowResp.UserID.Valid {
+		ar.logger.Error("Failed to insert user", requestID, zap.Error(err))
 		tx.Rollback(ctx)
 		return "", "", err
 	}
@@ -90,6 +92,7 @@ func (ar *authRepo) RegisterUserWithExternalProvider(ctx context.Context, userIn
 	})
 
 	if err != nil {
+		ar.logger.Error("Failed to insert external provider", requestID, zap.Error(err))
 		tx.Rollback(ctx)
 		return "", "", err
 	}
@@ -97,6 +100,7 @@ func (ar *authRepo) RegisterUserWithExternalProvider(ctx context.Context, userIn
 	// Assign Default role to the new user
 	defaultRole, err := qtx.GetRoleByName(ctx, string(constant.UserRole))
 	if err != nil {
+		ar.logger.Error("Failed to get default role", requestID, zap.Error(err))
 		tx.Rollback(ctx)
 		return "", "", err
 	}
@@ -112,6 +116,7 @@ func (ar *authRepo) RegisterUserWithExternalProvider(ctx context.Context, userIn
 	})
 
 	if err != nil {
+		ar.logger.Error("Failed to assign default role to user", requestID, zap.Error(err))
 		tx.Rollback(ctx)
 		return "", "", err
 	}
@@ -127,6 +132,7 @@ func (ar *authRepo) RegisterUserWithExternalProvider(ctx context.Context, userIn
 	requestId := utils.GetRequestIDFromOutgoingContext(ctx)
 	payloadBytes, marshalErr := json.Marshal(outboxPayload)
 	if marshalErr != nil {
+		ar.logger.Error("Failed to marshal outbox payload for new user", requestID, zap.Error(marshalErr))
 		tx.Rollback(ctx)
 		return "", "", marshalErr
 	}
@@ -138,6 +144,7 @@ func (ar *authRepo) RegisterUserWithExternalProvider(ctx context.Context, userIn
 		RequestID:     requestId,
 	})
 	if err != nil {
+		ar.logger.Error("Failed to insert outbox for new user", requestID, zap.Error(err))
 		tx.Rollback(ctx)
 		return "", "", err
 	}

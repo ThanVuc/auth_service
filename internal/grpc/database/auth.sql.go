@@ -117,16 +117,15 @@ func (q *Queries) InsertExternalProvider(ctx context.Context, arg InsertExternal
 }
 
 const insertUser = `-- name: InsertUser :one
-INSERT INTO users (email, password_hash, last_login_at, avatar_url)
-VALUES ($1, $2, $3, $4)
-RETURNING user_id, email, created_at, updated_at, avatar_url
+INSERT INTO users (email, password_hash, last_login_at)
+VALUES ($1, $2, $3)
+RETURNING user_id, email, created_at, updated_at
 `
 
 type InsertUserParams struct {
 	Email        string
 	PasswordHash string
 	LastLoginAt  pgtype.Timestamptz
-	AvatarUrl    pgtype.Text
 }
 
 type InsertUserRow struct {
@@ -134,23 +133,16 @@ type InsertUserRow struct {
 	Email     string
 	CreatedAt pgtype.Timestamptz
 	UpdatedAt pgtype.Timestamptz
-	AvatarUrl pgtype.Text
 }
 
 func (q *Queries) InsertUser(ctx context.Context, arg InsertUserParams) (InsertUserRow, error) {
-	row := q.db.QueryRow(ctx, insertUser,
-		arg.Email,
-		arg.PasswordHash,
-		arg.LastLoginAt,
-		arg.AvatarUrl,
-	)
+	row := q.db.QueryRow(ctx, insertUser, arg.Email, arg.PasswordHash, arg.LastLoginAt)
 	var i InsertUserRow
 	err := row.Scan(
 		&i.UserID,
 		&i.Email,
 		&i.CreatedAt,
 		&i.UpdatedAt,
-		&i.AvatarUrl,
 	)
 	return i, err
 }
