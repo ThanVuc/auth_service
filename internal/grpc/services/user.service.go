@@ -12,6 +12,7 @@ import (
 
 	"github.com/thanvuc/go-core-lib/log"
 	"github.com/thanvuc/go-core-lib/storage"
+	"go.uber.org/zap"
 )
 
 type userService struct {
@@ -106,6 +107,7 @@ func (us *userService) LockOrUnLockUser(ctx context.Context, req *auth.LockUserR
 }
 
 func (us *userService) PresignUrlForAvatarUpsert(ctx context.Context, req *auth.PresignUrlRequest) (*auth.PresignRequestUrlForAvatarUpsertResponse, error) {
+	requestId := utils.GetRequestIDFromOutgoingContext(ctx)
 	if req.IsDelete != nil && *req.IsDelete {
 		if req.PublicUrl == nil || *req.PublicUrl == "" {
 			return nil, fmt.Errorf("PublicUrl is required to delete")
@@ -113,14 +115,17 @@ func (us *userService) PresignUrlForAvatarUpsert(ctx context.Context, req *auth.
 
 		objectKey, err := us.r2.ParseURLToKey(*req.PublicUrl)
 		if err != nil {
+			us.logger.Error("invalid PublicUrl to delete", requestId, zap.Error(err))
 			return nil, fmt.Errorf("invalid PublicUrl to delete")
 		}
 		err = us.r2.Delete(ctx, objectKey)
 		if err != nil {
+			us.logger.Error("failed to delete avatar from r2", requestId, zap.Error(err))
 			return nil, err
 		}
 		_, err = us.userRepo.UpSertAvatar(ctx, req, "")
 		if err != nil {
+			us.logger.Error("failed to update user avatar to null", requestId, zap.Error(err))
 			return nil, err
 		}
 		return &auth.PresignRequestUrlForAvatarUpsertResponse{}, nil
@@ -131,10 +136,12 @@ func (us *userService) PresignUrlForAvatarUpsert(ctx context.Context, req *auth.
 		otps = constant.UserAvatar()
 		res, err := us.r2.GeneratePresignedURL(ctx, otps)
 		if err != nil {
+			us.logger.Error("failed to generate presigned url for avatar upsert", requestId, zap.Error(err))
 			return nil, err
 		}
 		_, err = us.userRepo.UpSertAvatar(ctx, req, res.PublicURL)
 		if err != nil {
+			us.logger.Error("failed to upsert avatar url to user", requestId, zap.Error(err))
 			return nil, err
 		}
 
@@ -147,19 +154,21 @@ func (us *userService) PresignUrlForAvatarUpsert(ctx context.Context, req *auth.
 
 	objectKey, err := us.r2.ParseURLToKey(*req.PublicUrl)
 	if err != nil {
+		us.logger.Error("invalid PublicUrl to update", requestId, zap.Error(err))
 		return nil, fmt.Errorf("invalid PublicUrl to update")
 	}
 
 	otps = constant.UpdateUserAvatar(&objectKey)
-	fmt.Println("objectKey:", objectKey)
 
 	res, err := us.r2.GeneratePresignedURL(ctx, otps)
 	if err != nil {
+		us.logger.Error("failed to generate presigned url for avatar upsert", requestId, zap.Error(err))
 		return nil, err
 	}
 
 	_, err = us.userRepo.UpSertAvatar(ctx, req, res.PublicURL)
 	if err != nil {
+		us.logger.Error("failed to upsert avatar url to user", requestId, zap.Error(err))
 		return nil, err
 	}
 
