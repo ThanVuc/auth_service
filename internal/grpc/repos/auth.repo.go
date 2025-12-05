@@ -121,7 +121,6 @@ func (ar *authRepo) RegisterUserWithExternalProvider(ctx context.Context, userIn
 		"user_id":    rowResp.UserID.String(),
 		"email":      rowResp.Email,
 		"created_at": rowResp.CreatedAt.Time.Unix(),
-		"avatar_url": rowResp.AvatarUrl.String,
 		"name":       userInfo.Name,
 	}
 
