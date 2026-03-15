@@ -16,3 +16,14 @@ func GetRequestIDFromOutgoingContext(ctx context.Context) string {
 	}
 	return ""
 }
+
+func GetUserIDFromOutgoingContext(ctx context.Context) string {
+	md, ok := metadata.FromIncomingContext(ctx)
+	if ok {
+		vals := md.Get("x-user-id")
+		if len(vals) > 0 {
+			return vals[0]
+		}
+	}
+	return ""
+}

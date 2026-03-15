@@ -18,7 +18,7 @@ type (
 		SyncActions(ctx context.Context, ids, resourceIds, names []string) error
 		RegisterUserWithExternalProvider(ctx context.Context, userInfo models.GoogleUserInfo, provider constant.Provider) (string, string, error)
 		LoginWithExternalProvider(ctx context.Context, sub string, email string) (*database.LoginWithExternalProviderRow, []pgtype.UUID, error)
-		CheckPermission(ctx context.Context, roleIDs []string, resource string, action string) (bool, error)
+		CheckPermission(ctx context.Context, userId string, resource string, action string) (bool, error)
 		GetUserActionsAndResources(ctx context.Context, roleIDs []string) ([]database.GetUserAuthInfoRow, error)
 		SyncDatabase(ctx context.Context) error
 	}
@@ -52,7 +52,7 @@ type (
 		RemoveRolesFromUser(ctx context.Context, tx pgx.Tx, userId pgtype.UUID, ids []pgtype.UUID) error
 		AssignRoleToUser(ctx context.Context, req *auth.AssignRoleToUserRequest) error
 		GetUser(ctx context.Context, req *auth.GetUserRequest) (*[]database.GetUserRow, error)
-		LockOrUnLockUser(ctx context.Context, req *auth.LockUserRequest) (bool , error)
+		LockOrUnLockUser(ctx context.Context, req *auth.LockUserRequest) (bool, error)
 		UpSertAvatar(ctx context.Context, req *auth.PresignUrlRequest, publicUrl string) (*pgtype.UUID, error)
 	}
 )
