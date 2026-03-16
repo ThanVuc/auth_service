@@ -238,7 +238,7 @@ func (as *authService) CheckPermission(ctx context.Context, req *auth.CheckPermi
 		}, err
 	}
 
-	hasPermission, err := as.authRepo.CheckPermission(ctx, claims.RoleIDs, req.ResourceName, req.ActionName)
+	hasPermission, err := as.authRepo.CheckPermission(ctx, claims.Subject, req.ResourceName, req.ActionName)
 	if err != nil {
 		return &auth.CheckPermissionResponse{
 			Error:  utils.InternalServerError(ctx, err),
