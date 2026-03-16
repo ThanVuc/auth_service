@@ -73,25 +73,28 @@ func (q *Queries) GetUserAuthInfo(ctx context.Context, dollar_1 []pgtype.UUID) (
 const hasPermission = `-- name: HasPermission :one
 SELECT EXISTS (
     SELECT 1
-    FROM role_permissions rp
+    FROM users u
+    JOIN user_roles ur ON ur.user_id = u.user_id
+    JOIN role_permissions rp ON rp.role_id = ur.role_id
     JOIN permissions p ON p.perm_id = rp.perm_id
     JOIN resources rc ON rc.resource_id = p.resource_id
     JOIN permission_actions pa ON pa.perm_id = p.perm_id
     JOIN actions at ON at.action_id = pa.action_id
-    WHERE rp.role_id = ANY($1::uuid[])
+    WHERE u.user_id = $1
+      AND (u.lock_end IS NULL OR u.lock_end <= NOW())
       AND rc.name = $2
       AND at.name = $3
 ) AS has_permission
 `
 
 type HasPermissionParams struct {
-	Column1 []pgtype.UUID
-	Name    string
-	Name_2  string
+	UserID pgtype.UUID
+	Name   string
+	Name_2 string
 }
 
 func (q *Queries) HasPermission(ctx context.Context, arg HasPermissionParams) (bool, error) {
-	row := q.db.QueryRow(ctx, hasPermission, arg.Column1, arg.Name, arg.Name_2)
+	row := q.db.QueryRow(ctx, hasPermission, arg.UserID, arg.Name, arg.Name_2)
 	var has_permission bool
 	err := row.Scan(&has_permission)
 	return has_permission, err

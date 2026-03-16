@@ -12,12 +12,15 @@ RETURNING sub;
 -- name: HasPermission :one
 SELECT EXISTS (
     SELECT 1
-    FROM role_permissions rp
+    FROM users u
+    JOIN user_roles ur ON ur.user_id = u.user_id
+    JOIN role_permissions rp ON rp.role_id = ur.role_id
     JOIN permissions p ON p.perm_id = rp.perm_id
     JOIN resources rc ON rc.resource_id = p.resource_id
     JOIN permission_actions pa ON pa.perm_id = p.perm_id
     JOIN actions at ON at.action_id = pa.action_id
-    WHERE rp.role_id = ANY($1::uuid[])
+    WHERE u.user_id = $1
+      AND (u.lock_end IS NULL OR u.lock_end <= NOW())
       AND rc.name = $2
       AND at.name = $3
 ) AS has_permission;
